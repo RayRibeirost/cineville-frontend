@@ -1,10 +1,9 @@
-import { nunito, dynapuff } from "@/src/lib/fonts";
+import { montserrat, inter } from "@/src/lib/fonts";
 import { AuthProvider } from "../context/AuthContext";
 import { UserPayload } from "../types";
 import { cookies } from "next/headers";
 import { jwtDecode } from "jwt-decode";
 import "./globals.css";
-
 
 async function getUserFromCookie(): Promise<UserPayload | null> {
   const cookieStore = await cookies();
@@ -30,11 +29,9 @@ export default async function RootLayout({
 }) {
   const user = await getUserFromCookie();
   return (
-    <html lang="pt-BR" className={`${nunito.variable} ${dynapuff.variable}`}>
+    <html lang="pt-BR" className={`${inter.variable} ${montserrat.variable}`}>
       <body className="bg-secondary-700 min-h-screen">
-        <AuthProvider initialUser={user}>
-          {children}
-        </AuthProvider>
+        <AuthProvider initialUser={user}>{children}</AuthProvider>
       </body>
     </html>
   );

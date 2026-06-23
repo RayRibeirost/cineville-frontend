@@ -1,13 +1,13 @@
-import { DynaPuff, Nunito } from "next/font/google";
+import { Montserrat, Inter } from "next/font/google";
 
-export const nunito = Nunito({
+export const inter = Inter({
   subsets: ["latin"],
-  weight: ["300", "400", "600", "700"],
-  variable: "--font-nunito",
+  weight: ["400", "500"],
+  variable: "--font-inter",
 });
 
-export const dynapuff = DynaPuff({
+export const montserrat = Montserrat({
   subsets: ["latin"],
-  weight: ["400", "700"],
-  variable: "--font-dynapuff",
+  weight: ["600", "700"],
+  variable: "--font-montserrat",
 });

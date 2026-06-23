@@ -4,65 +4,38 @@
   /* Tipografia */
   --font-nunito: "Nunito", sans-serif;
   --font-dynapuff: "DynaPuff", cursive;
-
-  /* Spacing */
-  --spacing-12_25: 3.0625rem;
 }
 
 @theme {
-  /* Primary */
-  --color-primary-100: #feede8;
-  --color-primary-200: #fcbea7;
+  --color-red-cinema: #e50914;
+  --color-deep-black: #0a0a0a;
+  --color-gray-surface: #151515;
+  --color-sucess: #09e641;
+  --color-alert: #e6e009;
 
-  /* Secondary */
-  --color-secondary-100: #ecf0ff;
-  --color-secondary-200: #b4c7fe;
-  --color-secondary-300: #759ffe;
-  --color-secondary-400: #0c78f4;
-  --color-secondary-500: #1e3a8a;
-  --color-secondary-700: #01193c;
-
-  /* Tertiary */
-  --color-tertiary-100: #ffd3e1;
-  --color-tertiary-200: #ff98be;
-  --color-tertiary-300: #ff479d;
-
-  /* Grey */
-  --color-grey-100: #f1f0f0;
-  --color-grey-700: #6b7280;
-  --color-grey-800: #374151;
+  /* Gray */
+  --color-grayScale-base: #ffffff;
+  --color-grayScale-200: #fafafa;
+  --color-grayScale-300: #e5e5e5;
+  --color-grayScale-400: #a3a3a3;
+  --color-grayScale-500: #525252;
+  --color-grayScale-600: #262626;
+  --color-grayScale-700: #0a0a0a;
 
   /* Success */
-  --color-success-400: #27cd27;
-  --color-success-500: #22b322;
-
-  /* Blue variants */
-  --color-blue-variant-400: #1e88e5;
-  --color-blue-variant-500: #1976d2;
+  --color-sucess: #09e641;
 
   /* Gradient */
-  --color-start-yellow: #fbbf2480;
-  --color-end-yellow: #fdc700;
-
-  --color-start-blue: #87ceeb;
-  --color-end-blue: #bfe9ff;
 
   /* Error */
-  --color-error: #f80303cc;
+  --color-error: #e50914;
 
   /* Button */
-  --color-button-primary: #11c011;
-  --color-button-primary-hover: #0eb000;
-  --color-button-primary-shadow: #0a8a00;
+  --color-button-primary: #e50914;
+  --color-button-primary-hover: rgb(229, 9, 20, 0.7);
 
-  /* Streak Modal & Home Theme */
-  --color-streak-bg: #fff5f2;
-  --color-streak-bar-bg: #ffe8a1;
-  --color-streak-day-bg: #ffda70;
-  --color-streak-star-active: #ffd700;
-  --color-streak-text-primary: #1a1a1a;
-  --color-streak-text-secondary: #333333;
-  --color-streak-text-muted: #5c4033;
+  --color-button-secondary: transparent;
+  --color-button-secondary-hover: #e50914;
 }
 
 /* Custom Utilities */
