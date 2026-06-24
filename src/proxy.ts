@@ -17,12 +17,6 @@ export default async function proxy(request: NextRequest) {
       response.cookies.delete("auth_token");
       return response;
     }
-
-    // Se estiver em rota pública e autenticado, por enquanto não redireciona.
-    // (Isso evita navegações inesperadas.)
-    // if (isPublicRoute && isValid) {
-    //   return NextResponse.redirect(new URL("/profile", request.url));
-    // }
   }
 
   return NextResponse.next();
