@@ -2,8 +2,8 @@
 
 @theme {
   /* Tipografia */
-  --font-nunito: "Nunito", sans-serif;
-  --font-dynapuff: "DynaPuff", cursive;
+  --font-inter: "Inter", sans-serif;
+  --font-montserrat: "Montserrat", cursive;
 }
 
 @theme {
@@ -32,21 +32,13 @@
 
   /* Button */
   --color-button-primary: #e50914;
-  --color-button-primary-hover: rgb(229, 9, 20, 0.7);
+  --color-button-primary-hover: rgb(229, 9, 20, 0.8);
 
   --color-button-secondary: transparent;
   --color-button-secondary-hover: #e50914;
 }
 
 /* Custom Utilities */
-@utility text-game-title {
-  @apply font-dynapuff font-bold tracking-tighter text-secondary-400;
-  text-shadow:
-    -2px -2px 0 var(--color-secondary-100),
-    2px -2px 0 var(--color-secondary-100),
-    -2px 2px 0 var(--color-secondary-100),
-    2px 2px 0 var(--color-secondary-100);
-}
 
 @media print {
   aside:first-of-type {

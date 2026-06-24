@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
+// Rotas públicas (exibidas sem exigir autenticação)
 const publicRoutes = ["/login", "/"];
 
 export default async function proxy(request: NextRequest) {
@@ -17,9 +18,11 @@ export default async function proxy(request: NextRequest) {
       return response;
     }
 
-    if (isPublicRoute && isValid) {
-      return NextResponse.redirect(new URL("/profile", request.url));
-    }
+    // Se estiver em rota pública e autenticado, por enquanto não redireciona.
+    // (Isso evita navegações inesperadas.)
+    // if (isPublicRoute && isValid) {
+    //   return NextResponse.redirect(new URL("/profile", request.url));
+    // }
   }
 
   return NextResponse.next();
