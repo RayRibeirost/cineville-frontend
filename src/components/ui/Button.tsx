@@ -1,22 +1,22 @@
 import clsx from "clsx";
 
-type ButtonProps = {
+interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   children: React.ReactNode;
   variant: "primary" | "secondary";
-};
+}
 
-export default function Button({ children, variant }: ButtonProps) {
+export default function Button({ children, variant, ...props }: ButtonProps) {
   const variants = {
-    primary:
-      "bg-button-primary hover:bg-button-primary-hover focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2",
+    primary: "bg-button-primary hover:bg-button-primary-hover cursor-pointer ",
     secondary:
-      "bg-button-secondary hover:bg-button-secondary-hover focus:outline-none focus:ring-2 focus:ring-secondary focus:ring-offset-2",
+      "bg-button-secondary hover:bg-button-secondary-hover cursor-pointer border border-white hover:border-button-primary",
   };
 
   return (
     <button
+      {...props}
       className={clsx(
-        "px-4 py-2 rounded-md text-white font-semibold transition-colors duration-300",
+        "px-4 py-2 rounded-md text-white font-semibold transition-colors duration-200",
         variants[variant],
       )}
     >
