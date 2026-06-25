@@ -22,7 +22,6 @@ export default function HeaderUser() {
           onClick={() => setOpen(true)}
           className="flex items-center gap-2 text-white"
         >
-          <span>{user?.name}</span>
           <Person className="hover:opacity-80  transition-all ease-in-out duration-500 cursor-pointer" />
         </button>
       </div>
@@ -50,11 +49,9 @@ export default function HeaderUser() {
 
           <div className="flex flex-col items-center border-b-grayScale-200 border-b pb-6 mb-6">
             <Person className="w-16 h-16 text-gray-400" />
-            <p className="font-bold text-lg mt-2">{user?.name} kaynan</p>
+            <p className="font-bold text-lg mt-2">{user?.name}</p>
 
-            <p className="text-gray-500 text-sm">
-              {user?.email} kaynanldev@gmail.com
-            </p>
+            <p className="text-gray-500 text-sm">{user?.email}</p>
           </div>
 
           <nav className="flex flex-col gap-4">

@@ -7,16 +7,16 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 
 export default function Button({ children, variant, ...props }: ButtonProps) {
   const variants = {
-    primary: "bg-button-primary hover:bg-button-primary-hover cursor-pointer ",
+    primary: "bg-button-primary  hover:scale-105 cursor-pointer ",
     secondary:
-      "bg-button-secondary hover:bg-button-secondary-hover cursor-pointer border border-white hover:border-button-primary",
+      "bg-button-secondary hover:opacity-80 cursor-pointer border border-white",
   };
 
   return (
     <button
       {...props}
       className={clsx(
-        "px-4 py-2 rounded-md text-white font-semibold transition-colors duration-200",
+        "px-4 py-2 rounded-md text-white font-medium transition-all duration-200",
         variants[variant],
       )}
     >

@@ -4,7 +4,7 @@ import HeaderAuth from "./HeaderAuth";
 
 export default function Header() {
   return (
-    <header className="h-16 bg-[#171717] border-b border-secondary-400">
+    <header className="h-16 w-full bg-transparent ">
       <div className="max-w-7xl mx-auto h-full px-6 flex items-center justify-between">
         <Logo />
 
