@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { logoutAction } from "@/src/actions/authAction";
-import { FiLogOut } from "react-icons/fi";
+import LogoutIcon from "@mui/icons-material/Logout";
 import { ConfirmModal } from "@/src/components/ui/ConfirmModal";
 
 export default function LogoutButton({
@@ -25,9 +25,9 @@ export default function LogoutButton({
     <>
       <button
         onClick={() => setIsModalOpen(true)}
-        className={`flex items-center gap-2 px-5 py-2.5 bg-error hover:bg-error/90 border-2 border-white/30 text-white rounded-full font-bold font-nunito transition-colors cursor-pointer shadow-lg ${customClass}`}
+        className={`flex items-center gap-2   text-red-cinema hover:text-red-cinema/80 rounded-full font-medium font-inter transition-colors cursor-pointer ${customClass}`}
       >
-        <FiLogOut size={20} />
+        <LogoutIcon />
         <span className="leading-none">Sair</span>
       </button>
 
