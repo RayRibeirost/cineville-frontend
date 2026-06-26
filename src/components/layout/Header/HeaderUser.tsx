@@ -5,6 +5,7 @@ import Person from "@mui/icons-material/Person";
 import Diamond from "@mui/icons-material/Diamond";
 import { useAuth } from "@/src/context/AuthContext";
 import Link from "next/link";
+import LogoutButton from "../../ui/LogoutButton";
 export default function HeaderUser() {
   const [open, setOpen] = useState(false);
   const { user, logout } = useAuth();
@@ -34,7 +35,7 @@ export default function HeaderUser() {
       />
 
       <aside
-        className={`fixed top-0 right-0 h-screen w-80 bg-white shadow-xl z-50
+        className={`fixed top-0 right-0 h-screen w-80 bg-gray-surface shadow-xl z-50
         transform transition-all duration-300 ease-out
         ${open ? "translate-x-0" : "translate-x-full"}`}
       >
@@ -47,8 +48,8 @@ export default function HeaderUser() {
             </button>
           </div>
 
-          <div className="flex flex-col items-center border-b-grayScale-200 border-b pb-6 mb-6">
-            <Person className="w-16 h-16 text-gray-400" />
+          <div className="flex flex-col items-center border-b-grayScale-500 border-b pb-6 mb-6">
+            <Person className="w-16 h-16 text-grayScale-500" />
             <p className="font-bold text-lg mt-2">{user?.name}</p>
 
             <p className="text-gray-500 text-sm">{user?.email}</p>
@@ -79,9 +80,7 @@ export default function HeaderUser() {
               Programa de Pontos
             </Link>
 
-            <button onClick={logout} className="text-left text-red-500 mt-4">
-              Sair
-            </button>
+            <LogoutButton key={1}></LogoutButton>
           </nav>
         </div>
       </aside>
