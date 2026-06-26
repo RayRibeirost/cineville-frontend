@@ -5,6 +5,7 @@ import Header from "../layout/Header";
 import Hero from "./Hero";
 import MovieCarousel from "../layout/Carousel/MovieCarousel";
 import PromoCandy from "./PromoCandy";
+import Footer from "../ui/Footer";
 export default function HomePage() {
   return (
     <>
@@ -23,6 +24,7 @@ export default function HomePage() {
         <MovieCarousel title="Em Cartazes" />
         <MovieCarousel title="Lançamentos" />
         <PromoCandy />
+        <Footer />
       </div>
     </>
   );
