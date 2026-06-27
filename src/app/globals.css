@@ -97,7 +97,7 @@
 }
 
 body {
-  background-color: white !important;
+  background-color: var(--color-deep-black) !important;
   font-family: var(--font-inter) !important;
   color: var(--color-grayScale-200) !important;
 }

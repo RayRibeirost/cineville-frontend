@@ -9,49 +9,60 @@ import HeadingContent from "@/src/components/ui/HeadingContent";
 
 export default function MovieCarousel({ title }: { title: string }) {
   return (
-    <section className="mx-auto w-full max-w-7xl py-20 ">
+    <section className="mx-auto w-full max-w-7xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-20">
       <HeadingContent title={title} />
 
       <Swiper
         modules={[Autoplay]}
         loop
-        centeredSlides={false}
         speed={700}
         autoplay={{
           delay: 2000,
           disableOnInteraction: false,
           pauseOnMouseEnter: true,
         }}
-        spaceBetween={20}
-        slidesPerView={4}
+        spaceBetween={16}
+        slidesPerView={1.2}
         breakpoints={{
-          320: {
-            slidesPerView: 1.2,
+          480: {
+            slidesPerView: 1.5,
+            spaceBetween: 16,
           },
           640: {
             slidesPerView: 2,
+            spaceBetween: 18,
           },
-          900: {
+          768: {
+            slidesPerView: 2.5,
+            spaceBetween: 20,
+          },
+          1024: {
             slidesPerView: 3,
+            spaceBetween: 20,
           },
-          1200: {
+          1280: {
             slidesPerView: 4,
+            spaceBetween: 24,
           },
         }}
       >
-        <SwiperSlide key={1}>
+        <SwiperSlide>
           <MovieCard />
         </SwiperSlide>
-        <SwiperSlide key={2}>
+
+        <SwiperSlide>
           <MovieCard />
         </SwiperSlide>
-        <SwiperSlide key={3}>
+
+        <SwiperSlide>
           <MovieCard />
         </SwiperSlide>
-        <SwiperSlide key={4}>
+
+        <SwiperSlide>
           <MovieCard />
         </SwiperSlide>
-        <SwiperSlide key={5}>
+
+        <SwiperSlide>
           <MovieCard />
         </SwiperSlide>
       </Swiper>

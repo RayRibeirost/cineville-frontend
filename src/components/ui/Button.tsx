@@ -20,7 +20,14 @@ export default function Button({
     <button
       {...props}
       className={clsx(
-        "inline-flex items-center justify-center rounded-md px-4 py-2 text-white font-medium transition-all duration-200 cursor-pointer",
+        "inline-flex items-center justify-center rounded-md",
+        "px-3 py-2 sm:px-4 sm:py-2.5",
+        "text-sm sm:text-base",
+        "font-medium text-white",
+        "whitespace-nowrap",
+        "transition-all duration-200",
+        "cursor-pointer",
+        "disabled:cursor-not-allowed disabled:opacity-50",
         variants[variant],
         className,
       )}

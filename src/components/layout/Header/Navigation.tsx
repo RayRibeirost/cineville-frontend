@@ -1,32 +1,35 @@
-import NavigationItem from "./NavigationItem";
+import Link from "next/link";
 
-export default function Navigation() {
-  const links = [
-    {
-      label: "Em Cartazes",
-      href: "/movies",
-    },
-    {
-      label: "Lançamentos",
-      href: "/releases",
-    },
-    {
-      label: "Bomboniere",
-      href: "/snacks",
-    },
-    {
-      label: "Programa de Pontos",
-      href: "/rewards",
-    },
-  ];
+type NavigationProps = {
+  mobile?: boolean;
+  onNavigate?: () => void;
+};
 
+export default function Navigation({
+  mobile = false,
+  onNavigate,
+}: NavigationProps) {
   return (
-    <nav>
-      <ul className="flex items-center gap-8">
-        {links.map((link) => (
-          <NavigationItem key={link.href} {...link} />
-        ))}
-      </ul>
+    <nav
+      className={`${
+        mobile ? "flex flex-col gap-6" : "hidden md:flex items-center gap-8"
+      }`}
+    >
+      <Link href="/" onClick={onNavigate}>
+        Home
+      </Link>
+
+      <Link href="/produtos" onClick={onNavigate}>
+        Produtos
+      </Link>
+
+      <Link href="/sobre" onClick={onNavigate}>
+        Sobre
+      </Link>
+
+      <Link href="/contato" onClick={onNavigate}>
+        Contato
+      </Link>
     </nav>
   );
 }

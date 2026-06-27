@@ -12,17 +12,19 @@ export default function HeaderGuest() {
   };
 
   return (
-    <div className="flex items-center gap-3">
-      <Button variant="primary" onClick={handleLogin}>
-        Entrar
-      </Button>
+    <div className="flex items-center gap-2 sm:gap-3">
+      <div className="hidden sm:block">
+        <Button variant="primary" onClick={handleLogin}>
+          Entrar
+        </Button>
+      </div>
 
       <button
         onClick={handleLogin}
-        className="text-white hover:text-button-primary-hover transition-colors cursor-pointer"
+        className="flex items-center justify-center text-white hover:opacity-80 transition-all duration-300 cursor-pointer p-1 sm:p-0"
         aria-label="Entrar"
       >
-        <Person fontSize="large" />
+        <Person className="text-[24px] sm:text-[32px]" />
       </button>
     </div>
   );

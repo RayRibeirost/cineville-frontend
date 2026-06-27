@@ -1,21 +1,23 @@
 "use client";
 
-import { LoginPops } from "@/src/types";
-import { useLoginForm } from "@/src/hooks/useLoginForm";
+import Link from "next/link";
 import { FiEye, FiEyeOff } from "react-icons/fi";
+import { useLoginForm } from "@/src/hooks/useLoginForm";
 
 const EyeIcon = ({ visible }: { visible: boolean }) => {
   const Icon = visible ? FiEye : FiEyeOff;
+
   return (
     <Icon
-      size={22}
-      style={{ color: "#759FFE" }}
-      className={`transition-opacity ${visible ? "opacity-100" : "opacity-60"}`}
+      size={20}
+      className={`transition-opacity ${
+        visible ? "opacity-100" : "opacity-60"
+      } text-[#759FFE]`}
     />
   );
 };
 
-export default function Login({ isLogin, setIsLogin }: LoginPops) {
+export default function Login() {
   const {
     formAction,
     isPending,
@@ -26,116 +28,97 @@ export default function Login({ isLogin, setIsLogin }: LoginPops) {
     handleChange,
   } = useLoginForm();
 
-  if (!isLogin) {
-    return null;
-  }
-
   return (
-    <form action={formAction} className="w-full">
-      <div className="flex flex-col mb-2">
+    <form action={formAction} className="space-y-5">
+      {/* Email */}
+      <div>
         <label
           htmlFor="email"
-          className="text-secondary-700 text-[20px] font-bold font-nunito"
+          className="mb-2 block text-xs font-semibold uppercase tracking-wider text-gray-300"
         >
-          Insira seu e-mail:
+          E-mail
         </label>
+
         <input
           id="email"
           name="email"
           type="email"
           autoComplete="email"
           required
-          className="mt-2 p-3 outline-2 outline-secondary-400 bg-secondary-100 rounded-xl text-black focus:none"
-          placeholder="responsavel@gmail.com"
+          placeholder="nome@exemplo.com"
           value={formValues.email || ""}
           onChange={handleChange}
+          className="w-full rounded-md border border-zinc-700 bg-zinc-900 px-4 py-3 text-white placeholder:text-gray-500 focus:border-[#759FFE] focus:outline-none"
         />
       </div>
 
-      <div className="flex flex-col mb-4">
-        <label
-          htmlFor="password"
-          className="text-secondary-700 text-[20px] font-bold font-nunito"
-        >
-          Insira sua senha:
-        </label>
-        <div className="relative mt-2">
+      {/* Senha */}
+      <div>
+        <div className="mb-2 flex items-center justify-between">
+          <label
+            htmlFor="password"
+            className="text-xs font-semibold uppercase tracking-wider text-gray-300"
+          >
+            Senha
+          </label>
+
+          <Link
+            href="/esqueci-senha"
+            className="text-xs text-red-500 hover:underline"
+          >
+            Esqueceu a senha?
+          </Link>
+        </div>
+
+        <div className="relative">
           <input
             id="password"
             name="password"
             type={showPassword ? "text" : "password"}
             autoComplete="current-password"
             required
-            className="p-3 w-full outline-2 outline-secondary-400 rounded-xl text-black focus:none bg-secondary-100"
             placeholder="********"
             value={formValues.password || ""}
             onChange={handleChange}
+            className="w-full rounded-md border border-zinc-700 bg-zinc-900 px-4 py-3 pr-12 text-white placeholder:text-gray-500 focus:border-[#759FFE] focus:outline-none"
           />
 
           <button
             type="button"
             onClick={togglePassword}
-            className="absolute right-3 top-3 cursor-pointer hover:opacity-80"
+            className="absolute right-4 top-1/2 -translate-y-1/2"
           >
             <EyeIcon visible={showPassword} />
           </button>
         </div>
       </div>
 
-      <div className="flex items-center justify-center text-sm mb-4">
-        <input
-          id="remember"
-          type="checkbox"
-          className="peer hidden" 
-        />
-        <div
-          className="w-5 h-5 border border-[#1f6fe3] rounded-full flex items-center justify-center cursor-pointer peer-checked:bg-[url('/assets/check-box.png')] peer-checked:bg-cover peer-checked:bg-center transition-all"
-          onClick={() => {
-            const checkbox = document.getElementById("remember");
-            if (checkbox) {
-              checkbox.click(); 
-            }
-          }}
-        >
-        </div>
-        <label
-          htmlFor="remember"
-          className="text-[14px] text-secondary-700 font-bold ml-2 cursor-pointer"
-        >
-          Lembre meu acesso
-        </label>
-      </div>
-
-      <div className="flex justify-center mt-4">
-        <button
-          disabled={isPending}
-          className={`w-28 h-10 text-white text-[20px] rounded-lg font-nunito transition-all bg-secondary-400 cursor-pointer ${
-            isPending
-              ? "bg-gray-400 cursor-not-allowed opacity-70"
-              : "bg-secondary-400 hover:bg-[#1f6fe3] cursor-pointer"
-          }`}
-        >
-          {isPending ? "Entrar" : "Entrar"}
-        </button>
-      </div>
-
+      {/* Erro */}
       {state.error && (
-        <div className="my-4 p-3 text-[#f10e0e] text-sm font-bold text-center">
+        <p className="text-center text-sm font-semibold text-red-500">
           {state.error}
-        </div>
+        </p>
       )}
 
-      <div className="mt-3 text-center text-sm">
-        <p className="text-secondary-700 text-[16px]">
-          Não possui uma conta?
-          <span
-            onClick={() => setIsLogin(false)}
-            className="text-secondary-700 hover:underline font-bold cursor-pointer ml-1"
-          >
-            Criar conta
-          </span>
-        </p>
-      </div>
+      {/* Botão */}
+      <button
+        type="submit"
+        disabled={isPending}
+        className="flex w-full items-center justify-center rounded-md bg-red-600 py-3 font-semibold text-white transition hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-60"
+      >
+        {isPending ? "Entrando..." : "Entrar →"}
+      </button>
+
+      {/* Cadastro */}
+      <p className="text-center text-sm text-gray-400">
+        Não tem uma conta?{" "}
+        <Link
+          href="/register"
+          className="font-semibold text-red-500 hover:underline"
+        >
+          Crie agora
+        </Link>
+      </p>
     </form>
   );
 }

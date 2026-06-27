@@ -6,24 +6,26 @@ import Diamond from "@mui/icons-material/Diamond";
 import { useAuth } from "@/src/context/AuthContext";
 import Link from "next/link";
 import LogoutButton from "../../ui/LogoutButton";
+
 export default function HeaderUser() {
   const [open, setOpen] = useState(false);
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
 
   return (
     <>
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-2 sm:gap-4">
         <Link
           href="/programaPonto"
           className="flex items-center gap-2 text-white"
         >
-          <Diamond className="hover:text-blue-400 hover:scale-110 transition-all ease-in-out duration-500 cursor-pointer" />
+          <Diamond className="text-[22px] sm:text-[26px] hover:text-blue-400 hover:scale-110 transition-all duration-500 cursor-pointer" />
         </Link>
+
         <button
           onClick={() => setOpen(true)}
           className="flex items-center gap-2 text-white"
         >
-          <Person className="hover:opacity-80  transition-all ease-in-out duration-500 cursor-pointer" />
+          <Person className="text-[22px] sm:text-[26px] hover:opacity-80 transition-all duration-500 cursor-pointer" />
         </button>
       </div>
 
@@ -35,31 +37,39 @@ export default function HeaderUser() {
       />
 
       <aside
-        className={`fixed top-0 right-0 h-screen w-80 bg-gray-surface shadow-xl z-50
+        className={`fixed top-0 right-0 h-screen w-full sm:w-80 md:w-96 bg-gray-surface shadow-xl z-50
         transform transition-all duration-300 ease-out
         ${open ? "translate-x-0" : "translate-x-full"}`}
       >
-        <div className="p-6">
+        <div className="p-5 sm:p-6 h-full flex flex-col">
           <div className="flex justify-between items-center mb-8">
-            <h2 className="font-bold text-xl">Minha Conta</h2>
+            <h2 className="font-bold text-lg sm:text-xl">Minha Conta</h2>
 
-            <button onClick={() => setOpen(false)} className="text-2xl">
+            <button
+              onClick={() => setOpen(false)}
+              className="text-xl sm:text-2xl hover:opacity-70 transition"
+            >
               ✕
             </button>
           </div>
 
-          <div className="flex flex-col items-center border-b-grayScale-500 border-b pb-6 mb-6">
-            <Person className="w-16 h-16 text-grayScale-500" />
-            <p className="font-bold text-lg mt-2">{user?.name}</p>
+          <div className="flex flex-col items-center border-b border-b-grayScale-500 pb-6 mb-6">
+            <Person className="w-14 h-14 sm:w-16 sm:h-16 text-grayScale-500" />
 
-            <p className="text-gray-500 text-sm">{user?.email}</p>
+            <p className="font-bold text-base sm:text-lg mt-2 text-center wrap-break-word">
+              {user?.name}
+            </p>
+
+            <p className="text-gray-500 text-xs sm:text-sm text-center break-all">
+              {user?.email}
+            </p>
           </div>
 
-          <nav className="flex flex-col gap-4">
+          <nav className="flex flex-col gap-3 sm:gap-4 flex-1">
             <Link
               href="/perfil"
               onClick={() => setOpen(false)}
-              className="hover:text-button-primary-hover transition-colors"
+              className="py-2 text-base  transition-colors"
             >
               Meu Perfil
             </Link>
@@ -67,7 +77,7 @@ export default function HeaderUser() {
             <Link
               href="/meus-pedidos"
               onClick={() => setOpen(false)}
-              className="hover:text-button-primary-hover transition-colors"
+              className="py-2 text-base  transition-colors"
             >
               Meus Pedidos
             </Link>
@@ -75,12 +85,14 @@ export default function HeaderUser() {
             <Link
               href="/programaPonto"
               onClick={() => setOpen(false)}
-              className="hover:text-button-primary-hover transition-colors"
+              className="py-2 text-base  transition-colors"
             >
               Programa de Pontos
             </Link>
 
-            <LogoutButton key={1}></LogoutButton>
+            <div className="mt-auto pt-6">
+              <LogoutButton />
+            </div>
           </nav>
         </div>
       </aside>

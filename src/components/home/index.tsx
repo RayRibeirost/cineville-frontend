@@ -5,7 +5,7 @@ import Header from "../layout/Header";
 import Hero from "./Hero";
 import MovieCarousel from "../layout/Carousel/MovieCarousel";
 import PromoCandy from "./PromoCandy";
-import Footer from "../ui/Footer";
+import Footer from "../layout/Footer/Footer";
 export default function HomePage() {
   return (
     <>

@@ -1,6 +1,6 @@
 import Image from "next/image";
 
-export default function Logo() {
+export default function Logo({ className }: { className?: string }) {
   return (
     <Image
       src="assets/logo.svg"
@@ -8,6 +8,7 @@ export default function Logo() {
       width={120}
       height={40}
       priority
+      className={className}
     />
   );
 }

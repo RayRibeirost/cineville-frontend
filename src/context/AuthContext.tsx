@@ -14,15 +14,15 @@ export function AuthProvider({
   children: ReactNode;
   initialUser: UserPayload | null;
 }) {
-  const DEV_USER: UserPayload = {
-    sub: "123456",
-    name: "Kaynan Teixeira",
-    email: "kaynan@email.com",
-    iat: Math.floor(Date.now() / 1000),
-    exp: Math.floor(Date.now() / 1000) + 86400,
-  };
+  // const DEV_USER: UserPayload = {
+  //   sub: "123456",
+  //   name: "Kaynan Teixeira",
+  //   email: "kaynan@email.com",
+  //   iat: Math.floor(Date.now() / 1000),
+  //   exp: Math.floor(Date.now() / 1000) + 86400,
+  // };
 
-  const [user, setUser] = useState<UserPayload | null>(initialUser || DEV_USER);
+  const [user, setUser] = useState<UserPayload | null>(initialUser || null);
   const router = useRouter();
 
   async function logout() {
