@@ -9,12 +9,37 @@ const EyeIcon = ({ visible }: { visible: boolean }) => {
   const Icon = visible ? FiEye : FiEyeOff;
   return (
     <Icon
-      size={22}
-      style={{ color: "#759FFE" }}
+      size={20}
+      style={{ color: "#a3a3a3" }}
       className={`transition-opacity ${visible ? "opacity-100" : "opacity-60"}`}
     />
   );
 };
+
+const Field = ({
+  label,
+  error,
+  children,
+}: {
+  label: string;
+  error?: string;
+  children: React.ReactNode;
+}) => (
+  <div className="flex flex-col gap-1">
+    <label className="text-xs font-semibold uppercase tracking-widest text-grayScale-400">
+      {label}
+    </label>
+    {children}
+    {error && (
+      <span className="text-red-cinema text-xs font-semibold">{error}</span>
+    )}
+  </div>
+);
+
+const inputClass = (hasError?: string) =>
+  `w-full px-4 py-3 rounded-lg bg-gray-surface border text-grayScale-200 placeholder-grayScale-500 text-sm focus:outline-none focus:ring-2 focus:ring-red-cinema transition-all ${
+    hasError ? "border-red-cinema" : "border-grayScale-600"
+  }`;
 
 export default function Register({ isLogin, setIsLogin }: LoginPops) {
   const {
@@ -30,8 +55,6 @@ export default function Register({ isLogin, setIsLogin }: LoginPops) {
     togglePassword,
     showConfirmPassword,
     toggleConfirmPassword,
-    showPin,
-    togglePin,
     showSuccessModal,
     handleCloseModal,
   } = useRegisterForm(setIsLogin);
@@ -40,269 +63,259 @@ export default function Register({ isLogin, setIsLogin }: LoginPops) {
 
   return (
     <>
-      <form
-        action={formAction}
-        onSubmit={handleSubmit}
-        className="w-full relative"
-      >
-        {/* --- NOME --- */}
-        <div className="flex flex-col mb-2">
-          <label
-            htmlFor="name"
-            className="text-secondary-700 text-[20px] font-bold font-nunito"
-          >
-            Nome:
-          </label>
-          <input
-            id="name"
-            name="name"
-            type="text"
-            maxLength={50}
-            autoComplete="given-name"
-            placeholder="Nome do usuário"
-            value={getValue("name")}
-            onChange={handleChange}
-            className={`mt-2 p-3 border-2 rounded-xl bg-secondary-100 focus:outline-none transition-colors ${
-              getError("name")
-                ? "border-[#f80303] bg-[#f80303]"
-                : "border-secondary-400"
-            }`}
-          />
-          {getError("name") && (
-            <span className="text-[#f80303] border-[#f80303] c font-bold text-xs mt-1">
-              {getError("name")}
-            </span>
-          )}
-        </div>
+      <form action={formAction} onSubmit={handleSubmit} className="w-full flex flex-col gap-4">
 
-        {/* --- SOBRENOME --- */}
-        <div className="flex flex-col mb-2">
-          <label
-            htmlFor="surname"
-            className="text-secondary-700 text-[20px] font-bold font-nunito"
-          >
-            Sobrenome:
-          </label>
-          <input
-            id="surname"
-            name="surname"
-            type="text"
-            maxLength={50}
-            autoComplete="family-name"
-            placeholder="Sobrenome do usuário"
-            value={getValue("surname")}
-            onChange={handleChange}
-            className={`mt-2 p-3 border-2 rounded-xl bg-secondary-100 text-black focus:outline-none transition-colors ${
-              getError("surname")
-                ? "border-[#f80303] bg-[#f80303]"
-                : "border-secondary-400"
-            }`}
-          />
-          {getError("surname") && (
-            <span className="text-[#f80303] border-[#f80303] c font-bold text-xs mt-1">
-              {getError("surname")}
-            </span>
-          )}
-        </div>
-
-        {/* --- EMAIL --- */}
-        <div className="flex flex-col mb-2">
-          <label
-            htmlFor="email"
-            className="text-secondary-700 text-[20px] font-bold font-nunito"
-          >
-            Insira seu melhor e-mail:
-          </label>
-          <input
-            id="email"
-            name="email"
-            type="email"
-            maxLength={50}
-            autoComplete="email"
-            placeholder="responsavel@gmail.com"
-            value={getValue("email")}
-            onChange={handleChange}
-            className={`mt-2 p-3 border-2 rounded-xl bg-secondary-100 text-black focus:outline-none transition-colors ${
-              getError("email")
-                ? "border-[#f80303] bg-[#f80303]"
-                : "border-secondary-400"
-            }`}
-          />
-          {getError("email") && (
-            <span className="text-[#f80303] border-[#f80303] c font-bold text-xs mt-1">
-              {getError("email")}
-            </span>
-          )}
-        </div>
-
-        {/* --- SENHA --- */}
-        <div className="flex flex-col mb-4">
-          <label
-            htmlFor="password"
-            className="text-secondary-700 text-[20px] font-bold font-nunito"
-          >
-            Crie uma senha:
-          </label>
-          <div className="relative mt-2">
+        {/* Nome + Sobrenome */}
+        <div className="grid grid-cols-2 gap-4">
+          <Field label="Nome" error={getError("name")}>
             <input
-              id="password"
-              name="password"
-              type={showPassword ? "text" : "password"}
-              maxLength={20}
-              autoComplete="new-password"
-              placeholder="********"
-              value={getValue("password")}
-              onChange={handleChange}
-              className={`p-3 w-full border-2 rounded-xl bg-secondary-100 text-black focus:outline-none transition-colors ${
-                getError("password")
-                  ? "border-[#f80303] bg-[#f80303]"
-                  : "border-secondary-400"
-              }`}
+              id="name" name="name" type="text" maxLength={50}
+              autoComplete="given-name" placeholder="João"
+              value={getValue("name")} onChange={handleChange}
+              className={inputClass(getError("name"))}
             />
-            <button
-              type="button"
-              onClick={togglePassword}
-              className="absolute right-3 top-3 cursor-pointer hover:opacity-80"
-            >
-              <EyeIcon visible={showPassword} />
-            </button>
-          </div>
-
-          {getError("password") && (
-            <span className="text-[#f80303] border-[#f80303] c font-bold text-xs mt-1">
-              {getError("password")}
-            </span>
-          )}
-          <p className="font-bold text-[14px] mt-2 text-[#01193C]">
-            A senha deve ter no mínimo 6 caracteres, maiúscula, minúscula,
-            número e especial.
-          </p>
-        </div>
-
-        {/* --- CONFIRMAR SENHA --- */}
-        <div className="flex flex-col mb-4">
-          <label
-            htmlFor="confirmPassword"
-            className="text-secondary-700 text-[20px] font-bold font-nunito"
-          >
-            Confirme sua senha:
-          </label>
-          <div className="relative mt-2">
+          </Field>
+          <Field label="Sobrenome" error={getError("surname")}>
             <input
-              id="confirmPassword"
-              name="confirmPassword"
-              type={showConfirmPassword ? "text" : "password"}
-              maxLength={20}
-              autoComplete="new-password"
-              placeholder="********"
-              value={getValue("confirmPassword")}
-              onChange={handleChange}
-              className={`p-3 w-full border-2 rounded-xl bg-secondary-100 text-black focus:outline-none transition-colors ${
-                getError("confirmPassword")
-                  ? "border-[#f80303] bg-[#f80303]"
-                  : "border-secondary-400"
-              }`}
+              id="surname" name="surname" type="text" maxLength={50}
+              autoComplete="family-name" placeholder="Silva"
+              value={getValue("surname")} onChange={handleChange}
+              className={inputClass(getError("surname"))}
             />
-            <button
-              type="button"
-              onClick={toggleConfirmPassword}
-              className="absolute right-3 top-3 cursor-pointer hover:opacity-80"
-            >
-              <EyeIcon visible={showConfirmPassword} />
-            </button>
-          </div>
-
-          {getError("confirmPassword") && (
-            <span className="text-[#f80303] border-[#f80303] c font-bold text-xs mt-1">
-              {getError("confirmPassword")}
-            </span>
-          )}
+          </Field>
         </div>
-        {/* --- TERMOS --- */}
-        <div className="flex items-start mt-2">
-          <input
-            id="termsAccepted"
-            name="termsAccepted"
-            key={`terms-${getChecked("termsAccepted")}`}
-            type="checkbox"
-            checked={getChecked("termsAccepted")}
-            onChange={handleChange}
-            value="on"
-            className="w-5 h-5 text-secondary-400 border-secondary-400 rounded-xl bg-secondary-100 focus:ring-2 focus:ring-[#4C6E91] mt-1"
-          />
 
-          <div className="ml-2 flex flex-col">
-            <label
-              htmlFor="termsAccepted"
-              className="text-[14px] text-secondary-700 leading-snug"
+        {/* Email + CPF */}
+        <div className="grid grid-cols-2 gap-4">
+          <Field label="E-mail" error={getError("email")}>
+            <input
+              id="email" name="email" type="email" maxLength={50}
+              autoComplete="email" placeholder="seu@email.com"
+              value={getValue("email")} onChange={handleChange}
+              className={inputClass(getError("email"))}
+            />
+          </Field>
+          <Field label="CPF" error={getError("cpf")}>
+            <input
+              id="cpf" name="cpf" type="text" maxLength={14}
+              placeholder="000.000.000-00"
+              value={getValue("cpf")} onChange={handleChange}
+              className={inputClass(getError("cpf"))}
+            />
+          </Field>
+        </div>
+
+        {/* Data de Nascimento + Telefone */}
+        <div className="grid grid-cols-2 gap-4">
+          <Field label="Data de Nascimento" error={getError("birthDate")}>
+            <input
+              id="birthDate" name="birthDate" type="date"
+              value={getValue("birthDate")} onChange={handleChange}
+              className={inputClass(getError("birthDate")) + " text-grayScale-400"}
+            />
+          </Field>
+          <Field label="Telefone" error={getError("phone")}>
+            <input
+              id="phone" name="phone" type="text" maxLength={15}
+              placeholder="(84)99999-9999"
+              value={getValue("phone")} onChange={handleChange}
+              className={inputClass(getError("phone"))}
+            />
+          </Field>
+        </div>
+
+        {/* CEP + Gênero */}
+        <div className="grid grid-cols-2 gap-4">
+          <Field label="CEP" error={getError("cep")}>
+            <input
+              id="cep" name="cep" type="text" maxLength={9}
+              placeholder="00000-000"
+              value={getValue("cep")} onChange={handleChange}
+              className={inputClass(getError("cep"))}
+            />
+          </Field>
+          <Field label="Gênero" error={getError("gender")}>
+            <select
+              id="gender" name="gender"
+              className="w-full px-4 py-3 rounded-lg bg-gray-surface border border-grayScale-600 text-grayScale-400 text-sm focus:outline-none focus:ring-2 focus:ring-red-cinema transition-all"
             >
-              Li e aceito os{" "}
-              <a
-                href="/pdfs/termos-de-uso.pdf"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="underline hover:text-secondary-500 font-black"
-                onClick={(e) => e.stopPropagation()}
-              >
-                termos e condições
-              </a>{" "}
-              e também as{" "}
-              <a
-                href="/pdfs/politica-de-privacidade.pdf"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="underline hover:text-secondary-500 font-black"
-                onClick={(e) => e.stopPropagation()}
-              >
-                políticas de privacidade
-              </a>{" "}
-              do serviço.
+              <option value="">Selecione</option>
+              <option value="MASCULINO">Masculino</option>
+              <option value="FEMININO">Feminino</option>
+              <option value="OUTRO">Outro</option>
+              <option value="PREFIRO_NAO_INFORMAR">Prefiro não informar</option>
+            </select>
+          </Field>
+        </div>
+
+        {/* Endereço + Número */}
+        <div className="grid grid-cols-3 gap-4">
+          <div className="col-span-2">
+            <Field label="Endereço" error={getError("address")}>
+              <input
+                id="address" name="address" type="text"
+                placeholder="Rua das Flores"
+                value={getValue("address")} onChange={handleChange}
+                className={inputClass(getError("address"))}
+              />
+            </Field>
+          </div>
+          <Field label="Número" error={getError("number")}>
+            <input
+              id="number" name="number" type="text"
+              placeholder="123"
+              value={getValue("number")} onChange={handleChange}
+              className={inputClass(getError("number"))}
+            />
+          </Field>
+        </div>
+
+        {/* Bairro + Cidade + Estado */}
+        <div className="grid grid-cols-3 gap-4">
+          <Field label="Bairro" error={getError("neighborhood")}>
+            <input
+              id="neighborhood" name="neighborhood" type="text"
+              placeholder="Centro"
+              value={getValue("neighborhood")} onChange={handleChange}
+              className={inputClass(getError("neighborhood"))}
+            />
+          </Field>
+          <Field label="Cidade" error={getError("city")}>
+            <input
+              id="city" name="city" type="text"
+              placeholder="Natal"
+              value={getValue("city")} onChange={handleChange}
+              className={inputClass(getError("city"))}
+            />
+          </Field>
+          <Field label="Estado" error={getError("state")}>
+            <input
+              id="state" name="state" type="text" maxLength={2}
+              placeholder="RN"
+              value={getValue("state")} onChange={handleChange}
+              className={inputClass(getError("state"))}
+            />
+          </Field>
+        </div>
+
+        {/* Complemento */}
+        <Field label="Complemento (opcional)" error={getError("complement")}>
+          <input
+            id="complement" name="complement" type="text"
+            placeholder="Apto 101"
+            value={getValue("complement")} onChange={handleChange}
+            className={inputClass(getError("complement"))}
+          />
+        </Field>
+
+        {/* Senha + Confirmar Senha */}
+        <div className="grid grid-cols-2 gap-4">
+          <Field label="Senha" error={getError("password")}>
+            <div className="relative">
+              <input
+                id="password" name="password"
+                type={showPassword ? "text" : "password"}
+                maxLength={20} placeholder="********"
+                value={getValue("password")} onChange={handleChange}
+                className={inputClass(getError("password"))}
+              />
+              <button type="button" onClick={togglePassword}
+                className="absolute right-3 top-3 cursor-pointer hover:opacity-80">
+                <EyeIcon visible={showPassword} />
+              </button>
+            </div>
+            <p className="text-grayScale-500 text-xs mt-1">
+              Mín. 6 caracteres, maiúscula, minúscula, número e especial.
+            </p>
+          </Field>
+          <Field label="Confirmar Senha" error={getError("confirmPassword")}>
+            <div className="relative">
+              <input
+                id="confirmPassword" name="confirmPassword"
+                type={showConfirmPassword ? "text" : "password"}
+                maxLength={20} placeholder="********"
+                value={getValue("confirmPassword")} onChange={handleChange}
+                className={inputClass(getError("confirmPassword"))}
+              />
+              <button type="button" onClick={toggleConfirmPassword}
+                className="absolute right-3 top-3 cursor-pointer hover:opacity-80">
+                <EyeIcon visible={showConfirmPassword} />
+              </button>
+            </div>
+          </Field>
+        </div>
+
+        {/* Termos + Privacidade */}
+        <div className="flex flex-col gap-2 mt-2">
+          <div className="flex items-start gap-2">
+            <input
+              id="termsAccepted" name="termsAccepted" type="checkbox"
+              checked={getChecked("termsAccepted")} onChange={handleChange}
+              value="on" className="mt-1 w-4 h-4 accent-red-cinema"
+            />
+            <label htmlFor="termsAccepted" className="text-grayScale-400 text-xs leading-snug">
+              Eu aceito os{" "}
+              <a href="/pdfs/termos-de-uso.pdf" target="_blank" rel="noopener noreferrer"
+                className="text-red-cinema underline font-bold">
+                Termos de Uso
+              </a>
             </label>
-
             {getError("termsAccepted") && (
-              <span className="text-[#f80303] c font-bold text-xs mt-1">
-                {getError("termsAccepted")}
-              </span>
+              <span className="text-red-cinema text-xs font-semibold">{getError("termsAccepted")}</span>
+            )}
+          </div>
+
+          <div className="flex items-start gap-2">
+            <input
+              id="privacyAccepted" name="privacyAccepted" type="checkbox"
+              checked={getChecked("privacyAccepted")} onChange={handleChange}
+              value="on" className="mt-1 w-4 h-4 accent-red-cinema"
+            />
+            <label htmlFor="privacyAccepted" className="text-grayScale-400 text-xs leading-snug">
+              Eu aceito a{" "}
+              <a href="/pdfs/politica-de-privacidade.pdf" target="_blank" rel="noopener noreferrer"
+                className="text-red-cinema underline font-bold">
+                Política de Privacidade
+              </a>
+            </label>
+            {getError("privacyAccepted") && (
+              <span className="text-red-cinema text-xs font-semibold">{getError("privacyAccepted")}</span>
             )}
           </div>
         </div>
 
-        {/* --- BOTÃO --- */}
-        <div className="flex justify-center mt-3">
-          <button
-            type="submit"
-            disabled={isPending}
-            className={`w-28 h-10 text-white text-[20px] rounded-lg font-nunito transition-all ${
-              isPending
-                ? "bg-gray-400 cursor-not-allowed opacity-70"
-                : "bg-secondary-400 hover:bg-[#1f6fe3] cursor-pointer"
-            }`}
-          >
-            {isPending ? "Cadastrar" : "Cadastrar"}
-          </button>
-        </div>
+        {/* Botão */}
+        <button
+          type="submit" disabled={isPending}
+          className={`w-full py-3 mt-2 rounded-lg font-black text-sm uppercase tracking-widest transition-all ${
+            isPending
+              ? "bg-grayScale-600 cursor-not-allowed text-grayScale-500"
+              : "bg-button-primary hover:bg-button-primary-hover text-grayScale-200 cursor-pointer"
+          }`}
+        >
+          {isPending ? "Cadastrando..." : "Criar Conta"}
+        </button>
 
-        {/* MENSAGEM DO SERVIDOR */}
+        {/* Erro do servidor */}
         {state.message && !state.success && (
-          <div className="my-4 p-3 rounded text-center text-sm font-bold text-tertiary-300">
+          <p className="text-red-cinema text-xs text-center font-semibold mt-2">
             {state.message}
-          </div>
+          </p>
         )}
 
-        <div className="mt-3 text-center text-sm">
-          <p className="text-secondary-700 text-[16px]">
-            Já possui uma conta?
-            <span
-              onClick={() => setIsLogin(true)}
-              className="text-secondary-700 hover:underline font-bold cursor-pointer ml-1"
-            >
-              Fazer login
-            </span>
-          </p>
-        </div>
+        {/* Link pro login */}
+        <p className="text-center text-grayScale-400 text-sm mt-2">
+          Já possui uma conta?{" "}
+          <span
+            onClick={() => setIsLogin(true)}
+            className="text-red-cinema font-bold cursor-pointer hover:underline"
+          >
+            Entrar agora
+          </span>
+        </p>
+
       </form>
 
-      {/* --- MODAL DE SUCESSO --- */}
       <SuccessModal
         isOpen={showSuccessModal}
         message={state.message || "Cadastro realizado com sucesso!"}
