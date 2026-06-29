@@ -10,7 +10,7 @@ const EyeIcon = ({ visible }: { visible: boolean }) => {
   return (
     <Icon
       size={20}
-      style={{ color: "#9ca3af" }}
+      style={{ color: "#a3a3a3" }}
       className={`transition-opacity ${visible ? "opacity-100" : "opacity-60"}`}
     />
   );
@@ -26,16 +26,19 @@ const Field = ({
   children: React.ReactNode;
 }) => (
   <div className="flex flex-col gap-1">
-    <label className="text-xs font-semibold uppercase tracking-widest text-gray-400">
+    <label className="text-xs font-semibold uppercase tracking-widest text-grayScale-400">
       {label}
     </label>
     {children}
-    {error && <span className="text-red-500 text-xs font-semibold">{error}</span>}
+    {error && (
+      <span className="text-red-cinema text-xs font-semibold">{error}</span>
+    )}
   </div>
 );
 
 const inputClass = (hasError?: string) =>
-  `w-full px-4 py-3 rounded-lg bg-[#1a1a1a] border text-white placeholder-gray-600 text-sm focus:outline-none focus:ring-2 focus:ring-red-600 transition-all ${hasError ? "border-red-500" : "border-[#2a2a2a]"
+  `w-full px-4 py-3 rounded-lg bg-gray-surface border text-grayScale-200 placeholder-grayScale-500 text-sm focus:outline-none focus:ring-2 focus:ring-red-cinema transition-all ${
+    hasError ? "border-red-cinema" : "border-grayScale-600"
   }`;
 
 export default function Register({ isLogin, setIsLogin }: LoginPops) {
@@ -108,7 +111,7 @@ export default function Register({ isLogin, setIsLogin }: LoginPops) {
             <input
               id="birthDate" name="birthDate" type="date"
               value={getValue("birthDate")} onChange={handleChange}
-              className={inputClass(getError("birthDate")) + " text-gray-400"}
+              className={inputClass(getError("birthDate")) + " text-grayScale-400"}
             />
           </Field>
           <Field label="Telefone" error={getError("phone")}>
@@ -134,7 +137,7 @@ export default function Register({ isLogin, setIsLogin }: LoginPops) {
           <Field label="Gênero" error={getError("gender")}>
             <select
               id="gender" name="gender"
-              className="w-full px-4 py-3 rounded-lg bg-[#1a1a1a] border border-[#2a2a2a] text-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-red-600 transition-all"
+              className="w-full px-4 py-3 rounded-lg bg-gray-surface border border-grayScale-600 text-grayScale-400 text-sm focus:outline-none focus:ring-2 focus:ring-red-cinema transition-all"
             >
               <option value="">Selecione</option>
               <option value="MASCULINO">Masculino</option>
@@ -221,7 +224,7 @@ export default function Register({ isLogin, setIsLogin }: LoginPops) {
                 <EyeIcon visible={showPassword} />
               </button>
             </div>
-            <p className="text-gray-600 text-xs mt-1">
+            <p className="text-grayScale-500 text-xs mt-1">
               Mín. 6 caracteres, maiúscula, minúscula, número e especial.
             </p>
           </Field>
@@ -248,17 +251,17 @@ export default function Register({ isLogin, setIsLogin }: LoginPops) {
             <input
               id="termsAccepted" name="termsAccepted" type="checkbox"
               checked={getChecked("termsAccepted")} onChange={handleChange}
-              value="on" className="mt-1 w-4 h-4 accent-red-600"
+              value="on" className="mt-1 w-4 h-4 accent-red-cinema"
             />
-            <label htmlFor="termsAccepted" className="text-gray-400 text-xs leading-snug">
+            <label htmlFor="termsAccepted" className="text-grayScale-400 text-xs leading-snug">
               Eu aceito os{" "}
               <a href="/pdfs/termos-de-uso.pdf" target="_blank" rel="noopener noreferrer"
-                className="text-red-500 underline font-bold">
+                className="text-red-cinema underline font-bold">
                 Termos de Uso
               </a>
             </label>
             {getError("termsAccepted") && (
-              <span className="text-red-500 text-xs font-semibold">{getError("termsAccepted")}</span>
+              <span className="text-red-cinema text-xs font-semibold">{getError("termsAccepted")}</span>
             )}
           </div>
 
@@ -266,17 +269,17 @@ export default function Register({ isLogin, setIsLogin }: LoginPops) {
             <input
               id="privacyAccepted" name="privacyAccepted" type="checkbox"
               checked={getChecked("privacyAccepted")} onChange={handleChange}
-              value="on" className="mt-1 w-4 h-4 accent-red-600"
+              value="on" className="mt-1 w-4 h-4 accent-red-cinema"
             />
-            <label htmlFor="privacyAccepted" className="text-gray-400 text-xs leading-snug">
+            <label htmlFor="privacyAccepted" className="text-grayScale-400 text-xs leading-snug">
               Eu aceito a{" "}
               <a href="/pdfs/politica-de-privacidade.pdf" target="_blank" rel="noopener noreferrer"
-                className="text-red-500 underline font-bold">
+                className="text-red-cinema underline font-bold">
                 Política de Privacidade
               </a>
             </label>
             {getError("privacyAccepted") && (
-              <span className="text-red-500 text-xs font-semibold">{getError("privacyAccepted")}</span>
+              <span className="text-red-cinema text-xs font-semibold">{getError("privacyAccepted")}</span>
             )}
           </div>
         </div>
@@ -284,27 +287,28 @@ export default function Register({ isLogin, setIsLogin }: LoginPops) {
         {/* Botão */}
         <button
           type="submit" disabled={isPending}
-          className={`w-full py-3 mt-2 rounded-lg font-black text-sm uppercase tracking-widest transition-all ${isPending
-              ? "bg-gray-700 cursor-not-allowed text-gray-500"
-              : "bg-red-600 hover:bg-red-700 text-white cursor-pointer"
-            }`}
+          className={`w-full py-3 mt-2 rounded-lg font-black text-sm uppercase tracking-widest transition-all ${
+            isPending
+              ? "bg-grayScale-600 cursor-not-allowed text-grayScale-500"
+              : "bg-button-primary hover:bg-button-primary-hover text-grayScale-200 cursor-pointer"
+          }`}
         >
           {isPending ? "Cadastrando..." : "Criar Conta"}
         </button>
 
         {/* Erro do servidor */}
         {state.message && !state.success && (
-          <p className="text-red-500 text-xs text-center font-semibold mt-2">
+          <p className="text-red-cinema text-xs text-center font-semibold mt-2">
             {state.message}
           </p>
         )}
 
         {/* Link pro login */}
-        <p className="text-center text-gray-500 text-sm mt-2">
+        <p className="text-center text-grayScale-400 text-sm mt-2">
           Já possui uma conta?{" "}
           <span
             onClick={() => setIsLogin(true)}
-            className="text-red-500 font-bold cursor-pointer hover:underline"
+            className="text-red-cinema font-bold cursor-pointer hover:underline"
           >
             Entrar agora
           </span>
