@@ -5,7 +5,7 @@ import { LoginPops } from "@/src/types";
 import { FiEye, FiEyeOff } from "react-icons/fi";
 import { SuccessModal } from "@/src/components/ui/SuccessModal";
 import { useRouter } from "next/navigation";
-
+import Link from "next/link";
 const EyeIcon = ({ visible }: { visible: boolean }) => {
   const Icon = visible ? FiEye : FiEyeOff;
   return (
@@ -317,7 +317,7 @@ export default function Register({ isLogin, setIsLogin }: LoginPops) {
 
         {/* Termos + Privacidade */}
         <div className="flex flex-col gap-2 mt-2">
-          <div className="flex items-start gap-2">
+          <div className="flex items-center gap-2">
             <input
               id="termsAccepted"
               name="termsAccepted"
@@ -325,56 +325,32 @@ export default function Register({ isLogin, setIsLogin }: LoginPops) {
               checked={getChecked("termsAccepted")}
               onChange={handleChange}
               value="on"
-              className="mt-1 w-4 h-4 accent-red-cinema"
+              className=" w-4 h-4 accent-red-cinema"
             />
             <label
               htmlFor="termsAccepted"
               className="text-grayScale-400 text-xs leading-snug"
             >
               Eu aceito os{" "}
-              <a
+              <Link
                 href="/pdfs/termos-de-uso.pdf"
                 target="_blank"
-                rel="noopener noreferrer"
                 className="text-red-cinema underline font-bold"
               >
                 Termos de Uso
-              </a>
+              </Link>{" "}
+              e a{" "}
+              <Link
+                href="/pdfs/politica-de-privacidade.pdf"
+                target="_blank"
+                className="text-red-cinema underline font-bold"
+              >
+                Política de Privacidade
+              </Link>
             </label>
             {getError("termsAccepted") && (
               <span className="text-red-cinema text-xs font-semibold">
                 {getError("termsAccepted")}
-              </span>
-            )}
-          </div>
-
-          <div className="flex items-start gap-2">
-            <input
-              id="privacyAccepted"
-              name="privacyAccepted"
-              type="checkbox"
-              checked={getChecked("privacyAccepted")}
-              onChange={handleChange}
-              value="on"
-              className="mt-1 w-4 h-4 accent-red-cinema"
-            />
-            <label
-              htmlFor="privacyAccepted"
-              className="text-grayScale-400 text-xs leading-snug"
-            >
-              Eu aceito a{" "}
-              <a
-                href="/pdfs/politica-de-privacidade.pdf"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-red-cinema underline font-bold"
-              >
-                Política de Privacidade
-              </a>
-            </label>
-            {getError("privacyAccepted") && (
-              <span className="text-red-cinema text-xs font-semibold">
-                {getError("privacyAccepted")}
               </span>
             )}
           </div>
