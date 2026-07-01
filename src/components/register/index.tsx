@@ -335,7 +335,7 @@ export default function Register({ isLogin, setIsLogin }: LoginPops) {
               <Link
                 href="/pdfs/termos-de-uso.pdf"
                 target="_blank"
-                className="text-red-cinema underline font-bold"
+                className="text-red-cinema hover:underline"
               >
                 Termos de Uso
               </Link>{" "}
@@ -343,7 +343,7 @@ export default function Register({ isLogin, setIsLogin }: LoginPops) {
               <Link
                 href="/pdfs/politica-de-privacidade.pdf"
                 target="_blank"
-                className="text-red-cinema underline font-bold"
+                className="text-red-cinema hover:underline"
               >
                 Política de Privacidade
               </Link>

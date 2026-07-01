@@ -37,3 +37,8 @@ export interface MovieCardProps {
     image: string;
   };
 }
+
+export interface SuportButtonProps {
+  phone: string;
+  message?: string;
+}

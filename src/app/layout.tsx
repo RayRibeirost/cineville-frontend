@@ -4,6 +4,8 @@ import { UserPayload } from "../types";
 import { cookies } from "next/headers";
 import { jwtDecode } from "jwt-decode";
 import "./globals.css";
+import SuportButton from "../components/ui/SuportButton";
+import VLibras from "../components/Vlibras";
 
 async function getUserFromCookie(): Promise<UserPayload | null> {
   const cookieStore = await cookies();
@@ -31,7 +33,11 @@ export default async function RootLayout({
   return (
     <html lang="pt-BR" className={`${inter.variable} ${montserrat.variable}`}>
       <body className="bg-secondary-700 min-h-screen">
-        <AuthProvider initialUser={user}>{children}</AuthProvider>
+        <AuthProvider initialUser={user}>
+          {children}
+          <SuportButton phone="99999999999" />
+          <VLibras />
+        </AuthProvider>
       </body>
     </html>
   );
