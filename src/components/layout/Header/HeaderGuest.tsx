@@ -2,13 +2,16 @@
 
 import { useRouter } from "next/navigation";
 import Button from "@/src/components/ui/Button";
-import Person from "@mui/icons-material/Person";
 
 export default function HeaderGuest() {
   const router = useRouter();
 
   const handleLogin = () => {
     router.push("/login");
+  };
+
+  const handleRegister = () => {
+    router.push("/register");
   };
 
   return (
@@ -19,13 +22,11 @@ export default function HeaderGuest() {
         </Button>
       </div>
 
-      <button
-        onClick={handleLogin}
-        className="flex items-center justify-center text-white hover:opacity-80 transition-all duration-300 cursor-pointer p-1 sm:p-0"
-        aria-label="Entrar"
-      >
-        <Person className="text-[24px] sm:text-[32px]" />
-      </button>
+      <div className="hidden sm:block">
+        <Button variant="secondary" onClick={handleRegister}>
+          Cadastrar
+        </Button>
+      </div>
     </div>
   );
 }
