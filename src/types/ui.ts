@@ -28,3 +28,17 @@ export interface SuccessModalProps {
   message?: string;
   onClose?: () => void;
 }
+
+export interface MovieCardProps {
+  movie: {
+    title: string;
+    genre: string;
+    classification: string;
+    image: string;
+  };
+}
+
+export interface SuportButtonProps {
+  phone: string;
+  message?: string;
+}

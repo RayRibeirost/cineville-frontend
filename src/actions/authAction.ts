@@ -48,6 +48,8 @@ export async function loginAction(
       path: "/",
     });
 
+    console.log("Token armazenado no cookie:", token);
+
     return { success: true, user: userDecoded };
   } catch (err) {
     console.error(err);
