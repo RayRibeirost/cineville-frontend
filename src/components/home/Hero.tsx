@@ -40,7 +40,7 @@ export default function Hero() {
             <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
               <Button
                 variant="primary"
-                onClick={() => router.push("#")}
+                onClick={() => router.push("/movies/1")}
                 className="w-full justify-center gap-2 sm:w-auto"
               >
                 <LocalActivity fontSize="small" />
