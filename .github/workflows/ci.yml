@@ -1,14 +1,13 @@
-name: "CI - Frontend"
-run-name: "${{github.ref_name}}: ${{github.run_id}}"
+name: CI (Continous integration pipeline) v1.1 - Frontend
 
-on: 
+on:
   push:
     branches:
-      - dev
+      - dev  
   pull_request:
     branches:
       - dev
-
+      
 concurrency:
   group: frontend-ci-${{ github.ref }}
   cancel-in-progress: true
@@ -17,12 +16,12 @@ env:
   NODE_VERSION: 20
 
 jobs:
-  build:
+  CI:
     name: Build e Validação
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest   
 
-    steps:
-      - name: Checkout Code
+    steps: 
+      - name: Checkout 
         uses: actions/checkout@v7
 
       - name: Setup Node.js
@@ -31,31 +30,15 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
           cache: yarn
           cache-dependency-path: yarn.lock
-
+      
       - name: Instalar dependências
-        run: yarn install --frozen-lockfile
+        run: yarn install --frozen-lockfile 
+
+      - name: Lint
+        run: yarn lint
 
       - name: TypeScript Check
         run: npx tsc --noEmit
 
-      - name: Build do Next.js
+      - name: Build do Next.js  
         run: yarn build
-  
-  build_app_image:
-    name: "Build Image"
-    needs: build
-    if: github.ref == 'refs/heads/dev' || github.base_ref == 'dev'
-    runs-on: ubuntu-latest
-    
-    steps:
-      - name: "Checkout Code"
-        id: checkout_code
-        uses: actions/checkout@v7
-
-      - name: Criar .env a partir do exemplo
-        run: |
-          cp .env.exemple .env
-          ls -la
-      
-      - name: Build Docker Image
-        run: docker build -f dockerfile -t "${{ vars.IMG_NAME }}:${{ github.run_id }}" .
