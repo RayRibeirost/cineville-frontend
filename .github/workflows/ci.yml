@@ -30,6 +30,7 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: yarn
+          cache-dependency-path: yarn.lock
 
       - name: Instalar dependências
         run: yarn install --frozen-lockfile
@@ -52,7 +53,9 @@ jobs:
         uses: actions/checkout@v7
 
       - name: Criar .env a partir do exemplo
-        run: cp .env.exemple .env
+        run: |
+          cp .env.example .env
+          ls -la
       
       - name: Build Docker Image
         run: docker build -f dockerfile -t "${{ vars.IMG_NAME }}:${{ github.run_id }}" .
