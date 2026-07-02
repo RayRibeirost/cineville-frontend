@@ -54,7 +54,7 @@ jobs:
 
       - name: Criar .env a partir do exemplo
         run: |
-          cp .env.example .env
+          cp .env.exemple .env
           ls -la
       
       - name: Build Docker Image
