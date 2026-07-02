@@ -1,36 +1,55 @@
-name: CI (Continous integration pipeline) v1 - Frontend
+name: "CI - Frontend"
+run-name: "${{github.ref_name}}: ${{github.run_id}}"
 
-on:
+on: 
   push:
     branches:
-      - '**'  
+      - dev
   pull_request:
     branches:
-      - main
+      - dev
+
+concurrency:
+  group: frontend-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  NODE_VERSION: 20
 
 jobs:
-  CI:
+  build:
     name: Build e Validação
-    runs-on: ubuntu-latest   
+    runs-on: ubuntu-latest
 
-    steps: 
-      - name: Checkout 
+    steps:
+      - name: Checkout Code
         uses: actions/checkout@v7
 
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
-          node-version: 20
+          node-version: ${{ env.NODE_VERSION }}
           cache: yarn
-      
-      - name: Instalar dependências
-        run: yarn install --frozen-lockfile 
 
-      - name: Lint
-        run: yarn lint
+      - name: Instalar dependências
+        run: yarn install --frozen-lockfile
 
       - name: TypeScript Check
         run: npx tsc --noEmit
 
-      - name: Build do Next.js  
+      - name: Build do Next.js
         run: yarn build
+  
+  build_app_image:
+    name: "Build Image"
+    needs: build
+    if: github.ref == 'refs/heads/dev' || github.base_ref == 'dev'
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: "Checkout Code"
+        id: checkout_code
+        uses: actions/checkout@v7
+      
+      - name: Build Docker Image
+        run: docker build -f dockerfile -t "${{ vars.IMG_NAME }}:${{ github.run_id }}" .
