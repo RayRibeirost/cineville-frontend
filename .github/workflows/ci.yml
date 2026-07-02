@@ -50,6 +50,9 @@ jobs:
       - name: "Checkout Code"
         id: checkout_code
         uses: actions/checkout@v7
+
+      - name: Criar .env a partir do exemplo
+        run: cp .env.exemple .env
       
       - name: Build Docker Image
         run: docker build -f dockerfile -t "${{ vars.IMG_NAME }}:${{ github.run_id }}" .
