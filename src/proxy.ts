@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
+// Rotas públicas (exibidas sem exigir autenticação)
 const publicRoutes = ["/login", "/"];
 
 export default async function proxy(request: NextRequest) {
@@ -8,27 +9,13 @@ export default async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const isPublicRoute = publicRoutes.includes(pathname);
 
-  if (!isPublicRoute && !token) {
-    return NextResponse.redirect(new URL("/login", request.url));
-  }
-
   if (token) {
     const isValid = await validateToken(token);
 
     if (!isValid) {
-      if (isPublicRoute) {
-        const response = NextResponse.next();
-        response.cookies.delete("auth_token");
-        return response;
-      }
-
-      const response = NextResponse.redirect(new URL("/login", request.url));
+      const response = NextResponse.next();
       response.cookies.delete("auth_token");
       return response;
-    }
-
-    if (isPublicRoute && isValid) {
-      return NextResponse.redirect(new URL("/profile", request.url));
     }
   }
 

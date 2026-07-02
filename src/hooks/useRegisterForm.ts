@@ -102,6 +102,18 @@ export function useRegisterForm(setIsLogin?: (value: boolean) => void) {
       password: formData.get("password")?.toString() || "",
       confirmPassword: formData.get("confirmPassword")?.toString() || "",
       termsAccepted: formData.get("termsAccepted") !== null,
+      privacyAccepted: formData.get("privacyAccepted") !== null,
+      cpf: formData.get("cpf")?.toString() || "",
+      birthDate: formData.get("birthDate")?.toString() || "",
+      phone: formData.get("phone")?.toString() || "",
+      cep: formData.get("cep")?.toString() || "",
+      address: formData.get("address")?.toString() || "",
+      number: formData.get("number")?.toString() || "",
+      complement: formData.get("complement")?.toString() || "",
+      neighborhood: formData.get("neighborhood")?.toString() || "",
+      city: formData.get("city")?.toString() || "",
+      state: formData.get("state")?.toString() || "",
+      gender: formData.get("gender")?.toString() || "",
     };
 
     const resultado = safeParse(registerSchema, dataToValidate);
