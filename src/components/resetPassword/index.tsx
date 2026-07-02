@@ -16,6 +16,7 @@ const initialState: ResetPasswordState<Partial<ResetPasswordInput>> = {
   message: "",
   inputs: {
     token: "",
+    code: "",
     password: "",
     confirmPassword: "",
   },
@@ -36,6 +37,26 @@ export default function ResetPasswordPage() {
       <form action={action} className="space-y-5">
         <input type="hidden" name="token" value={token} />
 
+        {/* Código enviado por e-mail */}
+        <div>
+          <label className="mb-2 block text-xs uppercase tracking-wide text-zinc-400">
+            Código de verificação
+          </label>
+
+          <input
+            type="text"
+            name="code"
+            defaultValue={state.inputs.code}
+            placeholder="Digite o código recebido por e-mail"
+            className="w-full rounded-md border border-zinc-700 bg-zinc-800 px-3 py-3 text-white outline-none focus:border-red-500"
+          />
+
+          {state.errors?.code && (
+            <p className="mt-1 text-xs text-red-500">{state.errors.code[0]}</p>
+          )}
+        </div>
+
+        {/* Nova senha */}
         <div>
           <label className="mb-2 block text-xs uppercase tracking-wide text-zinc-400">
             Nova senha
@@ -64,6 +85,7 @@ export default function ResetPasswordPage() {
           )}
         </div>
 
+        {/* Confirmar senha */}
         <div>
           <label className="mb-2 block text-xs uppercase tracking-wide text-zinc-400">
             Confirmar nova senha

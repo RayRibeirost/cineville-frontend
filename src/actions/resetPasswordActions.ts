@@ -12,6 +12,7 @@ export async function resetPassword(
 ): Promise<ResetPasswordState<Partial<ResetPasswordInput>>> {
   const rawData = {
     token: formData.get("token"),
+    code: formData.get("code"),
     password: formData.get("password"),
     confirmPassword: formData.get("confirmPassword"),
   } as Partial<ResetPasswordInput>;

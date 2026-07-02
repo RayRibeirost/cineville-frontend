@@ -13,6 +13,7 @@ export interface ResetPasswordState<T> {
   inputs: T;
   errors?: {
     token?: string[];
+    code?: string[];
     password?: string[];
     confirmPassword?: string[];
   };
