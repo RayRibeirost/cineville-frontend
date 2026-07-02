@@ -3,8 +3,11 @@
 import Image from "next/image";
 import { ConfirmationNumber, Add } from "@mui/icons-material";
 import Button from "../../ui/Button";
+import { useRouter } from "next/navigation";
 
 export default function MovieCard() {
+  const router = useRouter();
+
   return (
     <article className="overflow-hidden rounded-lg bg-zinc-900 shadow-lg transition-transform duration-300 hover:-translate-y-1">
       <div className="relative aspect-2/3">
@@ -24,7 +27,6 @@ export default function MovieCard() {
 
           <div className="mt-2 flex items-center gap-2">
             <span className="text-xs text-zinc-400 sm:text-sm">Aventura</span>
-
             <span className="rounded bg-lime-500 px-1.5 py-0.5 text-[10px] font-bold text-black sm:text-xs">
               L
             </span>
@@ -32,7 +34,10 @@ export default function MovieCard() {
         </div>
 
         <div className="flex flex-col gap-2 sm:flex-row">
-          <Button className="flex w-full flex-1 items-center justify-center gap-2">
+          <Button
+            className="flex w-full flex-1 items-center justify-center gap-2"
+            onClick={() => router.push("/movies/2")}
+          >
             <ConfirmationNumber fontSize="small" />
             <span>Ingressos</span>
           </Button>
@@ -40,6 +45,7 @@ export default function MovieCard() {
           <Button
             variant="secondary"
             className="flex w-full items-center justify-center gap-2 sm:w-auto"
+            onClick={() => router.push("/movies/2")}
           >
             <Add fontSize="small" />
             <span>Ver Mais</span>
