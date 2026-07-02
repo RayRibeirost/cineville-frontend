@@ -63,7 +63,7 @@ export default function Login() {
           </label>
 
           <Link
-            href="/esqueci-senha"
+            href="/forgot-password"
             className="text-xs text-red-500 hover:underline"
           >
             Esqueceu a senha?
