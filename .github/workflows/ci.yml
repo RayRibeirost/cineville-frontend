@@ -1,0 +1,36 @@
+name: CI (Continous integration pipeline) v1 - Frontend
+
+on:
+  push:
+    branches:
+      - '**'  
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  CI:
+    name: Build e Validação
+    runs-on: ubuntu-latest   
+
+    steps: 
+      - name: Checkout 
+        uses: actions/checkout@v7
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 20
+          cache: yarn
+      
+      - name: Instalar dependências
+        run: yarn install --frozen-lockfile 
+
+      - name: Lint
+        run: yarn lint
+
+      - name: TypeScript Check
+        run: npx tsc --noEmit
+
+      - name: Build do Next.js  
+        run: yarn build
