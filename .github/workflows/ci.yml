@@ -1,5 +1,4 @@
 name: CI (Continous integration pipeline) v2 - Frontend
-run-name: "${{github.ref_name}}: ${{github.run_id}}
 
 on:
   push:
