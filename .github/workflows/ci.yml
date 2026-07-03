@@ -45,7 +45,7 @@ jobs:
         run: yarn build
         
   build_app_image:
-    name: "Build Image"
+    name: Build Image
     needs: build
     if: github.ref == 'refs/heads/main' || github.base_ref == 'main'
     runs-on: ubuntu-latest
