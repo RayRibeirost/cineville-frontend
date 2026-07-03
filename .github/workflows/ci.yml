@@ -58,7 +58,7 @@ jobs:
         run: cp .env.exemple .env
   
       - name: Contornar o .dockerignore
-        run: sed -i '/\.env/d' .dockerignore || true
+        run: sed -i '/^\.env$/d' .dockerignore || true
   
       - name: Testar Build da Imagem Docker
         run: docker build -f dockerfile -t teste-imagem:latest .
