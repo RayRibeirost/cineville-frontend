@@ -61,4 +61,4 @@ jobs:
         run: sed -i '/\.env/d' .dockerignore || true
   
       - name: Testar Build da Imagem Docker
-      run: docker build -f dockerfile -t teste-imagem:latest .
+        run: docker build -f dockerfile -t teste-imagem:latest .
