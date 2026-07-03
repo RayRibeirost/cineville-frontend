@@ -1,4 +1,5 @@
-name: CI (Continous integration pipeline) v1 - Frontend
+name: CI (Continous integration pipeline) v2 - Frontend
+run-name: "${{github.ref_name}}: ${{github.run_id}}"
 
 on:
   push:
@@ -7,6 +8,13 @@ on:
   pull_request:
     branches:
       - main
+
+concurrency:
+  group: frontend-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  NODE_VERSION: 20
 
 jobs:
   CI:
@@ -20,8 +28,9 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
-          node-version: 20
+          node-version: ${{ env.NODE_VERSION }}
           cache: yarn
+          cache-dependency-path: yarn.lock
       
       - name: Instalar dependências
         run: yarn install --frozen-lockfile 
@@ -34,3 +43,26 @@ jobs:
 
       - name: Build do Next.js  
         run: yarn build
+        
+  build_app_image:
+      name: "Build Image"
+      needs: build
+      if: github.ref == 'refs/heads/dev' || github.base_ref == 'dev'
+      runs-on: ubuntu-latest
+      
+      steps:
+        - name: "Checkout Code"
+          id: checkout_code
+          uses: actions/checkout@v7
+  
+        # 1. Cria o arquivo .env fictício baseado no exemplo
+        - name: "Criar .env temporário"
+          run: cp .env.exemple .env
+  
+        # 2. Deleta a linha do .env do ignore na máquina do GitHub
+        - name: "Contornar o .dockerignore"
+          run: sed -i '/\.env/d' .dockerignore || true
+  
+        # 3. Apenas builda localmente para testar se a linha 14 passa direto
+        - name: Testar Build da Imagem Docker
+        run: docker build -f dockerfile -t teste-imagem:latest .
