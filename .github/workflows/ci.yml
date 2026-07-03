@@ -1,5 +1,5 @@
 name: CI (Continous integration pipeline) v2 - Frontend
-run-name: "${{github.ref_name}}: ${{github.run_id}}"
+run-name: "${{github.ref_name}}: ${{github.run_id}}
 
 on:
   push:
@@ -51,18 +51,15 @@ jobs:
     runs-on: ubuntu-latest
       
     steps:
-      - name: "Checkout Code"
+      - name: Checkout Code
         id: checkout_code
         uses: actions/checkout@v7
   
-      # 1. Cria o arquivo .env fictício baseado no exemplo
-      - name: "Criar .env temporário"
+      - name: Criar .env temporário
         run: cp .env.exemple .env
   
-      # 2. Deleta a linha do .env do ignore na máquina do GitHub
-      - name: "Contornar o .dockerignore"
+      - name: Contornar o .dockerignore
         run: sed -i '/\.env/d' .dockerignore || true
   
-      # 3. Apenas builda localmente para testar se a linha 14 passa direto
       - name: Testar Build da Imagem Docker
       run: docker build -f dockerfile -t teste-imagem:latest .
