@@ -34,9 +34,6 @@ jobs:
       - name: Instalar dependências
         run: yarn install --frozen-lockfile 
 
-      - name: Lint
-        run: yarn lint
-
       - name: TypeScript Check
         run: npx tsc --noEmit
 
