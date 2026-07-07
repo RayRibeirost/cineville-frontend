@@ -1,4 +1,4 @@
-name: CI (Continous integration pipeline) v1.0 - Frontend
+name: CI
 
 on:
   push:
