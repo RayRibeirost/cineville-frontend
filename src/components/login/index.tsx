@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { FiEye, FiEyeOff } from "react-icons/fi";
 import { useLoginForm } from "@/src/hooks/useLoginForm";
+import InputForm from "../ui/InputForm";
+import Button from "../ui/Button";
 
 const EyeIcon = ({ visible }: { visible: boolean }) => {
   const Icon = visible ? FiEye : FiEyeOff;
@@ -12,7 +14,7 @@ const EyeIcon = ({ visible }: { visible: boolean }) => {
       size={20}
       className={`transition-opacity ${
         visible ? "opacity-100" : "opacity-60"
-      } text-[#759FFE]`}
+      } text-red-cinema hover:opacity-100`}
     />
   );
 };
@@ -34,12 +36,12 @@ export default function Login() {
       <div>
         <label
           htmlFor="email"
-          className="mb-2 block text-xs font-semibold uppercase tracking-wider text-gray-300"
+          className="mb-2 block text-xs font-semibold uppercase tracking-wider text-grayScale-300"
         >
           E-mail
         </label>
 
-        <input
+        <InputForm
           id="email"
           name="email"
           type="email"
@@ -48,7 +50,7 @@ export default function Login() {
           placeholder="nome@exemplo.com"
           value={formValues.email || ""}
           onChange={handleChange}
-          className="w-full rounded-md border border-zinc-700 bg-zinc-900 px-4 py-3 text-white placeholder:text-gray-500 focus:border-[#759FFE] focus:outline-none"
+          hasIcon={false}
         />
       </div>
 
@@ -57,7 +59,7 @@ export default function Login() {
         <div className="mb-2 flex items-center justify-between">
           <label
             htmlFor="password"
-            className="text-xs font-semibold uppercase tracking-wider text-gray-300"
+            className="text-xs font-semibold uppercase tracking-wider text-grayScale-300"
           >
             Senha
           </label>
@@ -71,7 +73,7 @@ export default function Login() {
         </div>
 
         <div className="relative">
-          <input
+          <InputForm
             id="password"
             name="password"
             type={showPassword ? "text" : "password"}
@@ -80,7 +82,7 @@ export default function Login() {
             placeholder="********"
             value={formValues.password || ""}
             onChange={handleChange}
-            className="w-full rounded-md border border-zinc-700 bg-zinc-900 px-4 py-3 pr-12 text-white placeholder:text-gray-500 focus:border-[#759FFE] focus:outline-none"
+            hasIcon={false}
           />
 
           <button
@@ -95,26 +97,26 @@ export default function Login() {
 
       {/* Erro */}
       {state.error && (
-        <p className="text-center text-sm font-semibold text-red-500">
+        <p className="text-center text-sm font-semibold text-error">
           {state.error}
         </p>
       )}
 
       {/* Botão */}
-      <button
+      <Button
         type="submit"
         disabled={isPending}
-        className="flex w-full items-center justify-center rounded-md bg-red-600 py-3 font-semibold text-white transition hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-60"
+        className="flex w-full items-center justify-center rounded-md bg-red-cinema py-3 font-semibold text-grayScale-200 transition hover:bg-red-cinema/ disabled:cursor-not-allowed disabled:opacity-60"
       >
         {isPending ? "Entrando..." : "Entrar →"}
-      </button>
+      </Button>
 
       {/* Cadastro */}
-      <p className="text-center text-sm text-gray-400">
+      <p className="text-center text-sm text-grayScale-300">
         Não tem uma conta?{" "}
         <Link
           href="/register"
-          className="font-semibold text-red-500 hover:underline"
+          className="font-semibold text-red-cinema hover:underline"
         >
           Crie agora
         </Link>

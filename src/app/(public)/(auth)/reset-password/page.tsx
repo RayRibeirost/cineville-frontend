@@ -1,10 +1,10 @@
 import AuthLayout from "../AuthLayout";
-import ResetPasswordPage from "@/src/components/resetPassword";
+import ResetPassword from "@/src/components/resetPassword";
 
-export default function LoginPage() {
+export default function ResetPasswordPage() {
   return (
     <AuthLayout title="Redefinir Senha">
-      <ResetPasswordPage />
+      <ResetPassword />
     </AuthLayout>
   );
 }

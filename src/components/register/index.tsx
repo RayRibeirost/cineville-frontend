@@ -1,18 +1,21 @@
 "use client";
 
 import { useRegisterForm } from "@/src/hooks/useRegisterForm";
-import { LoginPops } from "@/src/types";
+
 import { FiEye, FiEyeOff } from "react-icons/fi";
 import { SuccessModal } from "@/src/components/ui/SuccessModal";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import InputForm from "../ui/InputForm";
+import Button from "../ui/Button";
 const EyeIcon = ({ visible }: { visible: boolean }) => {
   const Icon = visible ? FiEye : FiEyeOff;
   return (
     <Icon
       size={20}
-      style={{ color: "#a3a3a3" }}
-      className={`transition-opacity ${visible ? "opacity-100" : "opacity-60"}`}
+      className={`transition-opacity ${
+        visible ? "opacity-100" : "opacity-60"
+      } text-red-cinema hover:opacity-100`}
     />
   );
 };
@@ -38,11 +41,9 @@ const Field = ({
 );
 
 const inputClass = (hasError?: string) =>
-  `w-full px-4 py-3 rounded-lg bg-gray-surface border text-grayScale-200 placeholder-grayScale-500 text-sm focus:outline-none focus:ring-2 focus:ring-red-cinema transition-all ${
-    hasError ? "border-red-cinema" : "border-grayScale-600"
-  }`;
+  ` ${hasError ? "border-red-cinema" : "border-grayScale-600"}`;
 
-export default function Register({ isLogin, setIsLogin }: LoginPops) {
+export default function Register() {
   const router = useRouter();
 
   const {
@@ -60,9 +61,7 @@ export default function Register({ isLogin, setIsLogin }: LoginPops) {
     toggleConfirmPassword,
     showSuccessModal,
     handleCloseModal,
-  } = useRegisterForm(setIsLogin);
-
-  if (isLogin) return null;
+  } = useRegisterForm();
 
   return (
     <>
@@ -74,7 +73,7 @@ export default function Register({ isLogin, setIsLogin }: LoginPops) {
         {/* Nome + Sobrenome */}
         <div className="grid grid-cols-2 gap-4">
           <Field label="Nome" error={getError("name")}>
-            <input
+            <InputForm
               id="name"
               name="name"
               type="text"
@@ -87,7 +86,7 @@ export default function Register({ isLogin, setIsLogin }: LoginPops) {
             />
           </Field>
           <Field label="Sobrenome" error={getError("surname")}>
-            <input
+            <InputForm
               id="surname"
               name="surname"
               type="text"
@@ -104,7 +103,7 @@ export default function Register({ isLogin, setIsLogin }: LoginPops) {
         {/* Email + CPF */}
         <div className="grid grid-cols-2 gap-4">
           <Field label="E-mail" error={getError("email")}>
-            <input
+            <InputForm
               id="email"
               name="email"
               type="email"
@@ -117,7 +116,7 @@ export default function Register({ isLogin, setIsLogin }: LoginPops) {
             />
           </Field>
           <Field label="CPF" error={getError("cpf")}>
-            <input
+            <InputForm
               id="cpf"
               name="cpf"
               type="text"
@@ -133,7 +132,7 @@ export default function Register({ isLogin, setIsLogin }: LoginPops) {
         {/* Data de Nascimento + Telefone */}
         <div className="grid grid-cols-2 gap-4">
           <Field label="Data de Nascimento" error={getError("birthDate")}>
-            <input
+            <InputForm
               id="birthDate"
               name="birthDate"
               type="date"
@@ -145,7 +144,7 @@ export default function Register({ isLogin, setIsLogin }: LoginPops) {
             />
           </Field>
           <Field label="Telefone" error={getError("phone")}>
-            <input
+            <InputForm
               id="phone"
               name="phone"
               type="text"
@@ -161,7 +160,7 @@ export default function Register({ isLogin, setIsLogin }: LoginPops) {
         {/* CEP + Gênero */}
         <div className="grid grid-cols-2 gap-4">
           <Field label="CEP" error={getError("cep")}>
-            <input
+            <InputForm
               id="cep"
               name="cep"
               type="text"
@@ -191,7 +190,7 @@ export default function Register({ isLogin, setIsLogin }: LoginPops) {
         <div className="grid grid-cols-3 gap-4">
           <div className="col-span-2">
             <Field label="Endereço" error={getError("address")}>
-              <input
+              <InputForm
                 id="address"
                 name="address"
                 type="text"
@@ -203,7 +202,7 @@ export default function Register({ isLogin, setIsLogin }: LoginPops) {
             </Field>
           </div>
           <Field label="Número" error={getError("number")}>
-            <input
+            <InputForm
               id="number"
               name="number"
               type="text"
@@ -218,7 +217,7 @@ export default function Register({ isLogin, setIsLogin }: LoginPops) {
         {/* Bairro + Cidade + Estado */}
         <div className="grid grid-cols-3 gap-4">
           <Field label="Bairro" error={getError("neighborhood")}>
-            <input
+            <InputForm
               id="neighborhood"
               name="neighborhood"
               type="text"
@@ -229,7 +228,7 @@ export default function Register({ isLogin, setIsLogin }: LoginPops) {
             />
           </Field>
           <Field label="Cidade" error={getError("city")}>
-            <input
+            <InputForm
               id="city"
               name="city"
               type="text"
@@ -240,7 +239,7 @@ export default function Register({ isLogin, setIsLogin }: LoginPops) {
             />
           </Field>
           <Field label="Estado" error={getError("state")}>
-            <input
+            <InputForm
               id="state"
               name="state"
               type="text"
@@ -255,7 +254,7 @@ export default function Register({ isLogin, setIsLogin }: LoginPops) {
 
         {/* Complemento */}
         <Field label="Complemento (opcional)" error={getError("complement")}>
-          <input
+          <InputForm
             id="complement"
             name="complement"
             type="text"
@@ -270,7 +269,7 @@ export default function Register({ isLogin, setIsLogin }: LoginPops) {
         <div className="grid grid-cols-2 gap-4">
           <Field label="Senha" error={getError("password")}>
             <div className="relative">
-              <input
+              <InputForm
                 id="password"
                 name="password"
                 type={showPassword ? "text" : "password"}
@@ -294,7 +293,7 @@ export default function Register({ isLogin, setIsLogin }: LoginPops) {
           </Field>
           <Field label="Confirmar Senha" error={getError("confirmPassword")}>
             <div className="relative">
-              <input
+              <InputForm
                 id="confirmPassword"
                 name="confirmPassword"
                 type={showConfirmPassword ? "text" : "password"}
@@ -357,7 +356,7 @@ export default function Register({ isLogin, setIsLogin }: LoginPops) {
         </div>
 
         {/* Botão */}
-        <button
+        <Button
           type="submit"
           disabled={isPending}
           className={`w-full py-3 mt-2 rounded-lg font-black text-sm uppercase tracking-widest transition-all ${
@@ -367,7 +366,7 @@ export default function Register({ isLogin, setIsLogin }: LoginPops) {
           }`}
         >
           {isPending ? "Cadastrando..." : "Criar Conta"}
-        </button>
+        </Button>
 
         {/* Erro do servidor */}
         {state.message && !state.success && (

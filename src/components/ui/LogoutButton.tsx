@@ -19,7 +19,7 @@ export default function LogoutButton({
   };
 
   const blueButtonStyle =
-    "text-white bg-secondary-400 hover:bg-secondary-500 border-2 border-secondary-400 hover:border-secondary-500 shadow-md";
+    "text-deep-black bg-secondary-400 hover:bg-secondary-500 border-2 border-secondary-400 hover:border-secondary-500 shadow-md";
 
   return (
     <>
