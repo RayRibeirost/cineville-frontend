@@ -8,19 +8,12 @@ on:
     branches:
       - dev
       
-concurrency:
-  group: frontend-ci-${{ github.ref }}
-  cancel-in-progress: true
-
 env:
   NODE_VERSION: 20
 
 concurrency:
   group: frontend-ci-${{ github.ref }}
   cancel-in-progress: true
-
-env:
-  NODE_VERSION: 20
 
 jobs:
   build:
