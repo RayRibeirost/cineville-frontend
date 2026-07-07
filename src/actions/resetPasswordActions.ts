@@ -58,10 +58,10 @@ export async function resetPassword(
       message: apiData.message,
       inputs: {},
     };
-  } catch (err: any) {
+  } catch (err: unknown) {
     return {
       success: false,
-      message: err.message,
+      message: err instanceof Error ? err.message : "Erro inesperado.",
       inputs: rawData,
     };
   }
