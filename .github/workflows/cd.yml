@@ -36,7 +36,7 @@ jobs:
             echo "Baixando novo código do GitHub..."
             git pull origin main
             
-            git remote set-url origin https://github.com/PedroVitor87/smallville-front.git
+            git remote set-url origin https://github.com/smallville-front.git
             
             echo "node_modules" > .dockerignore
             echo ".git" >> .dockerignore
