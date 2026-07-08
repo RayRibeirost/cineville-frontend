@@ -8,7 +8,7 @@ WORKDIR /app
 
 # Copia os arquivos de dependências e instala todas as dependências (incluindo as de desenvolvimento)
 COPY package.json yarn.lock ./
-RUN yarn install --frozen-lockfile --ignore-scripts --network-timeout-100000
+RUN yarn install --frozen-lockfile --ignore-scripts --network-timeout-600000
 
 # Copia o arquivo .env necessário para o build
 COPY .env ./
