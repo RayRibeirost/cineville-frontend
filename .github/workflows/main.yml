@@ -1,0 +1,45 @@
+name: CD - Frontend
+run-name: "${{ github.ref_name }}: ${{ github.run_id }}"
+
+on:
+  workflow_run:
+    workflows: ["CD"]
+    types: [completed]
+    branches: [main]
+
+jobs:
+  deploy:
+    name: Deploy Frontend to VPS
+    runs-on: ubuntu-latest
+    if: github.event.workflow_run.conclusion == 'success'
+    
+    steps:
+      - name: Executar Deploy via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          script: |
+            set -e
+            PROJECT_ROOT="${{ vars.PROJECT_ROOT }}"
+            FRONTEND_DIR="$PROJECT_ROOT/frontend"
+            
+            echo "Iniciando deploy do Frontend..."
+            
+            git config --global --add safe.directory $FRONTEND_DIR
+            cd $FRONTEND_DIR
+            
+            echo "Baixando novo código do GitHub..."
+            git pull origin main
+            
+            echo "node_modules" > .dockerignore
+            echo ".git" >> .dockerignore
+            echo ".next" >> .dockerignore
+            
+            cd $PROJECT_ROOT
+            
+            echo "Fazendo o build e subindo o container..."
+            docker compose up -d --build frontend
+            
+            echo "Deploy do Frontend finalizado com sucesso!"
