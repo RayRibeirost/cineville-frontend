@@ -35,7 +35,7 @@ COPY --from=builder /app/public ./public
 RUN apk add --no-cache bash curl
 
 # Copia os arquivos de dependências para instalar somente as dependências de produção
-RUN yarn install --frozen-lockfile --ignore-scripts --network-timeout-100000
+RUN yarn install --frozen-lockfile --ignore-scripts --network-timeout-600000
 RUN npm install --save --legacy-peer-deps @sentry/node @sentry/tracing
 
 # Expõe a porta que a aplicação irá utilizar
