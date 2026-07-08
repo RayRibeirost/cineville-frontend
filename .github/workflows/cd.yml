@@ -38,10 +38,6 @@ jobs:
             
             git remote set-url origin https://github.com/qacoders-academy/smallville-front.git
             
-            echo "node_modules" > .dockerignore
-            echo ".git" >> .dockerignore
-            echo ".next" >> .dockerignore
-            
             cd $PROJECT_ROOT
             
             echo "Fazendo o build e subindo o container..."
