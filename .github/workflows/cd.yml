@@ -31,12 +31,12 @@ jobs:
             cd $FRONTEND_DIR
             
             echo "Configurando autenticação do Git..."
-            git remote set-url origin https://${{ secrets.GIT_TOKEN }}@github.com/smallville-front.git
+            git remote set-url origin https://${{ secrets.GIT_TOKEN }}@github.com/qacoders-academy/smallville-front.git
             
             echo "Baixando novo código do GitHub..."
             git pull origin main
             
-            git remote set-url origin https://github.com/smallville-front.git
+            git remote set-url origin https://github.com/qacoders-academy/smallville-front.git
             
             echo "node_modules" > .dockerignore
             echo ".git" >> .dockerignore
