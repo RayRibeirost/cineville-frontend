@@ -42,23 +42,3 @@ jobs:
 
       - name: Build do Next.js  
         run: yarn build
-        
-  build_app_image:
-    name: Build Image
-    needs: build
-    if: github.ref == 'refs/heads/main' || github.base_ref == 'main'
-    runs-on: ubuntu-latest
-      
-    steps:
-      - name: Checkout Code
-        id: checkout_code
-        uses: actions/checkout@v7
-  
-      - name: Criar .env temporário
-        run: cp .env.exemple .env
-  
-      - name: Contornar o .dockerignore
-        run: sed -i '/^\.env$/d' .dockerignore || true
-  
-      - name: Testar Build da Imagem Docker
-        run: docker build -f dockerfile -t teste-imagem:latest .
