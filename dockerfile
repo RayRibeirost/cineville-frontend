@@ -24,20 +24,19 @@ FROM node:20-alpine
 
 WORKDIR /app
 
+# Forçar o Docker a esperar o build da Etapa 1 terminar 100%.
+COPY --from=builder /app/.next ./.next
+COPY --from=builder /app/package.json ./
+COPY --from=builder /app/yarn.lock ./
+COPY --from=builder /app/tsconfig.json ./
+COPY --from=builder /app/public ./public
+
 # Instala o bash e o curl na imagem final
 RUN apk add --no-cache bash curl
 
 # Copia os arquivos de dependências para instalar somente as dependências de produção
-COPY package.json yarn.lock ./
 RUN yarn install --frozen-lockfile --ignore-scripts --network-timeout-100000
 RUN npm install --save --legacy-peer-deps @sentry/node @sentry/tracing
-
-# Copia os arquivos compilados da etapa de build
-COPY --from=builder /app/.next ./.next
-
-# Copia o diretório src para que os arquivos TS estejam disponíveis para os comandos de seeding
-COPY tsconfig.json ./
-COPY public ./public
 
 # Expõe a porta que a aplicação irá utilizar
 EXPOSE $PORT
