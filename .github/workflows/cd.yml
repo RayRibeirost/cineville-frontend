@@ -31,7 +31,7 @@ jobs:
             cd $FRONTEND_DIR
             
             echo "Configurando autenticação do Git..."
-            git remote set-url origin https://${{ secrets.GIT_TOKEN }}@github.com/PedroVitor87/smallville-front.git
+            git remote set-url origin https://${{ secrets.GIT_TOKEN }}@github.com/smallville-front.git
             
             echo "Baixando novo código do GitHub..."
             git pull origin main
