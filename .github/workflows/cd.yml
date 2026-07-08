@@ -35,6 +35,10 @@ jobs:
             
             echo "Baixando novo código do GitHub..."
             git pull origin main
+
+            echo "node_modules" > .dockerignore
+            echo ".git" >> .dockerignore
+            echo ".next" >> .dockerignore
             
             git remote set-url origin https://github.com/qacoders-academy/smallville-front.git
             
