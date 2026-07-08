@@ -30,8 +30,13 @@ jobs:
             git config --global --add safe.directory $FRONTEND_DIR
             cd $FRONTEND_DIR
             
+            echo "Configurando autenticação do Git..."
+            git remote set-url origin https://${{ secrets.GIT_TOKEN }}@github.com/PedroVitor87/smallville-front.git
+            
             echo "Baixando novo código do GitHub..."
             git pull origin main
+            
+            git remote set-url origin https://github.com/PedroVitor87/smallville-front.git
             
             echo "node_modules" > .dockerignore
             echo ".git" >> .dockerignore
