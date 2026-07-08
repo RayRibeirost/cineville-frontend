@@ -1,4 +1,3 @@
-# DOCKERFILE DO SERVIDORRRRR
 # Etapa 1: Build da aplicação
 FROM node:20-alpine AS builder
 
@@ -30,7 +29,7 @@ RUN apk add --no-cache bash curl
 
 # Copia os arquivos de dependências para instalar somente as dependências de produção
 COPY package.json yarn.lock ./
-RUN yarn install --frozen-lockfile --ignore-scripts --network-timeout 600000
+RUN yarn install --production --frozen-lockfile --ignore-scripts --network-timeout 600000
 RUN npm install --save --legacy-peer-deps @sentry/node @sentry/tracing
 
 # Copia os arquivos compilados da etapa de build
