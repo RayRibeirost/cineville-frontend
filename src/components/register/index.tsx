@@ -13,9 +13,8 @@ const EyeIcon = ({ visible }: { visible: boolean }) => {
   return (
     <Icon
       size={20}
-      className={`transition-opacity ${
-        visible ? "opacity-100" : "opacity-60"
-      } text-red-cinema hover:opacity-100`}
+      className={`transition-opacity ${visible ? "opacity-100" : "opacity-60"
+        } text-red-cinema hover:opacity-100`}
     />
   );
 };
@@ -315,6 +314,7 @@ export default function Register() {
         </div>
 
         {/* Termos + Privacidade */}
+        {/* Termos + Privacidade */}
         <div className="flex flex-col gap-2 mt-2">
           <div className="flex items-center gap-2">
             <input
@@ -324,46 +324,49 @@ export default function Register() {
               checked={getChecked("termsAccepted")}
               onChange={handleChange}
               value="on"
-              className=" w-4 h-4 accent-red-cinema"
+              className="w-4 h-4 accent-red-cinema"
             />
-            <label
-              htmlFor="termsAccepted"
-              className="text-grayScale-400 text-xs leading-snug"
-            >
+            <label htmlFor="termsAccepted" className="text-grayScale-400 text-xs leading-snug">
               Eu aceito os{" "}
-              <Link
-                href="/pdfs/termos-de-uso.pdf"
-                target="_blank"
-                className="text-red-cinema hover:underline"
-              >
+              <Link href="/pdfs/termos-de-uso.pdf" target="_blank" className="text-red-cinema hover:underline">
                 Termos de Uso
-              </Link>{" "}
-              e a{" "}
-              <Link
-                href="/pdfs/politica-de-privacidade.pdf"
-                target="_blank"
-                className="text-red-cinema hover:underline"
-              >
+              </Link>
+            </label>
+          </div>
+          {getError("termsAccepted") && (
+            <span className="text-red-cinema text-xs font-semibold">{getError("termsAccepted")}</span>
+          )}
+
+          <div className="flex items-center gap-2">
+            <input
+              id="privacyAccepted"
+              name="privacyAccepted"
+              type="checkbox"
+              checked={getChecked("privacyAccepted")}
+              onChange={handleChange}
+              value="on"
+              className="w-4 h-4 accent-red-cinema"
+            />
+            <label htmlFor="privacyAccepted" className="text-grayScale-400 text-xs leading-snug">
+              Eu aceito a{" "}
+              <Link href="/pdfs/politica-de-privacidade.pdf" target="_blank" className="text-red-cinema hover:underline">
                 Política de Privacidade
               </Link>
             </label>
-            {getError("termsAccepted") && (
-              <span className="text-red-cinema text-xs font-semibold">
-                {getError("termsAccepted")}
-              </span>
-            )}
           </div>
+          {getError("privacyAccepted") && (
+            <span className="text-red-cinema text-xs font-semibold">{getError("privacyAccepted")}</span>
+          )}
         </div>
 
         {/* Botão */}
         <Button
           type="submit"
           disabled={isPending}
-          className={`w-full py-3 mt-2 rounded-lg font-black text-sm uppercase tracking-widest transition-all ${
-            isPending
+          className={`w-full py-3 mt-2 rounded-lg font-black text-sm uppercase tracking-widest transition-all ${isPending
               ? "bg-grayScale-600 cursor-not-allowed text-grayScale-500"
               : "bg-button-primary hover:bg-button-primary-hover text-grayScale-200 cursor-pointer"
-          }`}
+            }`}
         >
           {isPending ? "Cadastrando..." : "Criar Conta"}
         </Button>
