@@ -7,7 +7,7 @@ import { registerSchema } from "../lib/schemas/registerSchema";
 type RegisterInput = InferInput<typeof registerSchema>;
 
 export async function RegisterUser(
-  prevStare: RegisterState<Partial<RegisterInput>>,
+  prevState: RegisterState<Partial<RegisterInput>>,
   FormData: FormData,
 ): Promise<RegisterState<Partial<RegisterInput>>> {
   const rawData = {
@@ -17,13 +17,25 @@ export async function RegisterUser(
     password: FormData.get("password"),
     confirmPassword: FormData.get("confirmPassword"),
     termsAccepted: FormData.get("termsAccepted") !== null,
+    privacyAccepted: FormData.get("privacyAccepted") !== null,
+    cpf: FormData.get("cpf"),
+    birthDate: FormData.get("birthDate"),
+    phone: FormData.get("phone"),
+    cep: FormData.get("cep"),
+    address: FormData.get("address"),
+    number: FormData.get("number"),
+    complement: FormData.get("complement"),
+    neighborhood: FormData.get("neighborhood"),
+    city: FormData.get("city"),
+    state: FormData.get("state"),
+    gender: FormData.get("gender"),
   } as Partial<RegisterInput>;
 
   try {
     const validData = parse(registerSchema, rawData);
 
     const response = await fetch(
-      process.env.NEXT_PUBLIC_API_URL + "/user/register",
+      process.env.NEXT_PUBLIC_API_URL + "/register",
       {
         method: "POST",
         body: JSON.stringify(validData),
@@ -57,13 +69,10 @@ export async function RegisterUser(
       message: apiData.message,
       inputs: {},
     };
-    //eslint-disable-next-line
-  } catch (err: any) {
-    console.error("ERRO CAPTURADO NO SERVER ACTION:", err);
-
+  } catch (err: unknown) {
     return {
       success: false,
-      message: err.message,
+      message: (err as Error).message,
       inputs: rawData,
     };
   }
