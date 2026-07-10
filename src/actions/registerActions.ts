@@ -7,7 +7,7 @@ import { registerSchema } from "../lib/schemas/registerSchema";
 type RegisterInput = InferInput<typeof registerSchema>;
 
 export async function RegisterUser(
-  prevStare: RegisterState<Partial<RegisterInput>>,
+  prevState: RegisterState<Partial<RegisterInput>>,
   FormData: FormData,
 ): Promise<RegisterState<Partial<RegisterInput>>> {
   const rawData = {
@@ -69,12 +69,10 @@ export async function RegisterUser(
       message: apiData.message,
       inputs: {},
     };
-  } catch (err: any) {
-    console.error("ERRO CAPTURADO NO SERVER ACTION:", err);
-
+  } catch (err: unknown) {
     return {
       success: false,
-      message: err.message,
+      message: (err as Error).message,
       inputs: rawData,
     };
   }
