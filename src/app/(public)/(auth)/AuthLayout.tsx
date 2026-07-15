@@ -32,7 +32,9 @@ export default function AuthLayout({
           <div
             className={`w-full ${wide ? "max-w-3xl" : "max-w-md"} bg-deep-black rounded-xl p-8 shadow-md`}
           >
-            <Logo className="mx-auto mb-6" />
+            <div className="flex justify-center mb-6">
+              <Logo className="mx-auto" />
+            </div>
 
             <h2 className="text-2xl text-center font-bold text-white">
               {title}
