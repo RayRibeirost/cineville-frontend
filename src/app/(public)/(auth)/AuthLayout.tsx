@@ -1,3 +1,5 @@
+"use client";
+
 import Logo from "@/src/components/ui/Logo";
 import SpinLoader from "@/src/components/ui/SpinLoader";
 import Image from "next/image";
