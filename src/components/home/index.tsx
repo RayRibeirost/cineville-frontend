@@ -6,7 +6,23 @@ import Hero from "./Hero";
 import MovieCarousel from "../layout/Carousel/MovieCarousel";
 import PromoCandy from "./PromoCandy";
 import Footer from "../layout/Footer/Footer";
+import { useEffect } from "react";
+import { useState } from "react";
+import { getMovies } from "@/src/actions/movieActions";
+import { Movie } from "@/src/types/movieTypes";
+
 export default function HomePage() {
+  const [movies, setMovies] = useState<Movie[]>([]);
+
+  useEffect(() => {
+    async function loadMovies() {
+      const data = await getMovies();
+      setMovies(data);
+    }
+
+    loadMovies();
+  }, []);
+
   return (
     <>
       <div
@@ -21,8 +37,9 @@ export default function HomePage() {
         </main>
       </div>
       <div className="bg-deep-black flex flex-col items-center justify-center ">
-        <MovieCarousel title="Em Cartazes" />
-        <MovieCarousel title="Lançamentos" />
+        <MovieCarousel title="Em Cartazes" movies={movies} />
+
+        <MovieCarousel title="Lançamentos" movies={movies} />
         <PromoCandy />
         <Footer />
       </div>
