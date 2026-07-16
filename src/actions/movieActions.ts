@@ -14,8 +14,8 @@ export async function getMovies(): Promise<Movie[]> {
     }
 
     const data = await response.json();
-
-    return data.data;
+    console.log(data);
+    return data["data"] as Movie[];
   } catch (error) {
     console.error("Erro ao buscar filmes:", error);
     return [];
