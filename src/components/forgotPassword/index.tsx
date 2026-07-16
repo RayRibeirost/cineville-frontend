@@ -2,10 +2,11 @@
 
 import Link from "next/link";
 import { ArrowLeft, Mail } from "lucide-react";
-import { useActionState } from "react";
+import { useActionState, useEffect } from "react";
 import { forgotPassword } from "@/src/actions/forgotPasswordActions";
 import Button from "@/src/components/ui/Button";
 import InputForm from "../ui/InputForm";
+import { useRouter } from "next/navigation";
 
 const initialState = {
   success: false,
@@ -18,6 +19,13 @@ const initialState = {
 export default function ForgotPassword() {
   const [state, action, pending] = useActionState(forgotPassword, initialState);
 
+  const router = useRouter();
+
+  useEffect(() => {
+    if (state.success) {
+      router.push("/reset-password");
+    }
+  }, [state.success, router]);
   return (
     <>
       <form action={action} className="mt-8 space-y-6">
