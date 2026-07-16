@@ -33,7 +33,7 @@ export default function Login() {
   return (
     <form action={formAction} className="space-y-5">
       {/* Email */}
-      <div>
+      <div className="w-full">
         <label
           htmlFor="email"
           className="mb-2 block text-xs font-semibold uppercase tracking-wider text-grayScale-300"

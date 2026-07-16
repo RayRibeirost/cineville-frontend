@@ -1,3 +1,5 @@
+"use client";
+
 import Login from "@/src/components/login";
 
 import AuthLayout from "../AuthLayout";
