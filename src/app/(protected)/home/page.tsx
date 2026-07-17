@@ -1,11 +1,6 @@
-"use client";
-
+'use server'
 import HomePage from "@/src/components/home";
-import LogoutButton from "@/src/components/ui/LogoutButton";
-import { useAuth } from "@/src/context/AuthContext";
 
-export default function Home() {
-  const { user } = useAuth();
-
+export default async function Home() {
   return <HomePage />;
 }
