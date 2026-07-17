@@ -8,12 +8,24 @@ import { MovieCardProps } from "@/src/types/movie-types";
 
 export default function MovieCard({ movie }: MovieCardProps) {
   const movieBanner = movie.banner || "/assets/movie-placeholder.png";
+import { useRouter } from "next/navigation";
+
+import Button from "../../ui/Button";
+import { Movie } from "@/src/types/movieTypes";
+
+interface MovieCardProps {
+  movie: Movie;
+}
+
+export default function MovieCard({ movie }: MovieCardProps) {
+  const router = useRouter();
 
   return (
     <article className="overflow-hidden rounded-lg bg-zinc-900 shadow-lg transition-transform duration-300 hover:-translate-y-1">
-      <div className="relative aspect-2/3">
+      <div className="relative aspect-[2/3]">
         <Image
           src={movieBanner}
+          src={"/assets/img-movie.png"}
           alt={movie.title}
           fill
           className="object-cover transition-transform duration-300 hover:scale-105"
@@ -33,6 +45,11 @@ export default function MovieCard({ movie }: MovieCardProps) {
             </span>
             <span className="rounded bg-lime-500 px-1.5 py-0.5 text-[10px] font-bold text-black sm:text-xs">
               {movie.ageRating || "L"}
+              {movie.genero}
+            </span>
+
+            <span className="rounded bg-lime-500 px-1.5 py-0.5 text-[10px] font-bold text-black sm:text-xs">
+              {movie.classificacao}
             </span>
           </div>
         </div>
@@ -54,6 +71,22 @@ export default function MovieCard({ movie }: MovieCardProps) {
               <span>Ver Mais</span>
             </Button>
           </Link>
+          <Button
+            className="flex w-full flex-1 items-center justify-center gap-2"
+            onClick={() => router.push(`/movies/${movie.id}/tickets`)}
+          >
+            <ConfirmationNumber fontSize="small" />
+            <span>Ingressos</span>
+          </Button>
+
+          <Button
+            variant="secondary"
+            className="flex w-full items-center justify-center gap-2 sm:w-auto"
+            onClick={() => router.push(`/movies/${movie.id}/details`)}
+          >
+            <Add fontSize="small" />
+            <span>Ver Mais</span>
+          </Button>
         </div>
       </div>
     </article>
