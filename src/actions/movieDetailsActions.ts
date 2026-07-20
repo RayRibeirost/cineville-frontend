@@ -17,7 +17,7 @@ export async function getMovieDetailsById(id: string): Promise<Movie | null> {
     }
 
     const movie: Movie = await response.json();
-    console.log(movie);
+
     return movie;
   } catch (error) {
     console.error("Erro ao buscar filme:", error);
