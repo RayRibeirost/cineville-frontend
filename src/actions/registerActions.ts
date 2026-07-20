@@ -19,7 +19,7 @@ export async function RegisterUser(
     termsAccepted: FormData.get("termsAccepted") !== null,
     privacyAccepted: FormData.get("privacyAccepted") !== null,
     cpf: FormData.get("cpf"),
-    birthDate: FormData.get("birthDate"),
+    birthDate: FormData.get("birthDate")?.toString() ?? "",
     phone: FormData.get("phone"),
     cep: FormData.get("cep"),
     address: FormData.get("address"),
