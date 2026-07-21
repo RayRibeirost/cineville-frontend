@@ -13,8 +13,9 @@ const EyeIcon = ({ visible }: { visible: boolean }) => {
   return (
     <Icon
       size={20}
-      className={`transition-opacity ${visible ? "opacity-100" : "opacity-60"
-        } text-red-cinema hover:opacity-100`}
+      className={`transition-opacity ${
+        visible ? "opacity-100" : "opacity-60"
+      } text-red-cinema hover:opacity-100`}
     />
   );
 };
@@ -29,9 +30,6 @@ const Field = ({
   children: React.ReactNode;
 }) => (
   <div className="flex flex-col gap-1">
-    <label className="text-xs font-semibold uppercase tracking-widest text-grayScale-400">
-      {label}
-    </label>
     {children}
     {error && (
       <span className="text-red-cinema text-xs font-semibold">{error}</span>
@@ -78,7 +76,7 @@ export default function Register() {
               type="text"
               maxLength={50}
               autoComplete="given-name"
-              placeholder="João"
+              placeholder="Nome"
               value={getValue("name")}
               onChange={handleChange}
               className={inputClass(getError("name"))}
@@ -91,7 +89,7 @@ export default function Register() {
               type="text"
               maxLength={50}
               autoComplete="family-name"
-              placeholder="Silva"
+              placeholder="Sobrenome"
               value={getValue("surname")}
               onChange={handleChange}
               className={inputClass(getError("surname"))}
@@ -108,7 +106,7 @@ export default function Register() {
               type="email"
               maxLength={50}
               autoComplete="email"
-              placeholder="seu@email.com"
+              placeholder="E-mail"
               value={getValue("email")}
               onChange={handleChange}
               className={inputClass(getError("email"))}
@@ -120,7 +118,7 @@ export default function Register() {
               name="cpf"
               type="text"
               maxLength={14}
-              placeholder="000.000.000-00"
+              placeholder="CPF "
               value={getValue("cpf")}
               onChange={handleChange}
               className={inputClass(getError("cpf"))}
@@ -148,7 +146,7 @@ export default function Register() {
               name="phone"
               type="text"
               maxLength={15}
-              placeholder="(84)99999-9999"
+              placeholder="Telefone"
               value={getValue("phone")}
               onChange={handleChange}
               className={inputClass(getError("phone"))}
@@ -164,7 +162,7 @@ export default function Register() {
               name="cep"
               type="text"
               maxLength={9}
-              placeholder="00000-000"
+              placeholder="CEP"
               value={getValue("cep")}
               onChange={handleChange}
               className={inputClass(getError("cep"))}
@@ -193,7 +191,7 @@ export default function Register() {
                 id="address"
                 name="address"
                 type="text"
-                placeholder="Rua das Flores"
+                placeholder="Endereço"
                 value={getValue("address")}
                 onChange={handleChange}
                 className={inputClass(getError("address"))}
@@ -205,7 +203,7 @@ export default function Register() {
               id="number"
               name="number"
               type="text"
-              placeholder="123"
+              placeholder="Número"
               value={getValue("number")}
               onChange={handleChange}
               className={inputClass(getError("number"))}
@@ -220,7 +218,7 @@ export default function Register() {
               id="neighborhood"
               name="neighborhood"
               type="text"
-              placeholder="Centro"
+              placeholder="Bairro"
               value={getValue("neighborhood")}
               onChange={handleChange}
               className={inputClass(getError("neighborhood"))}
@@ -231,7 +229,7 @@ export default function Register() {
               id="city"
               name="city"
               type="text"
-              placeholder="Natal"
+              placeholder="Cidade"
               value={getValue("city")}
               onChange={handleChange}
               className={inputClass(getError("city"))}
@@ -243,7 +241,7 @@ export default function Register() {
               name="state"
               type="text"
               maxLength={2}
-              placeholder="RN"
+              placeholder="Estado"
               value={getValue("state")}
               onChange={handleChange}
               className={inputClass(getError("state"))}
@@ -257,7 +255,7 @@ export default function Register() {
             id="complement"
             name="complement"
             type="text"
-            placeholder="Apto 101"
+            placeholder="Complemento (opcional)"
             value={getValue("complement")}
             onChange={handleChange}
             className={inputClass(getError("complement"))}
@@ -326,36 +324,37 @@ export default function Register() {
               value="on"
               className="w-4 h-4 accent-red-cinema"
             />
-            <label htmlFor="termsAccepted" className="text-grayScale-400 text-xs leading-snug">
+            <label
+              htmlFor="termsAccepted"
+              className="text-grayScale-400 text-xs leading-snug"
+            >
               Eu aceito os{" "}
-              <Link href="/pdfs/termos-de-uso.pdf" target="_blank" className="text-red-cinema hover:underline">
+              <Link
+                href="/pdfs/termos-de-uso.pdf"
+                target="_blank"
+                className="text-red-cinema hover:underline"
+              >
                 Termos de Uso
-              </Link>
-            </label>
-          </div>
-          {getError("termsAccepted") && (
-            <span className="text-red-cinema text-xs font-semibold">{getError("termsAccepted")}</span>
-          )}
-
-          <div className="flex items-center gap-2">
-            <input
-              id="privacyAccepted"
-              name="privacyAccepted"
-              type="checkbox"
-              checked={getChecked("privacyAccepted")}
-              onChange={handleChange}
-              value="on"
-              className="w-4 h-4 accent-red-cinema"
-            />
-            <label htmlFor="privacyAccepted" className="text-grayScale-400 text-xs leading-snug">
-              Eu aceito a{" "}
-              <Link href="/pdfs/politica-de-privacidade.pdf" target="_blank" className="text-red-cinema hover:underline">
+              </Link>{" "}
+              e a{" "}
+              <Link
+                href="/pdfs/politica-de-privacidade.pdf"
+                target="_blank"
+                className="text-red-cinema hover:underline"
+              >
                 Política de Privacidade
               </Link>
             </label>
           </div>
+          {getError("termsAccepted") && (
+            <span className="text-red-cinema text-xs font-semibold">
+              {getError("termsAccepted")}
+            </span>
+          )}
           {getError("privacyAccepted") && (
-            <span className="text-red-cinema text-xs font-semibold">{getError("privacyAccepted")}</span>
+            <span className="text-red-cinema text-xs font-semibold">
+              {getError("privacyAccepted")}
+            </span>
           )}
         </div>
 
@@ -363,10 +362,11 @@ export default function Register() {
         <Button
           type="submit"
           disabled={isPending}
-          className={`w-full py-3 mt-2 rounded-lg font-black text-sm uppercase tracking-widest transition-all ${isPending
+          className={`w-full py-3 mt-2 rounded-lg font-bold text-sm tracking-widest transition-all ${
+            isPending
               ? "bg-grayScale-600 cursor-not-allowed text-grayScale-500"
               : "bg-button-primary hover:bg-button-primary-hover text-grayScale-200 cursor-pointer"
-            }`}
+          }`}
         >
           {isPending ? "Cadastrando..." : "Criar Conta"}
         </Button>
