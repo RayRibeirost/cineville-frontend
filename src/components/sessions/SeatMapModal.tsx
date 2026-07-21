@@ -1,14 +1,14 @@
-'use client';
+"use client";
 
-import { useEffect, useState, useTransition } from 'react';
-import { SessionInfo } from '@/src/types/session-types';
-import { useSeatSelection } from '@/src/hooks/useSeatSelection';
-import { SeatMapHeader } from './SeatMapHeader';
-import { SeatMapSidebar } from './SeatMapSidebar';
-import { SeatMapFooter } from './SeatMapFooter';
-import { SeatGrid } from './SeatMapGrid';
-import { SeatRow } from '@/src/utils/seat-rows';
-import { createTickets, getSessionDetails } from '@/src/actions/sessionActions';
+import { useEffect, useState, useTransition } from "react";
+import { SessionInfo } from "@/src/types/session-types";
+import { useSeatSelection } from "@/src/hooks/useSeatSelection";
+import { SeatMapHeader } from "./SeatMapHeader";
+import { SeatMapSidebar } from "./SeatMapSidebar";
+import { SeatMapFooter } from "./SeatMapFooter";
+import { SeatGrid } from "./SeatMapGrid";
+import { SeatRow } from "@/src/utils/seat-rows";
+import { createTickets, getSessionDetails } from "@/src/actions/sessionActions";
 
 export default function SeatMapModal({
   isOpen,
@@ -30,7 +30,7 @@ export default function SeatMapModal({
     if (!isOpen) return;
 
     getSessionDetails(sessionId).then((result) => {
-      console.log('RESULTADO:', result);
+      console.log("RESULTADO:", result);
       if (!result.success) {
         setLoadError(result.error);
         return;
@@ -63,7 +63,7 @@ export default function SeatMapModal({
       if (!allSucceeded) {
         const failed = results.filter((r) => !r.success);
         setPurchaseError(
-          `Não foi possível reservar: ${failed.map((f) => f.seatNumber).join(', ')}. Tente novamente.`,
+          `Não foi possível reservar: ${failed.map((f) => f.seatNumber).join(", ")}. Tente novamente.`,
         );
         return;
       }
@@ -76,51 +76,87 @@ export default function SeatMapModal({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-2 sm:p-4 lg:p-10"
       role="dialog"
       aria-modal="true"
       onClick={onClose}
     >
       <div
-        className="relative w-full max-w-240 max-h-[90vh] overflow-hidden rounded-2xl bg-[#181818] p-6 text-white shadow-2xl border border-neutral-800"
+        className="
+        relative
+        w-full
+        max-w-7xl
+        h-[95vh]
+        lg:h-auto
+        lg:max-h-[90vh]
+        overflow-y-auto
+        rounded-2xl
+        bg-[#181818]
+        border
+        border-neutral-800
+        p-4
+        sm:p-6
+        text-white
+        shadow-2xl
+      "
         onClick={(e) => e.stopPropagation()}
       >
         <SeatMapHeader onClose={onClose} />
 
         {loadError && (
-          <p className="text-center text-sm text-red-500 py-8">{loadError}</p>
+          <p className="py-8 text-center text-sm text-red-500">{loadError}</p>
         )}
 
         {!loadError && !sessionInfo && (
-          <p className="text-center text-sm text-neutral-400 py-8">Carregando sessão...</p>
+          <p className="py-8 text-center text-sm text-neutral-400">
+            Carregando sessão...
+          </p>
         )}
 
         {sessionInfo && (
           <>
-            <div className="flex flex-col gap-8 lg:flex-row items-start justify-between">
-              <SeatGrid
-                seatRows={seatRows}
-                selectedSeats={selectedSeats}
-                toggleSeat={toggleSeat}
-                screenType={sessionInfo.screenType}
-                room={sessionInfo.room}
-              />
+            <div
+              className="
+              mt-6
+              flex
+              flex-col
+              gap-8
+              xl:flex-row
+              xl:items-start
+              xl:justify-between
+            "
+            >
+              <div className="w-full xl:flex-1">
+                <SeatGrid
+                  seatRows={seatRows}
+                  selectedSeats={selectedSeats}
+                  toggleSeat={toggleSeat}
+                  screenType={sessionInfo.screenType}
+                  room={sessionInfo.room}
+                />
+              </div>
 
-              <SeatMapSidebar
-                totalSeatsCount={totalSeatsCount}
-                selectedCount={selectedCount}
-              />
+              <div className="w-full xl:w-[320px]">
+                <SeatMapSidebar
+                  totalSeatsCount={totalSeatsCount}
+                  selectedCount={selectedCount}
+                />
+              </div>
             </div>
 
             {purchaseError && (
-              <p className="text-center text-sm text-red-500 mt-4">{purchaseError}</p>
+              <p className="mt-4 text-center text-sm text-red-500">
+                {purchaseError}
+              </p>
             )}
 
-            <SeatMapFooter
-              session={sessionInfo}
-              selectedCount={selectedCount}
-              onConfirm={handleConfirm}
-            />
+            <div className="mt-6">
+              <SeatMapFooter
+                session={sessionInfo}
+                selectedCount={selectedCount}
+                onConfirm={handleConfirm}
+              />
+            </div>
           </>
         )}
       </div>
