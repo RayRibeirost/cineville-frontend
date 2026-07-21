@@ -25,7 +25,7 @@ export default function Button({
         "inline-flex items-center justify-center rounded-md",
         "px-3 py-2 sm:px-4 sm:py-2.5",
         "text-sm sm:text-base",
-        "font-medium text-white",
+        "font-bold text-white",
         "whitespace-nowrap",
         "transition-all duration-200",
         "cursor-pointer",

@@ -36,7 +36,7 @@ export default function Login() {
       <div className="w-full">
         <label
           htmlFor="email"
-          className="mb-2 block text-xs font-semibold uppercase tracking-wider text-grayScale-300"
+          className="mb-2 block text-xs font-semibold tracking-wider text-grayScale-300"
         >
           E-mail
         </label>
@@ -59,7 +59,7 @@ export default function Login() {
         <div className="mb-2 flex items-center justify-between">
           <label
             htmlFor="password"
-            className="text-xs font-semibold uppercase tracking-wider text-grayScale-300"
+            className="text-xs font-semibold  tracking-wider text-grayScale-300"
           >
             Senha
           </label>

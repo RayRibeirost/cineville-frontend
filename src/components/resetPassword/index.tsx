@@ -36,7 +36,7 @@ export default function ResetPassword() {
 
   return (
     <>
-      <form action={action} className="space-y-5">
+      <form autoComplete="off" action={action} className="space-y-5">
         <input type="hidden" name="token" value={token} />
 
         {/* Código enviado por e-mail */}
