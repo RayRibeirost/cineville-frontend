@@ -59,7 +59,7 @@ export default function Login() {
         <div className="mb-2 flex items-center justify-between">
           <label
             htmlFor="password"
-            className="text-xs font-semibold  tracking-wider text-grayScale-300"
+            className="text-xs font-semibold tracking-wider text-grayScale-300"
           >
             Senha
           </label>
