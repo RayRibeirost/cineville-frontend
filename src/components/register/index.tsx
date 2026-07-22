@@ -312,51 +312,73 @@ export default function Register() {
         </div>
 
         {/* Termos + Privacidade */}
-        {/* Termos + Privacidade */}
-        <div className="flex flex-col gap-2 mt-2">
-          <div className="flex items-center gap-2">
-            <input
-              id="termsAccepted"
-              name="termsAccepted"
-              type="checkbox"
-              checked={getChecked("termsAccepted")}
-              onChange={handleChange}
-              value="on"
-              className="w-4 h-4 accent-red-cinema"
-            />
-            <label
-              htmlFor="termsAccepted"
-              className="text-grayScale-400 text-xs leading-snug"
-            >
-              Eu aceito os{" "}
-              <Link
-                href="/pdfs/termos-de-uso.pdf"
-                target="_blank"
-                className="text-red-cinema hover:underline"
-              >
-                Termos de Uso
-              </Link>{" "}
-              e a{" "}
-              <Link
-                href="/pdfs/politica-de-privacidade.pdf"
-                target="_blank"
-                className="text-red-cinema hover:underline"
-              >
-                Política de Privacidade
-              </Link>
-            </label>
-          </div>
-          {getError("termsAccepted") && (
-            <span className="text-red-cinema text-xs font-semibold">
-              {getError("termsAccepted")}
-            </span>
-          )}
-          {getError("privacyAccepted") && (
-            <span className="text-red-cinema text-xs font-semibold">
-              {getError("privacyAccepted")}
-            </span>
-          )}
-        </div>
+        <div className="flex flex-col gap-3 mt-2">
+  {/* Termos de Uso */}
+  <div className="flex items-start gap-2">
+    <input
+      id="termsAccepted"
+      name="termsAccepted"
+      type="checkbox"
+      checked={getChecked("termsAccepted")}
+      onChange={handleChange}
+      value="on"
+      className="w-4 h-4 mt-0.5 accent-red-cinema"
+    />
+
+    <label
+      htmlFor="termsAccepted"
+      className="text-grayScale-400 text-xs leading-snug"
+    >
+      Eu aceito os{" "}
+      <Link
+        href="/pdfs/termos-de-uso.pdf"
+        target="_blank"
+        className="text-red-cinema hover:underline"
+      >
+        Termos de Uso
+      </Link>
+    </label>
+  </div>
+
+  {getError("termsAccepted") && (
+    <span className="text-red-cinema text-xs font-semibold">
+      {getError("termsAccepted")}
+    </span>
+  )}
+
+  {/* Política de Privacidade */}
+  <div className="flex items-start gap-2">
+    <input
+      id="privacyAccepted"
+      name="privacyAccepted"
+      type="checkbox"
+      checked={getChecked("privacyAccepted")}
+      onChange={handleChange}
+      value="on"
+      className="w-4 h-4 mt-0.5 accent-red-cinema"
+    />
+
+    <label
+      htmlFor="privacyAccepted"
+      className="text-grayScale-400 text-xs leading-snug"
+    >
+      Eu aceito a{" "}
+      <Link
+        href="/pdfs/politica-de-privacidade.pdf"
+        target="_blank"
+        className="text-red-cinema hover:underline"
+      >
+        Política de Privacidade
+      </Link>
+    </label>
+  </div>
+
+  {getError("privacyAccepted") && (
+    <span className="text-red-cinema text-xs font-semibold">
+      {getError("privacyAccepted")}
+    </span>
+  )}
+</div>
 
         {/* Botão */}
         <Button
