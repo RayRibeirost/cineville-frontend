@@ -36,8 +36,6 @@ export default function ResetPassword() {
   return (
     <>
       <form autoComplete="off" action={action} className="space-y-5">
-        <input type="hidden" name="token" value={token} />
-
         {/* Código enviado por e-mail */}
         <div>
           <label className="mb-2 block text-xs font-semibold uppercase tracking-wider text-grayScale-300">
@@ -47,7 +45,7 @@ export default function ResetPassword() {
           <InputForm
             type="text"
             name="token"
-            defaultValue={state.inputs.token}
+            defaultValue={state.inputs.token || token}
             placeholder="Digite o código recebido por e-mail"
           />
 

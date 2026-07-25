@@ -3,7 +3,7 @@
 import { parse, InferInput } from "valibot";
 import { resetPasswordSchema } from "../lib/schemas/resetPasswordSchema";
 import { ResetPasswordState } from "../types/forgotPassword";
-
+import * as v from "valibot";
 type ResetPasswordInput = InferInput<typeof resetPasswordSchema>;
 
 export async function resetPassword(
@@ -12,8 +12,7 @@ export async function resetPassword(
 ): Promise<ResetPasswordState<Partial<ResetPasswordInput>>> {
   const rawData = {
     token: formData.get("token"),
-
-    password: formData.get("newPassword"),
+    password: formData.get("password"),
     confirmPassword: formData.get("confirmPassword"),
   } as Partial<ResetPasswordInput>;
 
@@ -59,6 +58,17 @@ export async function resetPassword(
       inputs: {},
     };
   } catch (err: unknown) {
+    if (err instanceof v.ValiError) {
+      const issues = v.flatten(err.issues);
+
+      return {
+        success: false,
+        message: "Verifique os campos.",
+        inputs: rawData,
+        errors: issues.nested,
+      };
+    }
+
     return {
       success: false,
       message: err instanceof Error ? err.message : "Erro inesperado.",
