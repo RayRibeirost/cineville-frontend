@@ -1,7 +1,6 @@
 "use client";
 import Register from "@/src/components/register";
 
-import { useState } from "react";
 import AuthLayout from "../AuthLayout";
 
 export default function RegisterPage() {

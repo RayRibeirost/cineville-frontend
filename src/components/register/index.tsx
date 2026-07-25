@@ -172,13 +172,15 @@ export default function Register() {
             <select
               id="gender"
               name="gender"
+              value={getValue("gender")}
+              onChange={handleChange}
               className="w-full px-4 py-3 rounded-lg bg-gray-surface border border-grayScale-600 text-grayScale-400 text-sm focus:outline-none focus:ring-2 focus:ring-red-cinema transition-all"
             >
               <option value="">Selecione</option>
-              <option value="MASCULINO">Masculino</option>
-              <option value="FEMININO">Feminino</option>
-              <option value="OUTRO">Outro</option>
-              <option value="PREFIRO_NAO_INFORMAR">Prefiro não informar</option>
+              <option value="Masculino">Masculino</option>
+              <option value="Feminino">Feminino</option>
+              <option value="Outro">Outro</option>
+              <option value="Prefiro não informar">Prefiro não informar</option>
             </select>
           </Field>
         </div>
@@ -313,72 +315,72 @@ export default function Register() {
 
         {/* Termos + Privacidade */}
         <div className="flex flex-col gap-3 mt-2">
-  {/* Termos de Uso */}
-  <div className="flex items-start gap-2">
-    <input
-      id="termsAccepted"
-      name="termsAccepted"
-      type="checkbox"
-      checked={getChecked("termsAccepted")}
-      onChange={handleChange}
-      value="on"
-      className="w-4 h-4 mt-0.5 accent-red-cinema"
-    />
+          {/* Termos de Uso */}
+          <div className="flex items-start gap-2">
+            <input
+              id="termsAccepted"
+              name="termsAccepted"
+              type="checkbox"
+              checked={getChecked("termsAccepted")}
+              onChange={handleChange}
+              value="on"
+              className="w-4 h-4 mt-0.5 accent-red-cinema"
+            />
 
-    <label
-      htmlFor="termsAccepted"
-      className="text-grayScale-400 text-xs leading-snug"
-    >
-      Eu aceito os{" "}
-      <Link
-        href="/pdfs/termos-de-uso.pdf"
-        target="_blank"
-        className="text-red-cinema hover:underline"
-      >
-        Termos de Uso
-      </Link>
-    </label>
-  </div>
+            <label
+              htmlFor="termsAccepted"
+              className="text-grayScale-400 text-xs leading-snug"
+            >
+              Eu aceito os{" "}
+              <Link
+                href="/pdfs/termos-de-uso.pdf"
+                target="_blank"
+                className="text-red-cinema hover:underline"
+              >
+                Termos de Uso
+              </Link>
+            </label>
+          </div>
 
-  {getError("termsAccepted") && (
-    <span className="text-red-cinema text-xs font-semibold">
-      {getError("termsAccepted")}
-    </span>
-  )}
+          {getError("termsAccepted") && (
+            <span className="text-red-cinema text-xs font-semibold">
+              {getError("termsAccepted")}
+            </span>
+          )}
 
-  {/* Política de Privacidade */}
-  <div className="flex items-start gap-2">
-    <input
-      id="privacyAccepted"
-      name="privacyAccepted"
-      type="checkbox"
-      checked={getChecked("privacyAccepted")}
-      onChange={handleChange}
-      value="on"
-      className="w-4 h-4 mt-0.5 accent-red-cinema"
-    />
+          {/* Política de Privacidade */}
+          <div className="flex items-start gap-2">
+            <input
+              id="privacyAccepted"
+              name="privacyAccepted"
+              type="checkbox"
+              checked={getChecked("privacyAccepted")}
+              onChange={handleChange}
+              value="on"
+              className="w-4 h-4 mt-0.5 accent-red-cinema"
+            />
 
-    <label
-      htmlFor="privacyAccepted"
-      className="text-grayScale-400 text-xs leading-snug"
-    >
-      Eu aceito a{" "}
-      <Link
-        href="/pdfs/politica-de-privacidade.pdf"
-        target="_blank"
-        className="text-red-cinema hover:underline"
-      >
-        Política de Privacidade
-      </Link>
-    </label>
-  </div>
+            <label
+              htmlFor="privacyAccepted"
+              className="text-grayScale-400 text-xs leading-snug"
+            >
+              Eu aceito a{" "}
+              <Link
+                href="/pdfs/politica-de-privacidade.pdf"
+                target="_blank"
+                className="text-red-cinema hover:underline"
+              >
+                Política de Privacidade
+              </Link>
+            </label>
+          </div>
 
-  {getError("privacyAccepted") && (
-    <span className="text-red-cinema text-xs font-semibold">
-      {getError("privacyAccepted")}
-    </span>
-  )}
-</div>
+          {getError("privacyAccepted") && (
+            <span className="text-red-cinema text-xs font-semibold">
+              {getError("privacyAccepted")}
+            </span>
+          )}
+        </div>
 
         {/* Botão */}
         <Button
@@ -414,7 +416,7 @@ export default function Register() {
 
       <SuccessModal
         isOpen={showSuccessModal}
-        message={state.message || "Cadastro realizado com sucesso!"}
+        message={state.message ? "Cadastro realizado com sucesso!" : ""}
         onClose={handleCloseModal}
       />
     </>

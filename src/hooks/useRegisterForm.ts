@@ -12,7 +12,8 @@ import { RegisterUser } from "../actions/registerActions";
 import { RegisterState } from "../types";
 import { flatten, safeParse, InferInput } from "valibot";
 import { registerSchema } from "../lib/schemas/registerSchema";
-
+import { formatDate } from "../utils/date";
+import { useRouter } from "next/navigation";
 export type RegisterInput = InferInput<typeof registerSchema>;
 
 const initialState: RegisterState<Partial<RegisterInput>> = {
@@ -28,7 +29,7 @@ export function useRegisterForm(setIsLogin?: (value: boolean) => void) {
   );
 
   const [showSuccessModal, setShowSuccessModal] = useState(false);
-
+  const router = useRouter();
   const prevSuccess = useRef(state.success);
 
   const [showPassword, setShowPassword] = useState(false);
@@ -56,10 +57,8 @@ export function useRegisterForm(setIsLogin?: (value: boolean) => void) {
 
       const redirectTimer = setTimeout(() => {
         setShowSuccessModal(false);
-        if (setIsLogin) {
-          setIsLogin(true);
-        }
-      }, 4000);
+        router.push("/login");
+      }, 3000);
 
       return () => {
         clearTimeout(startSequenceTimer);
@@ -75,13 +74,25 @@ export function useRegisterForm(setIsLogin?: (value: boolean) => void) {
     if (setIsLogin) setIsLogin(true);
   };
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLSelectElement>,
+  ) => {
     const name = e.target.name as keyof RegisterInput;
-    const { value, type, checked } = e.target;
-    const valorReal = type === "checkbox" ? checked : value;
 
-    setFormValues((prev) => ({ ...prev, [name]: valorReal }));
-    setTouchedFields((prev) => ({ ...prev, [name]: true }));
+    const valorReal =
+      e.target instanceof HTMLInputElement && e.target.type === "checkbox"
+        ? e.target.checked
+        : e.target.value;
+
+    setFormValues((prev) => ({
+      ...prev,
+      [name]: valorReal,
+    }));
+
+    setTouchedFields((prev) => ({
+      ...prev,
+      [name]: true,
+    }));
 
     if (clientErrors[name]) {
       setClientErrors((prev) => {
@@ -94,7 +105,10 @@ export function useRegisterForm(setIsLogin?: (value: boolean) => void) {
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     const formData = new FormData(e.currentTarget);
-
+    const number = formData.get("number")?.toString().trim();
+    const complement = formData.get("complement")?.toString().trim();
+    const gender = formData.get("gender")?.toString().trim();
+    console.log(Object.fromEntries(formData.entries()));
     const dataToValidate = {
       name: formData.get("name")?.toString() || "",
       surname: formData.get("surname")?.toString() || "",
@@ -104,16 +118,16 @@ export function useRegisterForm(setIsLogin?: (value: boolean) => void) {
       termsAccepted: formData.get("termsAccepted") !== null,
       privacyAccepted: formData.get("privacyAccepted") !== null,
       cpf: formData.get("cpf")?.toString() || "",
-      birthDate: formData.get("birthDate")?.toString() || "",
+      birthDate: formatDate(formData.get("birthDate")?.toString() || ""),
       phone: formData.get("phone")?.toString() || "",
       cep: formData.get("cep")?.toString() || "",
       address: formData.get("address")?.toString() || "",
-      number: formData.get("number")?.toString() || "",
-      complement: formData.get("complement")?.toString() || "",
+      number: number || undefined,
+      complement: complement || undefined,
       neighborhood: formData.get("neighborhood")?.toString() || "",
       city: formData.get("city")?.toString() || "",
       state: formData.get("state")?.toString() || "",
-      gender: formData.get("gender")?.toString() || "",
+      gender: gender || undefined,
     };
 
     const resultado = safeParse(registerSchema, dataToValidate);
@@ -121,6 +135,7 @@ export function useRegisterForm(setIsLogin?: (value: boolean) => void) {
     if (!resultado.success) {
       e.preventDefault();
       const issues = flatten(resultado.issues).nested;
+      console.log(resultado.issues);
       setClientErrors(issues as Partial<Record<keyof RegisterInput, string[]>>);
     }
   };

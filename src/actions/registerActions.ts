@@ -3,7 +3,7 @@
 import { parse, InferInput } from "valibot";
 import { RegisterState } from "../types";
 import { registerSchema } from "../lib/schemas/registerSchema";
-
+import { formatDate } from "../utils/date";
 type RegisterInput = InferInput<typeof registerSchema>;
 
 export async function RegisterUser(
@@ -19,16 +19,16 @@ export async function RegisterUser(
     termsAccepted: FormData.get("termsAccepted") !== null,
     privacyAccepted: FormData.get("privacyAccepted") !== null,
     cpf: FormData.get("cpf"),
-    birthDate: FormData.get("birthDate")?.toString() ?? "",
+    birthDate: formatDate(FormData.get("birthDate") as string),
     phone: FormData.get("phone"),
     cep: FormData.get("cep"),
     address: FormData.get("address"),
     number: FormData.get("number"),
-    complement: FormData.get("complement"),
+    complement: FormData.get("complement") || undefined,
     neighborhood: FormData.get("neighborhood"),
     city: FormData.get("city"),
     state: FormData.get("state"),
-    gender: FormData.get("gender"),
+    gender: FormData.get("gender") || undefined,
   } as Partial<RegisterInput>;
 
   try {

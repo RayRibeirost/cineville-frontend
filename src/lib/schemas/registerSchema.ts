@@ -14,6 +14,7 @@ import {
   partialCheck,
   literal,
   optional,
+  picklist,
 } from "valibot";
 
 export const registerSchema = pipe(
@@ -24,7 +25,10 @@ export const registerSchema = pipe(
       trim(),
       minLength(2, "O campo nome deve conter entre 2 e 50 caracteres"),
       maxLength(50, "O campo nome deve conter entre 2 e 50 caracteres"),
-      regex(/^[A-Za-zÀ-ÖØ-öø-ÿ ]+$/, "O campo Nome aceita apenas letras, acentuação e espaços"),
+      regex(
+        /^[A-Za-zÀ-ÖØ-öø-ÿ ]+$/,
+        "O campo Nome aceita apenas letras, acentuação e espaços",
+      ),
     ),
     surname: pipe(
       string("O campo sobrenome é obrigatório"),
@@ -32,14 +36,20 @@ export const registerSchema = pipe(
       trim(),
       minLength(2, "O campo Sobrenome deve conter entre 2 e 50 caracteres"),
       maxLength(50, "O campo Sobrenome deve conter entre 2 e 50 caracteres"),
-      regex(/^[A-Za-zÀ-ÖØ-öø-ÿ ]+$/, "O campo Sobrenome aceita apenas letras, acentuação e espaços"),
+      regex(
+        /^[A-Za-zÀ-ÖØ-öø-ÿ ]+$/,
+        "O campo Sobrenome aceita apenas letras, acentuação e espaços",
+      ),
     ),
     email: pipe(
       string("O campo e-mail é obrigatório."),
       nonEmpty("O campo e-mail é obrigatório."),
       trim(),
       email("O formato do e-mail parece inválido."),
-      regex(/@.*\.(com|com\.br)$/, "O campo e-mail deve ter o formato (nome@dominio.com ou nome@dominio.com.br)"),
+      regex(
+        /@.*\.(com|com\.br)$/,
+        "O campo e-mail deve ter o formato (nome@dominio.com ou nome@dominio.com.br)",
+      ),
       maxLength(50, "O campo e-mail deve permitir no máximo 50 caracteres"),
     ),
     password: pipe(
@@ -51,7 +61,10 @@ export const registerSchema = pipe(
       regex(/[a-z]/, "A senha deve conter pelo menos uma letra minúscula."),
       regex(/[A-Z]/, "A senha deve conter pelo menos uma letra maiúscula."),
       regex(/[0-9]/, "A senha deve conter pelo menos um número."),
-      regex(/[^a-zA-Z0-9]/, "A senha deve conter pelo menos um caractere especial."),
+      regex(
+        /[^a-zA-Z0-9]/,
+        "A senha deve conter pelo menos um caractere especial.",
+      ),
     ),
     confirmPassword: pipe(
       string("O campo confirmar senha é obrigatório."),
@@ -68,17 +81,26 @@ export const registerSchema = pipe(
     cpf: pipe(
       string("O campo CPF é obrigatório."),
       nonEmpty("O campo CPF é obrigatório."),
-      regex(/^\d{3}\.\d{3}\.\d{3}-\d{2}$/, "CPF inválido. Use o formato 000.000.000-00"),
+      regex(
+        /^\d{3}\.\d{3}\.\d{3}-\d{2}$/,
+        "CPF inválido. Use o formato 000.000.000-00",
+      ),
     ),
     birthDate: pipe(
       string("O campo data de nascimento é obrigatório."),
       nonEmpty("O campo data de nascimento é obrigatório."),
-      regex(/^\d{4}-\d{2}-\d{2}$/, "Data de nascimento inválida."),
+      regex(
+        /^\d{2}\/\d{2}\/\d{4}$/,
+        "A data deve estar no formato DD/MM/AAAA.",
+      ),
     ),
     phone: pipe(
       string("O campo telefone é obrigatório."),
       nonEmpty("O campo telefone é obrigatório."),
-      regex(/^\(?\d{2}\)?\s?\d{4,5}-\d{4}$/, "Telefone inválido. Use o formato (84)99999-9999"),
+      regex(
+        /^\(?\d{2}\)?\s?\d{4,5}-\d{4}$/,
+        "Telefone inválido. Use o formato (84)99999-9999",
+      ),
     ),
     cep: pipe(
       string("O campo CEP é obrigatório."),
@@ -104,7 +126,14 @@ export const registerSchema = pipe(
       nonEmpty("O campo estado é obrigatório."),
       regex(/^[A-Z]{2}$/, "Use a sigla do estado. Ex: RN, SP, RJ"),
     ),
-    gender: optional(pipe(string())),
+    gender: optional(
+      pipe(
+        picklist(
+          ["Masculino", "Feminino", "Outro", "Prefiro não informar"],
+          "Selecione um gênero válido.",
+        ),
+      ),
+    ),
   }),
   forward(
     partialCheck(
