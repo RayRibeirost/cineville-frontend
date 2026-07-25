@@ -18,7 +18,6 @@ const initialState: ResetPasswordState<Partial<ResetPasswordInput>> = {
   message: "",
   inputs: {
     token: "",
-    code: "",
     password: "",
     confirmPassword: "",
   },
@@ -47,13 +46,13 @@ export default function ResetPassword() {
 
           <InputForm
             type="text"
-            name="code"
-            defaultValue={state.inputs.code}
+            name="token"
+            defaultValue={state.inputs.token}
             placeholder="Digite o código recebido por e-mail"
           />
 
-          {state.errors?.code && (
-            <p className="mt-1 text-xs text-error">{state.errors.code[0]}</p>
+          {state.errors?.token && (
+            <p className="mt-1 text-xs text-error">{state.errors.token[0]}</p>
           )}
         </div>
 
