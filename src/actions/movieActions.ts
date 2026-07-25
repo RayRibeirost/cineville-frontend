@@ -32,7 +32,6 @@ export async function getAllMovies(): Promise<
     }
 
     const json = await res.json();
-    console.log("Fetched movies:", json); // Log the fetched data for debugging
     return { success: true, data: json.data ?? json };
   } catch (error) {
     return { success: false, error: "Erro na requisição dos filmes." };
