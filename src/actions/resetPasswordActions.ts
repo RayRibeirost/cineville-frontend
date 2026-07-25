@@ -18,7 +18,11 @@ export async function resetPassword(
 
   try {
     const validData = parse(resetPasswordSchema, rawData);
-
+    const payload = {
+      token: validData.token,
+      newPassword: validData.password,
+      confirmNewPassword: validData.confirmPassword,
+    };
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL}/reset-password`,
       {
@@ -26,7 +30,7 @@ export async function resetPassword(
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(validData),
+        body: JSON.stringify(payload),
         cache: "no-store",
       },
     );
