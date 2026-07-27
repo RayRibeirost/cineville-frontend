@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import InputForm from "../ui/InputForm";
 import Button from "../ui/Button";
+import { masks } from "@/src/utils/masks";
 const EyeIcon = ({ visible }: { visible: boolean }) => {
   const Icon = visible ? FiEye : FiEyeOff;
   return (
@@ -119,6 +120,7 @@ export default function Register() {
               type="text"
               maxLength={14}
               placeholder="CPF "
+              {...masks.cpf}
               value={getValue("cpf")}
               onChange={handleChange}
               className={inputClass(getError("cpf"))}
@@ -134,6 +136,7 @@ export default function Register() {
               name="birthDate"
               type="date"
               value={getValue("birthDate")}
+              {...masks.birthDate}
               onChange={handleChange}
               className={
                 inputClass(getError("birthDate")) + " text-grayScale-400"
@@ -147,6 +150,7 @@ export default function Register() {
               type="text"
               maxLength={15}
               placeholder="Telefone"
+              {...masks.phone}
               value={getValue("phone")}
               onChange={handleChange}
               className={inputClass(getError("phone"))}
@@ -166,6 +170,7 @@ export default function Register() {
               value={getValue("cep")}
               onChange={handleChange}
               className={inputClass(getError("cep"))}
+              {...masks.cep}
             />
           </Field>
           <Field label="Gênero" error={getError("gender")}>
