@@ -1,12 +1,12 @@
 import { BackendSeat, SeatRow } from "../utils/seat-rows";
 
 export type SeatType =
-  | 'comum'
-  | 'preferencial'
-  | 'cadeirante'
-  | 'acompanhante'
-  | 'obesa'
-  | 'indisponivel';
+  | "comum"
+  | "preferencial"
+  | "cadeirante"
+  | "acompanhante"
+  | "obesa"
+  | "indisponivel";
 
 export interface SessionInfo {
   movieTitle: string;
@@ -45,6 +45,7 @@ export interface SeatMapFooterProps {
   session: SessionInfo;
   selectedCount: number;
   onConfirm: () => void;
+  isLoading: boolean;
 }
 
 export interface BackendSession {

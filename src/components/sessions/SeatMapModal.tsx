@@ -9,6 +9,8 @@ import { SeatMapFooter } from "./SeatMapFooter";
 import { SeatGrid } from "./SeatMapGrid";
 import { SeatRow } from "@/src/utils/seat-rows";
 import { createTickets, getSessionDetails } from "@/src/actions/sessionActions";
+import BomboniereModal from "../bomboniere/BomboniereModal";
+import { Product } from "@/src/components/layout/Carousel/ProductCard";
 
 export default function SeatMapModal({
   isOpen,
@@ -25,6 +27,7 @@ export default function SeatMapModal({
   const [loadError, setLoadError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
   const [purchaseError, setPurchaseError] = useState<string | null>(null);
+  const [isOpenBomboniere, setIsOpenBomboniere] = useState(false);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -52,37 +55,217 @@ export default function SeatMapModal({
     0,
   );
 
-  function handleConfirm() {
+  async function handleConfirm() {
     setPurchaseError(null);
+
     startTransition(async () => {
       const { results, allSucceeded } = await createTickets(
         sessionId,
         Array.from(selectedSeats),
       );
-
+      console.log(results);
+      console.log(allSucceeded);
       if (!allSucceeded) {
         const failed = results.filter((r) => !r.success);
+
         setPurchaseError(
-          `Não foi possível reservar: ${failed.map((f) => f.seatNumber).join(", ")}. Tente novamente.`,
+          failed.map((f) => `${f.seatNumber}: ${f.error}`).join("\n"),
         );
+
         return;
       }
 
-      onClose();
+      // abre a bomboniere
+      setIsOpenBomboniere(true);
     });
   }
 
   if (!isOpen) return null;
+  const bebidas: Product[] = [
+    {
+      id: "beb-1",
+      name: "Refrigerante",
+      size: "500 ml",
+      price: 8,
+      limit: 6,
+      image: "/assets/promo-candy.png",
+    },
+    {
+      id: "beb-2",
+      name: "Refrigerante",
+      size: "700 ml",
+      price: 10,
+      limit: 6,
+      image: "/assets/promo-candy.png",
+    },
+    {
+      id: "beb-3",
+      name: "Suco Natural de Laranja",
+      size: "500 ml",
+      price: 10,
+      limit: 6,
+      image: "/assets/promo-candy.png",
+    },
+    {
+      id: "beb-4",
+      name: "Água Mineral",
+      size: "500 ml",
+      price: 5,
+      limit: 6,
+      image: "/assets/promo-candy.png",
+    },
+    {
+      id: "beb-5",
+      name: "Água com Gás",
+      size: "500 ml",
+      price: 5,
+      limit: 6,
+      image: "/assets/promo-candy.png",
+    },
+    {
+      id: "beb-6",
+      name: "Chá Gelado",
+      size: "500 ml",
+      price: 8,
+      limit: 6,
+      image: "/assets/promo-candy.png",
+    },
+    {
+      id: "beb-7",
+      name: "Milk-shake",
+      size: "400 ml",
+      price: 12,
+      limit: 6,
+      image: "/assets/promo-candy.png",
+    },
+    {
+      id: "beb-8",
+      name: "Energético",
+      size: "250 ml",
+      price: 10,
+      limit: 6,
+      image: "/assets/promo-candy.png",
+    },
+  ];
 
+  const comidas: Product[] = [
+    {
+      id: "com-1",
+      name: "Pipoca Salgada",
+      size: "Pequena",
+      price: 8,
+      limit: 6,
+      image: "/assets/promo-candy.png",
+    },
+    {
+      id: "com-4",
+      name: "Pipoca Doce",
+      size: "Pequena",
+      price: 8,
+      limit: 6,
+      image: "/assets/promo-candy.png",
+    },
+
+    {
+      id: "com-7",
+      name: "Pipoca Caramelizada",
+      size: "Pequena",
+      price: 10,
+      limit: 6,
+      image: "/assets/promo-candy.png",
+    },
+
+    {
+      id: "com-10",
+      name: "Nachos com Queijo",
+      size: "60g",
+      price: 14,
+      limit: 6,
+      image: "/assets/promo-candy.png",
+    },
+    {
+      id: "com-11",
+      name: "Hot Dog",
+      size: "Individual",
+      price: 12,
+      limit: 4,
+      image: "/assets/promo-candy.png",
+    },
+  ];
+
+  const combos: Product[] = [
+    {
+      id: "cmb-1",
+      name: "Combo Individual",
+      size: "1 Pipoca P + 1 Refrigerante 500ml",
+      price: 15,
+      limit: 4,
+      image: "/assets/promo-candy.png",
+    },
+    {
+      id: "cmb-2",
+      name: "Combo Casal",
+      size: "1 Pipoca G + 2 Refrigerantes 500ml",
+      price: 32,
+      limit: 3,
+      image: "/assets/promo-candy.png",
+    },
+    {
+      id: "cmb-3",
+      name: "Combo Família",
+      size: "2 Pipocas G + 4 Refrigerantes 500ml",
+      price: 64,
+      limit: 2,
+      image: "/assets/promo-candy.png",
+    },
+    {
+      id: "cmb-4",
+      name: "Combo Caramelizado",
+      size: "1 Pipoca Caramelizada M + 1 Refrigerante 500ml",
+      price: 22,
+      limit: 3,
+      image: "/assets/promo-candy.png",
+    },
+  ];
+
+  const cart = [
+    {
+      id: "cmb-1",
+      name: "Combo Individual",
+      size: "1 Pipoca P + 1 Refrigerante 500ml",
+      price: 15,
+      quantity: 2,
+      limit: 4,
+      image: "/assets/promo-candy.png",
+    },
+    {
+      id: "beb-1",
+      name: "Refrigerante",
+      size: "500 ml",
+      price: 8,
+      quantity: 1,
+      limit: 6,
+      image: "/assets/promo-candy.png",
+    },
+  ];
+
+  const handleAdd = (product: Product) => {
+    console.log("Adicionar:", product);
+  };
+
+  const handleRemove = (productId: string) => {
+    console.log("Remover:", productId);
+  };
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-2 sm:p-4 lg:p-10"
-      role="dialog"
-      aria-modal="true"
-      onClick={onClose}
-    >
+    <>
       <div
-        className="
+        className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-2 sm:p-4 lg:p-10"
+        role="dialog"
+        aria-modal="true"
+        onClick={onClose}
+      >
+        <div
+          className="
         relative
         w-full
         max-w-7xl
@@ -99,24 +282,24 @@ export default function SeatMapModal({
         text-white
         shadow-2xl
       "
-        onClick={(e) => e.stopPropagation()}
-      >
-        <SeatMapHeader onClose={onClose} />
+          onClick={(e) => e.stopPropagation()}
+        >
+          <SeatMapHeader onClose={onClose} />
 
-        {loadError && (
-          <p className="py-8 text-center text-sm text-red-500">{loadError}</p>
-        )}
+          {loadError && (
+            <p className="py-8 text-center text-sm text-red-500">{loadError}</p>
+          )}
 
-        {!loadError && !sessionInfo && (
-          <p className="py-8 text-center text-sm text-neutral-400">
-            Carregando sessão...
-          </p>
-        )}
+          {!loadError && !sessionInfo && (
+            <p className="py-8 text-center text-sm text-neutral-400">
+              Carregando sessão...
+            </p>
+          )}
 
-        {sessionInfo && (
-          <>
-            <div
-              className="
+          {sessionInfo && (
+            <>
+              <div
+                className="
               mt-6
               flex
               flex-col
@@ -125,41 +308,53 @@ export default function SeatMapModal({
               xl:items-start
               xl:justify-between
             "
-            >
-              <div className="w-full xl:flex-1">
-                <SeatGrid
-                  seatRows={seatRows}
-                  selectedSeats={selectedSeats}
-                  toggleSeat={toggleSeat}
-                  screenType={sessionInfo.screenType}
-                  room={sessionInfo.room}
-                />
+              >
+                <div className="w-full xl:flex-1">
+                  <SeatGrid
+                    seatRows={seatRows}
+                    selectedSeats={selectedSeats}
+                    toggleSeat={toggleSeat}
+                    screenType={sessionInfo.screenType}
+                    room={sessionInfo.room}
+                  />
+                </div>
+
+                <div className="w-full xl:w-[320px]">
+                  <SeatMapSidebar
+                    totalSeatsCount={totalSeatsCount}
+                    selectedCount={selectedCount}
+                  />
+                </div>
               </div>
 
-              <div className="w-full xl:w-[320px]">
-                <SeatMapSidebar
-                  totalSeatsCount={totalSeatsCount}
+              {purchaseError && (
+                <p className="mt-4 text-center text-sm text-red-500">
+                  {purchaseError}
+                </p>
+              )}
+
+              <div className="mt-6">
+                <SeatMapFooter
+                  session={sessionInfo}
                   selectedCount={selectedCount}
+                  onConfirm={handleConfirm}
+                  isLoading={isPending}
                 />
               </div>
-            </div>
-
-            {purchaseError && (
-              <p className="mt-4 text-center text-sm text-red-500">
-                {purchaseError}
-              </p>
-            )}
-
-            <div className="mt-6">
-              <SeatMapFooter
-                session={sessionInfo}
-                selectedCount={selectedCount}
-                onConfirm={handleConfirm}
-              />
-            </div>
-          </>
-        )}
+            </>
+          )}
+        </div>
       </div>
-    </div>
+      <BomboniereModal
+        isOpen={isOpenBomboniere}
+        onClose={() => setIsOpenBomboniere(false)}
+        bebidas={bebidas}
+        comidas={comidas}
+        combos={combos}
+        cart={cart}
+        onAdd={handleAdd}
+        onRemove={handleRemove}
+      />
+    </>
   );
 }
