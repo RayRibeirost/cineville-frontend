@@ -1,26 +1,16 @@
-"use client";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 
-import { useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { useAuth } from "@/src/context/AuthContext";
-
-export default function ProtectedLayout({
+export default async function ProtectedLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const { isAuthenticated } = useAuth();
-  const router = useRouter();
+  const token = (await cookies()).get("auth_token")?.value;
 
-  useEffect(() => {
-    if (!isAuthenticated) {
-      router.replace("/login");
-    }
-  }, [isAuthenticated, router]);
-
-  if (!isAuthenticated) {
-    return null;
+  if (!token) {
+    redirect("/login");
   }
 
-  return <>{children}</>;
+  return children;
 }

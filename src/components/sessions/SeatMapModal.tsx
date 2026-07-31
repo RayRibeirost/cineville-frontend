@@ -8,7 +8,8 @@ import { SeatMapSidebar } from "./SeatMapSidebar";
 import { SeatMapFooter } from "./SeatMapFooter";
 import { SeatGrid } from "./SeatMapGrid";
 import { SeatRow } from "@/src/utils/seat-rows";
-import { createTickets, getSessionDetails } from "@/src/actions/sessionActions";
+import { getSessionDetails } from "@/src/actions/sessionActions";
+import { createOrder, type SeatDto } from "@/src/actions/orderAction";
 import BomboniereModal from "../bomboniere/BomboniereModal";
 import { Product } from "@/src/components/layout/Carousel/ProductCard";
 
@@ -59,23 +60,20 @@ export default function SeatMapModal({
     setPurchaseError(null);
 
     startTransition(async () => {
-      const { results, allSucceeded } = await createTickets(
-        sessionId,
-        Array.from(selectedSeats),
-      );
-      console.log(results);
-      console.log(allSucceeded);
-      if (!allSucceeded) {
-        const failed = results.filter((r) => !r.success);
+      const seats: SeatDto[] = Array.from(selectedSeats).map((seatNumber) => ({
+        seatNumber,
+        type: "INTEIRA",
+      }));
 
-        setPurchaseError(
-          failed.map((f) => `${f.seatNumber}: ${f.error}`).join("\n"),
-        );
+      const result = await createOrder(sessionId, seats);
 
+      if (!result.success) {
+        setPurchaseError(result.error);
         return;
       }
 
-      // abre a bomboniere
+      localStorage.setItem("orderId", result.order.id);
+
       setIsOpenBomboniere(true);
     });
   }
