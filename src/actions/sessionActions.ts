@@ -2,7 +2,11 @@
 
 import { cookies } from "next/headers";
 import { buildSeatLayout, SeatRow } from "@/src/utils/seat-rows";
-import { BackendCinema, BackendSession, SessionInfo } from "@/src/types/session-types";
+import {
+  BackendCinema,
+  BackendSession,
+  SessionInfo,
+} from "@/src/types/session-types";
 import { buildAuthHeaders } from "./http";
 
 const MONTHS = [
@@ -118,11 +122,20 @@ export async function createTickets(
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify({ sessionId, seatNumber, type: "FULL" }),
+          body: JSON.stringify({ sessionId, seatNumber, type: "INTEIRA" }),
         });
 
-        const json = await res.json();
+        const body = await res.text();
 
+        if (!res.ok) {
+          return {
+            seatNumber,
+            success: false,
+            error: body,
+          };
+        }
+
+        const json = JSON.parse(body);
         if (!res.ok) {
           return {
             seatNumber,
@@ -135,11 +148,11 @@ export async function createTickets(
         }
 
         return { seatNumber, success: true };
-      } catch {
+      } catch (error) {
         return {
           seatNumber,
           success: false,
-          error: "Erro ao comprar ingresso.",
+          error: error instanceof Error ? error.message : JSON.stringify(error),
         };
       }
     }),

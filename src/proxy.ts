@@ -1,45 +1,8 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-// Rotas públicas (exibidas sem exigir autenticação)
-const publicRoutes = ["/login", "/"];
-
-export default async function proxy(request: NextRequest) {
-  const token = request.cookies.get("auth_token")?.value;
-  const { pathname } = request.nextUrl;
-  const isPublicRoute = publicRoutes.includes(pathname);
-
-  if (token) {
-    const isValid = await validateToken(token);
-
-    if (!isValid) {
-      const response = NextResponse.next();
-      response.cookies.delete("auth_token");
-      return response;
-    }
-  }
-
+export default function proxy(request: NextRequest) {
   return NextResponse.next();
-}
-
-async function validateToken(token: string): Promise<boolean> {
-  if (!token) return false;
-
-  try {
-    const response = await fetch(process.env.NEXT_PUBLIC_API_URL + "/auth", {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      cache: "no-store",
-    });
-
-    return response.ok;
-  } catch (error) {
-    console.error("Erro no Proxy:", error);
-    return false;
-  }
 }
 
 export const config = {

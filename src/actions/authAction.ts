@@ -48,7 +48,17 @@ export async function loginAction(
       path: "/",
     });
 
-    console.log("Token armazenado no cookie:", token);
+    const cookieStore = await cookies();
+
+    cookieStore.set("auth_token", token, {
+      httpOnly: true,
+      secure: false, // apenas para teste
+      sameSite: "lax",
+      path: "/",
+      maxAge: 60 * 60 * 24,
+    });
+
+    console.log("Cookie:", cookieStore.get("auth_token"));
 
     return { success: true, user: userDecoded };
   } catch (err) {
