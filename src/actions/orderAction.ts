@@ -25,17 +25,154 @@ export async function createOrder(sessionId: string, seats: SeatDto[]) {
     cache: "no-store",
   });
 
-  if (!response.ok) {
-    const error = await response.json();
+  const data = await response.json();
 
+  console.log("CREATE ORDER STATUS:", response.status);
+  console.log("CREATE ORDER DATA:", data);
+
+  if (!response.ok) {
     return {
       success: false,
-      error: error.message,
+      error: data.message ?? "Erro ao criar pedido",
     };
   }
 
   return {
     success: true,
-    order: await response.json(),
+    order: data.data ?? data,
+  };
+}
+
+export async function addProductsToOrder(
+  orderId: string,
+  products: {
+    productId: string;
+    quantity: number;
+  }[],
+) {
+  const token = (await cookies()).get("auth_token")?.value;
+
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/orders/${orderId}/products`,
+    {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        products,
+      }),
+    },
+  );
+
+  const data = await response.json();
+
+  console.log("ADD PRODUCTS STATUS:", response.status);
+  console.log("ADD PRODUCTS DATA:", data);
+
+  if (!response.ok) {
+    return {
+      success: false,
+      error: data.message ?? "Erro ao adicionar produtos",
+    };
+  }
+
+  return {
+    success: true,
+    order: data.data ?? data,
+  };
+}
+
+export async function getOrder(orderId: string) {
+  const token = (await cookies()).get("auth_token")?.value;
+
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/orders/${orderId}`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      cache: "no-store",
+    },
+  );
+
+  const data = await response.json();
+
+  console.log("STATUS:", response.status);
+  console.log("ORDER RESPONSE:", data);
+
+  if (!response.ok) {
+    throw new Error(data.message ?? "Erro ao buscar pedido");
+  }
+
+  const order = data.data ?? data;
+  console.log(JSON.stringify(order, null, 2));
+  const formattedOrder = {
+    _id: order._id,
+
+    movie: order.session?.movieTitle ?? "Filme",
+
+    session: order.session?.dateTime ?? "Sessão",
+
+    room: order.session?.roomName ?? "Sala",
+
+    seats: order.seats?.map((seat: any) => seat.seatNumber) ?? [],
+
+    tickets:
+      order.seats?.map((seat: any) => ({
+        id: seat.seatNumber,
+        seatNumber: seat.seatNumber,
+        type: seat.type,
+
+        description: seat.type === "MEIA" ? "Meia entrada" : "Inteira",
+
+        price:
+          seat.type === "MEIA" ? order.session.price / 2 : order.session.price,
+      })) ?? [],
+
+    products:
+      order.products?.map((item: any) => ({
+        id: item.product?._id ?? item.product,
+
+        name: item.product?.name ?? "Produto",
+
+        quantity: item.quantity,
+
+        price: item.pricePaid,
+      })) ?? [],
+
+    discount: order.discountAmount ?? 0,
+
+    total: order.totalAmount ?? 0,
+  };
+
+  console.log("FORMATTED ORDER:", formattedOrder);
+
+  return formattedOrder;
+}
+
+export async function checkoutOrder(orderId: string) {
+  const token = (await cookies()).get("auth_token")?.value;
+
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/orders/${orderId}/checkout`,
+    {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    },
+  );
+
+  const data = await response.json();
+
+  console.log("STATUS:", response.status);
+  console.log("BACKEND RESPONSE:", data);
+
+  return {
+    success: true,
+    orderId: "MOCK-12345",
+    message: "Pedido criado com sucesso",
   };
 }

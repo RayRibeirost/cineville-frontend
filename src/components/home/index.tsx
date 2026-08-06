@@ -5,8 +5,6 @@ import PromoCandy from "@/src/components/home/PromoCandy";
 import Footer from "@/src/components/layout/Footer/Footer";
 import { getAllMovies } from "@/src/actions/movieActions";
 
-import OrderConfirmedClient from "../confirmation/OrderConfirmedClient";
-
 export default async function HomePage() {
   const result = await getAllMovies();
   const movies = result.success ? result.data : [];
@@ -19,8 +17,6 @@ export default async function HomePage() {
       <MovieCarousel title="Em Cartazes" movies={movies} />
       <MovieCarousel title="Lançamentos" movies={movies} />
       <PromoCandy />
-
-      <OrderConfirmedClient />
 
       <Footer />
     </>

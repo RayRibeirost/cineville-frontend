@@ -13,7 +13,6 @@ export async function createPayment(
     orderId,
     method,
   };
-  console.log(body);
   const response = await fetch(`${API_URL}/payments`, {
     method: "POST",
     headers: {
@@ -31,7 +30,7 @@ export async function createPayment(
   if (!response.ok) {
     throw new Error(data.message);
   }
-  console.log("API RESPONSE", data);
+
   return data;
 }
 

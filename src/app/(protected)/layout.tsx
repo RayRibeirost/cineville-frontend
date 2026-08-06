@@ -1,6 +1,6 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-
+import { OrderProvider } from "@/src/context/OrderContext";
 export default async function ProtectedLayout({
   children,
 }: {
@@ -12,5 +12,5 @@ export default async function ProtectedLayout({
     redirect("/login");
   }
 
-  return children;
+  return <OrderProvider>{children}</OrderProvider>;
 }

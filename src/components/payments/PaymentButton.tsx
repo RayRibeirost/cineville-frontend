@@ -9,6 +9,7 @@ interface PaymentButtonsProps {
   onConfirm: () => void;
   onBack: () => void;
   onCancel: () => void;
+  showConfirm?: boolean;
 }
 
 export default function PaymentButtons({
@@ -36,7 +37,10 @@ export default function PaymentButtons({
         <Button
           type="button"
           disabled={disabled || loading}
-          onClick={onConfirm}
+          onClick={() => {
+            console.log("clicou no botão");
+            onConfirm();
+          }}
         >
           {loading ? (
             <>

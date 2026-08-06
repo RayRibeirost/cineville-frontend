@@ -5,6 +5,12 @@ interface Props {
 }
 
 export default function PurchaseSummary({ purchase }: Props) {
+  const formatCurrency = (value: number) =>
+    new Intl.NumberFormat("pt-BR", {
+      style: "currency",
+      currency: "BRL",
+    }).format(value / 100);
+
   return (
     <aside className="rounded-xl bg-zinc-900 border border-zinc-800 p-6">
       <h2 className="text-lg font-semibold mb-6">Resumo da Compra</h2>
@@ -24,7 +30,7 @@ export default function PurchaseSummary({ purchase }: Props) {
 
         <p>
           <span className="text-zinc-400">Assentos:</span>{" "}
-          {purchase.seats.join(", ")}
+          {purchase.seats?.join(", ") ?? "Nenhum assento"}
         </p>
       </div>
 
@@ -33,16 +39,21 @@ export default function PurchaseSummary({ purchase }: Props) {
       <div>
         <h3 className="text-sm font-semibold mb-3">Ingressos</h3>
 
-        {purchase.tickets.map((ticket) => (
-          <div key={ticket.id} className="flex justify-between mb-2">
-            <span>{ticket.description}</span>
+        {purchase.tickets?.map((ticket, index) => (
+          <div
+            key={ticket.id ?? ticket.seatNumber ?? index}
+            className="flex justify-between mb-2"
+          >
+            <span>
+              {ticket.description ?? `${ticket.type} - ${ticket.seatNumber}`}
+            </span>
 
-            <span>R$ {ticket.price.toFixed(2)}</span>
+            <span>{formatCurrency(ticket.price ?? 0)}</span>
           </div>
         ))}
       </div>
 
-      {!!purchase.products.length && (
+      {!!purchase.products?.length && (
         <>
           <hr className="my-6 border-zinc-800" />
 
@@ -53,7 +64,7 @@ export default function PurchaseSummary({ purchase }: Props) {
               <div key={product.id} className="flex justify-between mb-2">
                 <span>{product.name}</span>
 
-                <span>R$ {product.price.toFixed(2)}</span>
+                <span>{formatCurrency(product.price ?? 0)}</span>
               </div>
             ))}
           </div>
@@ -67,14 +78,14 @@ export default function PurchaseSummary({ purchase }: Props) {
           <span>Descontos</span>
 
           <span className="text-green-500">
-            - R$ {purchase.discount.toFixed(2)}
+            - R$ {formatCurrency(purchase.discount ?? 0)}
           </span>
         </div>
 
         <div className="flex justify-between text-lg font-bold text-red-500">
           <span>Total</span>
 
-          <span>R$ {purchase.total.toFixed(2)}</span>
+          <span>R$ {formatCurrency(purchase.total ?? 0)}</span>
         </div>
       </div>
     </aside>
