@@ -146,7 +146,7 @@ export default function PaymentPage({
       }
     }
     createPix();
-  }, [paymentMethod, order?._id]);
+  }, [paymentMethod, order?._id, payment]);
 
   useEffect(() => {
     if (!payment?._id || !order) return;

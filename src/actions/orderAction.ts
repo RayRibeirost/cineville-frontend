@@ -7,6 +7,23 @@ export interface SeatDto {
   type: "INTEIRA" | "MEIA";
 }
 
+interface OrderSeat {
+  seatNumber: string;
+  type: "INTEIRA" | "MEIA";
+}
+
+interface OrderProduct {
+  product?:
+    | {
+        _id: string;
+        name: string;
+      }
+    | string;
+
+  quantity: number;
+  pricePaid: number;
+}
+
 export async function createOrder(sessionId: string, seats: SeatDto[]) {
   const cookieStore = await cookies();
 
@@ -117,10 +134,10 @@ export async function getOrder(orderId: string) {
 
     room: order.session?.roomName ?? "Sala",
 
-    seats: order.seats?.map((seat: any) => seat.seatNumber) ?? [],
+    seats: order.seats?.map((seat: OrderSeat) => seat.seatNumber) ?? [],
 
     tickets:
-      order.seats?.map((seat: any) => ({
+      order.seats?.map((seat: OrderSeat) => ({
         id: seat.seatNumber,
         seatNumber: seat.seatNumber,
         type: seat.type,
@@ -128,14 +145,16 @@ export async function getOrder(orderId: string) {
         description: seat.type === "MEIA" ? "Meia entrada" : "Inteira",
 
         price:
-          seat.type === "MEIA" ? order.session.price / 2 : order.session.price,
+          seat.type === "MEIA"
+            ? (order.session?.price ?? 0) / 2
+            : (order.session?.price ?? 0),
       })) ?? [],
 
     products:
-      order.products?.map((item: any) => ({
-        id: item.product?._id ?? item.product,
+      order.products?.map((item: OrderProduct) => ({
+        id: typeof item.product === "object" ? item.product._id : item.product,
 
-        name: item.product?.name ?? "Produto",
+        name: typeof item.product === "object" ? item.product.name : "Produto",
 
         quantity: item.quantity,
 
@@ -146,8 +165,6 @@ export async function getOrder(orderId: string) {
 
     total: order.totalAmount ?? 0,
   };
-
-  console.log("FORMATTED ORDER:", formattedOrder);
 
   return formattedOrder;
 }

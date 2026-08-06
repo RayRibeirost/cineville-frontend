@@ -3,6 +3,7 @@
 import { Copy, QrCode } from "lucide-react";
 import { useState } from "react";
 import { usePixTimer } from "@/src/hooks/usePixTimer";
+import Image from "next/image";
 interface PixPaymentProps {
   qrCode?: string;
   copyPasteCode?: string;
@@ -41,10 +42,12 @@ export default function PixPayment({
       <div className="flex flex-col items-center">
         <div className="flex h-56 w-56 items-center justify-center rounded-xl border border-dashed border-zinc-700 bg-white">
           {qrCode ? (
-            <img
+            <Image
               src={qrCode}
-              alt="QR Code PIX"
-              className="h-full w-full rounded-xl object-contain"
+              alt="QR Code Pix"
+              width={200}
+              height={200}
+              unoptimized
             />
           ) : (
             <QrCode size={120} className="text-zinc-400" />
