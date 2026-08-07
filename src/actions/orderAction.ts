@@ -85,9 +85,6 @@ export async function addProductsToOrder(
 
   const data = await response.json();
 
-  console.log("ADD PRODUCTS STATUS:", response.status);
-  console.log("ADD PRODUCTS DATA:", data);
-
   if (!response.ok) {
     return {
       success: false,
@@ -115,9 +112,6 @@ export async function getOrder(orderId: string) {
   );
 
   const data = await response.json();
-
-  console.log("STATUS:", response.status);
-  console.log("ORDER RESPONSE:", data);
 
   if (!response.ok) {
     throw new Error(data.message ?? "Erro ao buscar pedido");
