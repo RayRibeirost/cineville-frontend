@@ -21,7 +21,7 @@ export interface SessionInfo {
 
   screenType: string;
 
-  price: number;
+  price?: number;
 }
 
 export interface SeatProps {
