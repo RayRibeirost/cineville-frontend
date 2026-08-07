@@ -212,7 +212,9 @@ export default function SeatMapModal({
             seatNumber: seat.seatNumber,
             type: seat.type,
             price:
-              seat.type === "MEIA" ? sessionInfo.price / 2 : sessionInfo.price,
+              seat.type === "MEIA"
+                ? (sessionInfo.price ?? 0) / 2
+                : (sessionInfo.price ?? 0),
           })),
 
           products: [],
