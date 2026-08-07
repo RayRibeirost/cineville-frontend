@@ -19,4 +19,18 @@ export const masks = {
     mask: "__/__/____",
     replacement: { _: /\d/ },
   },
+  cardNumber: {
+    mask: "____ ____ ____ ____ ___",
+    replacement: { _: /\d/ },
+  } satisfies Pick<MaskOptions, "mask" | "replacement">,
+
+  cardExpiry: {
+    mask: "__/__",
+    replacement: { _: /\d/ },
+  } satisfies Pick<MaskOptions, "mask" | "replacement">,
+
+  cardCvv: {
+    mask: "____",
+    replacement: { _: /\d/ },
+  } satisfies Pick<MaskOptions, "mask" | "replacement">,
 };

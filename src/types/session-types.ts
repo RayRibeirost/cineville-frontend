@@ -1,21 +1,27 @@
 import { BackendSeat, SeatRow } from "../utils/seat-rows";
+import { SelectedSeat } from "@/src/hooks/useSeatSelection";
 
 export type SeatType =
-  | 'comum'
-  | 'preferencial'
-  | 'cadeirante'
-  | 'acompanhante'
-  | 'obesa'
-  | 'indisponivel';
+  | "comum"
+  | "preferencial"
+  | "cadeirante"
+  | "acompanhante"
+  | "obesa"
+  | "indisponivel";
 
 export interface SessionInfo {
   movieTitle: string;
   city: string;
   date: string;
   time: string;
+
   audio: string;
+
   room: string;
+
   screenType: string;
+
+  price?: number;
 }
 
 export interface SeatProps {
@@ -30,8 +36,12 @@ export interface SeatMapHeaderProps {
 
 export interface SeatGridProps {
   seatRows: SeatRow[];
-  selectedSeats: Set<string>;
-  toggleSeat: (seatId: string, type: SeatType) => void;
+  selectedSeats: SelectedSeat[];
+  toggleSeat: (
+    seatNumber: string,
+    seatType: SeatType,
+    ticketType?: "INTEIRA" | "MEIA",
+  ) => void;
   screenType: string;
   room: string;
 }
@@ -45,6 +55,7 @@ export interface SeatMapFooterProps {
   session: SessionInfo;
   selectedCount: number;
   onConfirm: () => void;
+  isLoading: boolean;
 }
 
 export interface BackendSession {

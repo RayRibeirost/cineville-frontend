@@ -1,4 +1,3 @@
-import clsx from "clsx";
 import Header from "@/src/components/layout/Header";
 import Hero from "@/src/components/home/Hero";
 import MovieCarousel from "@/src/components/layout/Carousel/MovieCarousel";
@@ -12,24 +11,14 @@ export default async function HomePage() {
 
   return (
     <>
-      <div
-        className={clsx(
-          "flex flex-col items-center justify-center min-h-screen w-full p-4",
-          "bg-[url('/assets/img-hero.png')] bg-cover bg-center",
-        )}
-      >
-        <Header />
-        <main className="flex flex-col min-h-screen w-full p-4">
-          <Hero />
-        </main>
-      </div>
+      <Header />
+      <Hero />
 
-      <div className="bg-deep-black flex flex-col items-center justify-center">
-        <MovieCarousel title="Em Cartazes" movies={movies} />
-        <MovieCarousel title="Lançamentos" movies={movies} />
-        <PromoCandy />
-        <Footer />
-      </div>
+      <MovieCarousel title="Em Cartazes" movies={movies} />
+      <MovieCarousel title="Lançamentos" movies={movies} />
+      <PromoCandy />
+
+      <Footer />
     </>
   );
 }

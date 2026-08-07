@@ -5,9 +5,8 @@ import { useRouter } from "next/navigation";
 import Header from "@/src/components/layout/Header";
 import Footer from "@/src/components/layout/Footer/Footer";
 import { ShoppingCart, ArrowBack } from "@mui/icons-material";
-import ProductCarousel, {
-  CartItem,
-} from "@/src/components/layout/Carousel/ProductCarousel";
+import ProductCarousel from "@/src/components/layout/Carousel/ProductCarousel";
+import type { CartItem } from "@/src/types/cart";
 import { Product } from "@/src/components/layout/Carousel/ProductCard";
 import Button from "@/src/components/ui/Button";
 

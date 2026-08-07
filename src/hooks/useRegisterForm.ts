@@ -67,7 +67,7 @@ export function useRegisterForm(setIsLogin?: (value: boolean) => void) {
     }
 
     prevSuccess.current = state.success;
-  }, [state.success, setIsLogin]);
+  }, [state.success, setIsLogin, router]);
 
   const handleCloseModal = () => {
     setShowSuccessModal(false);

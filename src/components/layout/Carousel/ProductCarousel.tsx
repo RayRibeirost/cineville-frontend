@@ -4,10 +4,7 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay } from "swiper/modules";
 import "swiper/css";
 import ProductCard, { Product } from "./ProductCard";
-
-export interface CartItem extends Product {
-  quantity: number;
-}
+import type { CartItem } from "@/src/types/cart";
 
 export default function ProductCarousel({
   title,
