@@ -10,6 +10,7 @@ export interface SeatCellData {
   seatNumber: string;
   type: SeatType;
   isOccupied: boolean;
+  id?: string;
 }
 
 export interface SeatRow {

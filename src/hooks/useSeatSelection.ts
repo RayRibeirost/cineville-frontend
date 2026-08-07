@@ -2,31 +2,45 @@
 
 import { useState } from "react";
 import { SeatType } from "../types/session-types";
-
+export interface SelectedSeat {
+  seatNumber: string;
+  type: "INTEIRA" | "MEIA";
+}
 export function useSeatSelection(initialSelected: string[] = []) {
-  const [selectedSeats, setSelectedSeats] = useState<Set<string>>(
-    new Set(initialSelected),
+  const [selectedSeats, setSelectedSeats] = useState<SelectedSeat[]>(
+    initialSelected.map((seat) => ({
+      seatNumber: seat,
+      type: "INTEIRA",
+    })),
   );
 
-  const toggleSeat = (seatId: string, type: SeatType) => {
-    if (type === "indisponivel") return;
+  const toggleSeat = (
+    seatNumber: string,
+    seatType: SeatType,
+    ticketType: "INTEIRA" | "MEIA" = "INTEIRA",
+  ) => {
+    if (seatType === "indisponivel") return;
 
     setSelectedSeats((prev) => {
-      const next = new Set(prev);
+      const exists = prev.find((seat) => seat.seatNumber === seatNumber);
 
-      if (next.has(seatId)) {
-        next.delete(seatId);
-      } else {
-        next.add(seatId);
+      if (exists) {
+        return prev.filter((seat) => seat.seatNumber !== seatNumber);
       }
 
-      return next;
+      return [
+        ...prev,
+        {
+          seatNumber,
+          type: ticketType,
+        },
+      ];
     });
   };
 
   return {
     selectedSeats,
-    selectedCount: selectedSeats.size,
+    selectedCount: selectedSeats.length,
     toggleSeat,
   };
 }

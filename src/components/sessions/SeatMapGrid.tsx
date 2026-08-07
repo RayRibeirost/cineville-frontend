@@ -47,8 +47,9 @@ export function SeatGrid({
                       ? "indisponivel"
                       : seat.type;
 
-                    const isSelected = selectedSeats.has(seat.seatNumber);
-
+                    const isSelected = selectedSeats.some(
+                      (selected) => selected.seatNumber === seat.id,
+                    );
                     return (
                       <Seat
                         key={seat.seatNumber}

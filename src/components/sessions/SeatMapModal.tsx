@@ -12,7 +12,11 @@ import { getSessionDetails } from "@/src/actions/sessionActions";
 import { createOrder, type SeatDto } from "@/src/actions/orderAction";
 import BomboniereModal from "../bomboniere/BomboniereModal";
 import { Product } from "@/src/components/layout/Carousel/ProductCard";
-
+import { addProductsToOrder } from "@/src/actions/orderAction";
+import type { CartItem } from "@/src/types/cart";
+import { getBomboniere } from "../../actions/productAction";
+import { useRouter } from "next/navigation";
+import { useOrder } from "@/src/context/OrderContext";
 export default function SeatMapModal({
   isOpen,
   onClose,
@@ -22,6 +26,8 @@ export default function SeatMapModal({
   onClose: () => void;
   sessionId: string;
 }) {
+  const router = useRouter();
+  const { setOrder } = useOrder();
   const { selectedSeats, selectedCount, toggleSeat } = useSeatSelection();
   const [sessionInfo, setSessionInfo] = useState<SessionInfo | null>(null);
   const [seatRows, setSeatRows] = useState<SeatRow[]>([]);
@@ -29,7 +35,51 @@ export default function SeatMapModal({
   const [isPending, startTransition] = useTransition();
   const [purchaseError, setPurchaseError] = useState<string | null>(null);
   const [isOpenBomboniere, setIsOpenBomboniere] = useState(false);
+  const [orderId, setOrderId] = useState("");
+  const [cart, setCart] = useState<CartItem[]>([]);
 
+  const [bebidas, setBebidas] = useState<Product[]>([]);
+  const [comidas, setComidas] = useState<Product[]>([]);
+  const [combos, setCombos] = useState<Product[]>([]);
+  const handleCheckout = async (cart: CartItem[]) => {
+    try {
+      if (!orderId) return;
+
+      const products = cart.map((item) => ({
+        productId: item.id,
+        quantity: item.quantity,
+      }));
+
+      const result = await addProductsToOrder(orderId, products);
+
+      if (!result.success) {
+        alert(result.error);
+        return;
+      }
+
+      setOrder((prev) => {
+        if (!prev) return prev;
+
+        return {
+          ...prev,
+          products: cart.map((item) => ({
+            name: item.name,
+            quantity: item.quantity,
+            price: item.price,
+          })),
+          total: result.order.total,
+        };
+      });
+
+      setIsOpenBomboniere(false);
+      onClose();
+      console.log("INDO PARA PAYMENT:", orderId);
+      console.log("OrderId:", orderId);
+      router.push(`/payment/${orderId}`);
+    } catch (error) {
+      console.error(error);
+    }
+  };
   useEffect(() => {
     if (!isOpen) return;
 
@@ -51,208 +101,181 @@ export default function SeatMapModal({
     };
   }, [isOpen, sessionId]);
 
+  useEffect(() => {
+    async function loadProducts() {
+      const result = await getBomboniere();
+
+      if (!result.success || !result.products) {
+        console.error(result.error);
+        return;
+      }
+
+      const products = result.products;
+      console.log("Produtos:", products);
+
+      console.log(
+        products.map((p) => ({
+          nome: p.name,
+          categoria: p.category,
+        })),
+      );
+      setBebidas(
+        products
+          .filter((p) => p.category === "BEBIDAS")
+          .map((p) => ({
+            id: p._id,
+            name: p.name,
+            size: p.size ?? "",
+            price: p.price / 100,
+            limit: p.maxLimit,
+            image: p.imageUrl,
+          })),
+      );
+
+      setComidas(
+        products
+          .filter((p) => p.category === "COMIDAS")
+          .map((p) => ({
+            id: p._id,
+            name: p.name,
+            size: p.size ?? "",
+            price: p.price / 100,
+            limit: p.maxLimit,
+            image: p.imageUrl,
+          })),
+      );
+
+      setCombos(
+        products
+          .filter((p) => p.category === "COMBOS")
+          .map((p) => ({
+            id: p._id,
+            name: p.name,
+            size: p.size ?? "",
+            price: p.price / 100,
+            limit: p.maxLimit,
+            image: p.imageUrl,
+          })),
+      );
+    }
+
+    if (isOpenBomboniere) {
+      loadProducts();
+    }
+  }, [isOpenBomboniere]);
   const totalSeatsCount = seatRows.reduce(
     (total, { seats }) => total + seats.filter((s) => s !== null).length,
     0,
   );
 
   async function handleConfirm() {
+    console.log("SESSION ID:", sessionId);
+    console.log("SESSION INFO:", sessionInfo);
+    console.log("SELECTED SEATS:", selectedSeats);
+    if (!sessionInfo) {
+      setPurchaseError("Sessão não encontrada.");
+      return;
+    }
+
+    if (selectedSeats.length === 0) {
+      setPurchaseError("Selecione pelo menos um assento.");
+      return;
+    }
+
     setPurchaseError(null);
 
     startTransition(async () => {
-      const seats: SeatDto[] = Array.from(selectedSeats).map((seatNumber) => ({
-        seatNumber,
-        type: "INTEIRA",
-      }));
+      try {
+        const seats: SeatDto[] = selectedSeats.map((seat) => ({
+          seatNumber: seat.seatNumber,
+          type: seat.type,
+        }));
 
-      const result = await createOrder(sessionId, seats);
+        const result = await createOrder(sessionId, seats);
 
-      if (!result.success) {
-        setPurchaseError(result.error);
-        return;
+        if (!result.success || !result.order) {
+          setPurchaseError(result.error ?? "Erro ao criar pedido.");
+          return;
+        }
+
+        const order = result.order;
+
+        const orderData = {
+          _id: order._id,
+          movie: sessionInfo.movieTitle,
+          session: `${sessionInfo.date} às ${sessionInfo.time}`,
+          room: sessionInfo.room,
+
+          seats: selectedSeats.map((seat) => seat.seatNumber),
+
+          tickets: selectedSeats.map((seat) => ({
+            seatNumber: seat.seatNumber,
+            type: seat.type,
+            price:
+              seat.type === "MEIA"
+                ? (sessionInfo.price ?? 0) / 2
+                : (sessionInfo.price ?? 0),
+          })),
+
+          products: [],
+
+          total: order.total,
+          discount: 0,
+        };
+
+        setOrder(orderData);
+
+        setOrderId(order._id);
+
+        setIsOpenBomboniere(true);
+      } catch (error) {
+        console.error("Erro ao criar pedido:", error);
+
+        setPurchaseError("Não foi possível criar o pedido.");
       }
-
-      localStorage.setItem("orderId", result.order.id);
-
-      setIsOpenBomboniere(true);
     });
   }
 
   if (!isOpen) return null;
-  const bebidas: Product[] = [
-    {
-      id: "beb-1",
-      name: "Refrigerante",
-      size: "500 ml",
-      price: 8,
-      limit: 6,
-      image: "/assets/promo-candy.png",
-    },
-    {
-      id: "beb-2",
-      name: "Refrigerante",
-      size: "700 ml",
-      price: 10,
-      limit: 6,
-      image: "/assets/promo-candy.png",
-    },
-    {
-      id: "beb-3",
-      name: "Suco Natural de Laranja",
-      size: "500 ml",
-      price: 10,
-      limit: 6,
-      image: "/assets/promo-candy.png",
-    },
-    {
-      id: "beb-4",
-      name: "Água Mineral",
-      size: "500 ml",
-      price: 5,
-      limit: 6,
-      image: "/assets/promo-candy.png",
-    },
-    {
-      id: "beb-5",
-      name: "Água com Gás",
-      size: "500 ml",
-      price: 5,
-      limit: 6,
-      image: "/assets/promo-candy.png",
-    },
-    {
-      id: "beb-6",
-      name: "Chá Gelado",
-      size: "500 ml",
-      price: 8,
-      limit: 6,
-      image: "/assets/promo-candy.png",
-    },
-    {
-      id: "beb-7",
-      name: "Milk-shake",
-      size: "400 ml",
-      price: 12,
-      limit: 6,
-      image: "/assets/promo-candy.png",
-    },
-    {
-      id: "beb-8",
-      name: "Energético",
-      size: "250 ml",
-      price: 10,
-      limit: 6,
-      image: "/assets/promo-candy.png",
-    },
-  ];
-
-  const comidas: Product[] = [
-    {
-      id: "com-1",
-      name: "Pipoca Salgada",
-      size: "Pequena",
-      price: 8,
-      limit: 6,
-      image: "/assets/promo-candy.png",
-    },
-    {
-      id: "com-4",
-      name: "Pipoca Doce",
-      size: "Pequena",
-      price: 8,
-      limit: 6,
-      image: "/assets/promo-candy.png",
-    },
-
-    {
-      id: "com-7",
-      name: "Pipoca Caramelizada",
-      size: "Pequena",
-      price: 10,
-      limit: 6,
-      image: "/assets/promo-candy.png",
-    },
-
-    {
-      id: "com-10",
-      name: "Nachos com Queijo",
-      size: "60g",
-      price: 14,
-      limit: 6,
-      image: "/assets/promo-candy.png",
-    },
-    {
-      id: "com-11",
-      name: "Hot Dog",
-      size: "Individual",
-      price: 12,
-      limit: 4,
-      image: "/assets/promo-candy.png",
-    },
-  ];
-
-  const combos: Product[] = [
-    {
-      id: "cmb-1",
-      name: "Combo Individual",
-      size: "1 Pipoca P + 1 Refrigerante 500ml",
-      price: 15,
-      limit: 4,
-      image: "/assets/promo-candy.png",
-    },
-    {
-      id: "cmb-2",
-      name: "Combo Casal",
-      size: "1 Pipoca G + 2 Refrigerantes 500ml",
-      price: 32,
-      limit: 3,
-      image: "/assets/promo-candy.png",
-    },
-    {
-      id: "cmb-3",
-      name: "Combo Família",
-      size: "2 Pipocas G + 4 Refrigerantes 500ml",
-      price: 64,
-      limit: 2,
-      image: "/assets/promo-candy.png",
-    },
-    {
-      id: "cmb-4",
-      name: "Combo Caramelizado",
-      size: "1 Pipoca Caramelizada M + 1 Refrigerante 500ml",
-      price: 22,
-      limit: 3,
-      image: "/assets/promo-candy.png",
-    },
-  ];
-
-  const cart = [
-    {
-      id: "cmb-1",
-      name: "Combo Individual",
-      size: "1 Pipoca P + 1 Refrigerante 500ml",
-      price: 15,
-      quantity: 2,
-      limit: 4,
-      image: "/assets/promo-candy.png",
-    },
-    {
-      id: "beb-1",
-      name: "Refrigerante",
-      size: "500 ml",
-      price: 8,
-      quantity: 1,
-      limit: 6,
-      image: "/assets/promo-candy.png",
-    },
-  ];
 
   const handleAdd = (product: Product) => {
-    console.log("Adicionar:", product);
+    setCart((current) => {
+      const existing = current.find((item) => item.id === product.id);
+
+      if (existing) {
+        return current.map((item) =>
+          item.id === product.id
+            ? {
+                ...item,
+                quantity: Math.min(item.quantity + 1, product.limit),
+              }
+            : item,
+        );
+      }
+
+      return [
+        ...current,
+        {
+          ...product,
+          quantity: 1,
+        },
+      ];
+    });
   };
 
   const handleRemove = (productId: string) => {
-    console.log("Remover:", productId);
+    setCart((current) =>
+      current
+        .map((item) =>
+          item.id === productId
+            ? {
+                ...item,
+                quantity: item.quantity - 1,
+              }
+            : item,
+        )
+        .filter((item) => item.quantity > 0),
+    );
   };
   return (
     <>
@@ -352,6 +375,7 @@ export default function SeatMapModal({
         cart={cart}
         onAdd={handleAdd}
         onRemove={handleRemove}
+        onCheckout={handleCheckout}
       />
     </>
   );

@@ -32,10 +32,7 @@ export default function OrderConfirmedModal({
   if (!isOpen) return null;
 
   return createPortal(
-    <div
-      className="fixed inset-0 z-50 flex items-center overflow-y-auto justify-center bg-deep-black/90 backdrop-blur-sm p-4"
-      onClick={onClose}
-    >
+    <div className="fixed inset-0 z-50 flex items-center overflow-y-auto justify-center bg-deep-black/90 backdrop-blur-sm p-4">
       <div
         className="relative w-full max-w-5xl max-h-[90vh] rounded-3xl bg-background "
         onClick={(e) => e.stopPropagation()}

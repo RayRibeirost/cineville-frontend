@@ -3,7 +3,8 @@ export type PaymentMethod = "credit" | "debit" | "pix";
 export interface Ticket {
   id: string;
   description: string;
-  quantity: number;
+  seatNumber: string;
+  type: "INTEIRA" | "MEIA";
   price: number;
 }
 

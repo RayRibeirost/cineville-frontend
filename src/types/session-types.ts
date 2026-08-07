@@ -1,4 +1,5 @@
 import { BackendSeat, SeatRow } from "../utils/seat-rows";
+import { SelectedSeat } from "@/src/hooks/useSeatSelection";
 
 export type SeatType =
   | "comum"
@@ -13,9 +14,14 @@ export interface SessionInfo {
   city: string;
   date: string;
   time: string;
+
   audio: string;
+
   room: string;
+
   screenType: string;
+
+  price?: number;
 }
 
 export interface SeatProps {
@@ -30,8 +36,12 @@ export interface SeatMapHeaderProps {
 
 export interface SeatGridProps {
   seatRows: SeatRow[];
-  selectedSeats: Set<string>;
-  toggleSeat: (seatId: string, type: SeatType) => void;
+  selectedSeats: SelectedSeat[];
+  toggleSeat: (
+    seatNumber: string,
+    seatType: SeatType,
+    ticketType?: "INTEIRA" | "MEIA",
+  ) => void;
   screenType: string;
   room: string;
 }

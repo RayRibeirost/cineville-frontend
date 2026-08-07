@@ -1,9 +1,8 @@
 "use client";
 import CloseIcon from "@mui/icons-material/Close";
 import { ShoppingCart } from "@mui/icons-material";
-import ProductCarousel, {
-  CartItem,
-} from "@/src/components/layout/Carousel/ProductCarousel";
+import ProductCarousel from "@/src/components/layout/Carousel/ProductCarousel";
+import type { CartItem } from "@/src/types/cart";
 import { Product } from "@/src/components/layout/Carousel/ProductCard";
 import Button from "@/src/components/ui/Button";
 import { useState, useEffect } from "react";
@@ -16,6 +15,7 @@ interface BomboniereModalProps {
   cart: CartItem[];
   onAdd: (product: Product) => void;
   onRemove: (id: string) => void;
+  onCheckout: (cart: CartItem[]) => void;
 }
 export default function BomboniereModal({
   isOpen,
@@ -26,6 +26,7 @@ export default function BomboniereModal({
   cart,
   onAdd,
   onRemove,
+  onCheckout,
 }: BomboniereModalProps) {
   const [cartOpen, setCartOpen] = useState(false);
 
@@ -175,7 +176,7 @@ export default function BomboniereModal({
                       R$ {totalPrice.toFixed(2).replace(".", ",")}{" "}
                     </span>{" "}
                   </div>{" "}
-                  <Button className="w-full" onClick={onClose}>
+                  <Button className="w-full" onClick={() => onCheckout(cart)}>
                     {" "}
                     Finalizar Pedido{" "}
                   </Button>{" "}
@@ -291,7 +292,7 @@ export default function BomboniereModal({
                   R$ {totalPrice.toFixed(2).replace(".", ",")}{" "}
                 </span>{" "}
               </div>{" "}
-              <Button className="w-full" onClick={onClose}>
+              <Button className="w-full" onClick={() => onCheckout(cart)}>
                 {" "}
                 Finalizar Pedido{" "}
               </Button>{" "}
