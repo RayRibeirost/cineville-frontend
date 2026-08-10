@@ -8,7 +8,11 @@ import MovieCard from "./MovieCard";
 import HeadingContent from "@/src/components/ui/HeadingContent";
 import { MovieCarouselProps } from "@/src/types/movie-types";
 
-export default function MovieCarousel({ title, movies }: MovieCarouselProps) {
+export default function MovieCarousel({
+  title,
+  movies,
+  idSection,
+}: MovieCarouselProps) {
   if (!movies || movies.length === 0) {
     return (
       <section className="mx-auto w-full max-w-7xl px-4 py-12 text-center text-zinc-500">
@@ -18,7 +22,10 @@ export default function MovieCarousel({ title, movies }: MovieCarouselProps) {
   }
 
   return (
-    <section className="mx-auto w-full max-w-7xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-20">
+    <section
+      id={idSection}
+      className="mx-auto w-full max-w-7xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-20"
+    >
       <HeadingContent title={title} />
 
       <Swiper
