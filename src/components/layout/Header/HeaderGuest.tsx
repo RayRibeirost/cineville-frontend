@@ -18,7 +18,7 @@ export default function HeaderGuest() {
     <div className="flex items-center gap-2 sm:gap-3">
       <div className="hidden sm:block">
         <Button variant="primary" onClick={handleLogin}>
-          Entrar
+          Login
         </Button>
       </div>
 
