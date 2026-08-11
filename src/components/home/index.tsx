@@ -4,6 +4,7 @@ import MovieCarousel from "@/src/components/layout/Carousel/MovieCarousel";
 import PromoCandy from "@/src/components/home/PromoCandy";
 import Footer from "@/src/components/layout/Footer/Footer";
 import { getAllMovies } from "@/src/actions/movieActions";
+import { clsx } from "clsx";
 
 export default async function HomePage() {
   const result = await getAllMovies();
@@ -11,11 +12,26 @@ export default async function HomePage() {
 
   return (
     <>
-      <Header />
-      <Hero />
+      <div
+        className={clsx(
+          "flex flex-col  min-h-screen w-full  p-4",
+          "bg-[url('/assets/img-hero.png')] bg-cover bg-center",
+        )}
+      >
+        <Header />
+        <Hero />
+      </div>
 
-      <MovieCarousel title="Em Cartazes" movies={movies} />
-      <MovieCarousel title="Lançamentos" movies={movies} />
+      <MovieCarousel
+        idSection="EmCartazes"
+        title="Em Cartazes"
+        movies={movies}
+      />
+      <MovieCarousel
+        idSection="Lancamentos"
+        title="Lançamentos"
+        movies={movies}
+      />
       <PromoCandy />
 
       <Footer />

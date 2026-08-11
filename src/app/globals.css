@@ -96,6 +96,10 @@
   print-color-adjust: exact !important;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 body {
   background-color: var(--color-deep-black) !important;
   font-family: var(--font-inter) !important;

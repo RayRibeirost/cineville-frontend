@@ -4,7 +4,7 @@ interface Props {
   purchase: Summary;
 }
 
-export default function PurchaseSummary({ purchase }: Props) {
+export default function ContPurchaseSummary({ purchase }: Props) {
   const formatCurrency = (value: number) =>
     new Intl.NumberFormat("pt-BR", {
       style: "currency",

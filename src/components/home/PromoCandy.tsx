@@ -7,7 +7,10 @@ import Button from "../ui/Button";
 
 export default function PromoCandy() {
   return (
-    <section className="mx-auto w-full max-w-7xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-20">
+    <section
+      id="bomboniere"
+      className="mx-auto w-full max-w-7xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-20"
+    >
       <HeadingContent title="Bomboniere" />
 
       <div className="mt-10 flex flex-col items-center gap-10 lg:mt-16 lg:flex-row lg:items-start lg:justify-between lg:gap-8">

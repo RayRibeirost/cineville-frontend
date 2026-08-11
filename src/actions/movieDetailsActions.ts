@@ -1,8 +1,10 @@
 "use server";
 
-import { Movie } from "@/src/types/movieTypes";
+import { MovieDetailsResult } from "@/src/types/movie-types";
 
-export async function getMovieDetailsById(id: string): Promise<Movie | null> {
+export async function getMovieDetailsById(
+  id: string,
+): Promise<MovieDetailsResult | null> {
   try {
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL}/movies/${id}/details`,
@@ -16,7 +18,7 @@ export async function getMovieDetailsById(id: string): Promise<Movie | null> {
       return null;
     }
 
-    const movie: Movie = await response.json();
+    const movie: MovieDetailsResult = await response.json();
 
     return movie;
   } catch (error) {
