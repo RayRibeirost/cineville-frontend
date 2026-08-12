@@ -5,7 +5,7 @@ import { useParams } from "next/navigation";
 import Header from "@/src/components/layout/Header";
 import Footer from "@/src/components/layout/Footer/Footer";
 import SeatMapModal from "@/src/components/sessions/SeatMapModal";
-import { MovieDetailsResult } from "@/src/types/movie-types";
+import type { MovieDetailsResult } from "@/src/types/movie-types";
 import { getMovieWithSessions } from "@/src/actions/movieActions";
 import MovieBanner from "@/src/components/movies/MovieBanner";
 import MovieInfo from "@/src/components/movies/MovieInfo";
