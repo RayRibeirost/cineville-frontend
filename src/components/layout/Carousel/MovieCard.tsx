@@ -50,10 +50,10 @@ export default function MovieCard({ movie }: MovieCardProps) {
           <Link href={`/movies/${movie._id}`} className="sm:w-auto">
             <Button
               variant="secondary"
-              className="flex w-full items-center justify-center gap-2"
+              className="flex w-full items-center justify-center gap-2 "
             >
               <Add fontSize="small" />
-              <span>Ver Mais</span>
+              <span>Detalhes</span>
             </Button>
           </Link>
         </div>

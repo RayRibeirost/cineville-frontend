@@ -71,9 +71,11 @@ export interface MovieCardProps {
 
 export interface MovieCarouselProps {
   title: string;
+  idSection?: string;
   movies: {
     _id: string;
-    title: string; 
+    title: string;
+
     banner: string;
     genre?: string;
     ageRating?: string;

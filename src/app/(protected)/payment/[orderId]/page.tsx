@@ -11,44 +11,16 @@ import {
 
 import { getOrder } from "@/src/actions/orderAction";
 
-import PurchaseSummary from "@/src/components/payments/PurchaseSummary";
 import PaymentMethods from "@/src/components/payments/PaymentsMethods";
 import CreditCardForm from "@/src/components/payments/CreditCardForm";
 import PixPayment from "@/src/components/payments/PixPayment";
 import PaymentButtons from "@/src/components/payments/PaymentButton";
 import CancelPurchaseModal from "@/src/components/payments/CancelPurchaseModal";
-
+import ContPurchaseSummary from "@/src/components/payments/PurchaseSummary";
 import { useOrder } from "@/src/context/OrderContext";
-import { PaymentMethod } from "@/src/types/payments";
+import { PaymentMethod, PurchaseSummary } from "@/src/types/payments";
+
 import OrderConfirmedModal from "@/src/components/confirmation/OrderConfirmed";
-
-interface Order {
-  _id: string;
-
-  movie: string;
-  session: string;
-  room: string;
-
-  seats: string[];
-
-  tickets: {
-    id: string;
-    description: string;
-    seatNumber: string;
-    type: "INTEIRA" | "MEIA";
-    price: number;
-  }[];
-
-  products: {
-    id: string;
-    name: string;
-    quantity: number;
-    price: number;
-  }[];
-
-  total: number;
-  discount: number;
-}
 
 type PaymentStatus = "PENDING" | "APPROVED" | "REFUSED" | "EXPIRED";
 
@@ -74,7 +46,7 @@ export default function PaymentPage({
   const { orderId } = use(params);
   const { clearOrder } = useOrder();
 
-  const [order, setOrder] = useState<Order | undefined>();
+  const [order, setOrder] = useState<PurchaseSummary | undefined>();
 
   const [payment, setPayment] = useState<Payment | null>(null);
 
@@ -322,7 +294,7 @@ export default function PaymentPage({
         lg:grid-cols-[340px_1fr]
       "
       >
-        <PurchaseSummary purchase={order} />
+        <ContPurchaseSummary purchase={order} />
 
         <div className="space-y-6">
           <PaymentMethods value={paymentMethod} onChange={setPaymentMethod} />
@@ -361,6 +333,7 @@ export default function PaymentPage({
         onClose={() => {
           setIsConfirmModalOpen(false);
         }}
+        order={order}
       />
     </main>
   );

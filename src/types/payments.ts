@@ -16,6 +16,8 @@ export interface Product {
 }
 
 export interface PurchaseSummary {
+  _id: string;
+
   movie: string;
   session: string;
   room: string;
