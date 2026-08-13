@@ -238,6 +238,7 @@ export default function PaymentPage({
         className="
         flex
         h-screen
+        mt-20
         items-center
         justify-center
         text-white

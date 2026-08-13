@@ -14,10 +14,7 @@ export default function HeaderUser() {
   return (
     <>
       <div className="flex items-center gap-2 sm:gap-4">
-        <Link
-          href="/programaPonto"
-          className="flex items-center gap-2 text-white"
-        >
+        <Link href="/points" className="flex items-center gap-2 text-white">
           <Diamond className="text-[22px] sm:text-[26px] hover:text-blue-400 hover:scale-110 transition-all duration-500 cursor-pointer" />
         </Link>
 
