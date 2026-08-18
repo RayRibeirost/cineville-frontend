@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 
 import ConfirmationNumberOutlinedIcon from "@mui/icons-material/ConfirmationNumberOutlined";
 import LocalOfferOutlinedIcon from "@mui/icons-material/LocalOfferOutlined";
@@ -486,11 +487,13 @@ function RewardCard({
 }) {
   return (
     <article className="overflow-hidden rounded-md border border-grayScale-600 bg-deep-black">
-      <div className="h-33.75 overflow-hidden bg-grayScale-900">
-        <img
+      <div className="relative h-33.75 overflow-hidden bg-grayScale-900">
+        <Image
           src={reward.image}
           alt={reward.name}
-          className="h-full w-full object-cover transition duration-300 hover:scale-105"
+          fill
+          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+          className="object-cover transition duration-300 hover:scale-105"
         />
       </div>
 

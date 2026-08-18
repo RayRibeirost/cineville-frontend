@@ -37,10 +37,7 @@ export default function PaymentButtons({
         <Button
           type="button"
           disabled={disabled || loading}
-          onClick={() => {
-            console.log("clicou no botão");
-            onConfirm();
-          }}
+          onClick={onConfirm}
         >
           {loading ? (
             <>

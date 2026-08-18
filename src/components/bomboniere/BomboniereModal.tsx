@@ -16,6 +16,8 @@ interface BomboniereModalProps {
   onAdd: (product: Product) => void;
   onRemove: (id: string) => void;
   onCheckout: (cart: CartItem[]) => void;
+  /** Falha ao carregar o catálogo ou ao gravar os produtos no pedido. */
+  error?: string | null;
 }
 export default function BomboniereModal({
   isOpen,
@@ -27,6 +29,7 @@ export default function BomboniereModal({
   onAdd,
   onRemove,
   onCheckout,
+  error,
 }: BomboniereModalProps) {
   const [cartOpen, setCartOpen] = useState(false);
 
@@ -70,6 +73,15 @@ export default function BomboniereModal({
                   Complete sua experiência com pipoca fresquinha, bebidas
                   geladas e os melhores snacks.
                 </p>
+
+                {error && (
+                  <p
+                    role="alert"
+                    className="mt-4 rounded-lg border border-red-500/40 bg-red-500/10 px-4 py-3 text-sm text-red-400"
+                  >
+                    {error}
+                  </p>
+                )}
               </div>
 
               <div className="custom-scroll flex-1 overflow-y-auto px-4 pb-5 sm:px-6 lg:px-8">

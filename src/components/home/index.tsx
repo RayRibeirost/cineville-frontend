@@ -1,38 +1,87 @@
 import Header from "@/src/components/layout/Header";
-import Hero from "@/src/components/home/Hero";
+import HeroCarousel from "@/src/components/home/HeroCarousel";
 import MovieCarousel from "@/src/components/layout/Carousel/MovieCarousel";
-import PromoCandy from "@/src/components/home/PromoCandy";
+import HomeBomboniere from "@/src/components/home/HomeBomboniere";
 import Footer from "@/src/components/layout/Footer/Footer";
-import { getAllMovies } from "@/src/actions/movieActions";
-import { clsx } from "clsx";
+import {
+  getNowPlayingMovies,
+  getUpcomingReleases,
+} from "@/src/actions/catalogActions";
+import { CatalogMovie } from "@/src/types/admin";
+
+/** Quantos filmes entram na rotação do destaque. */
+const HERO_SIZE = 5;
 
 export default async function HomePage() {
-  const result = await getAllMovies();
-  const movies = result.success ? result.data : [];
+  // Duas listas diferentes: "Em Cartaz" olha a grade de sessões, "Lançamentos"
+  // olha a data de estreia. Antes as duas seções recebiam a mesma lista de
+  // filmes, então mostravam exatamente o mesmo conteúdo.
+  const [nowPlaying, releases] = await Promise.all([
+    getNowPlayingMovies(),
+    getUpcomingReleases(),
+  ]);
+
+  const nowPlayingMovies = nowPlaying.success ? nowPlaying.data : [];
+  const releaseMovies = releases.success ? releases.data : [];
+
+  /*
+   * O destaque usa os filmes que já estão em cartaz — são os que o botão
+   * "Comprar Ingresso" consegue levar a uma sessão de verdade. Sem nenhum em
+   * cartaz, cai para os lançamentos. As duas listas já foram buscadas acima:
+   * a rotação não faz nenhuma requisição nova.
+   */
+  const heroMovies: CatalogMovie[] = (
+    nowPlayingMovies.length ? nowPlayingMovies : releaseMovies
+  ).slice(0, HERO_SIZE);
+
+  const heroHighlights = Object.fromEntries(
+    heroMovies.map((movie) => {
+      const nextSession = nowPlayingMovies.find(
+        (candidate) => candidate._id === movie._id,
+      )?.nextSession;
+
+      return [
+        movie._id,
+        nextSession
+          ? `Próxima sessão: ${nextSession}`
+          : movie.releaseDate
+            ? `Estreia em ${movie.releaseDate}`
+            : "",
+      ];
+    }),
+  );
 
   return (
     <>
-      <div
-        className={clsx(
-          "flex flex-col  min-h-screen w-full  p-4",
-          "bg-[url('/assets/img-hero.png')] bg-cover bg-center",
-        )}
-      >
+      <HeroCarousel movies={heroMovies} highlights={heroHighlights}>
         <Header />
-        <Hero />
-      </div>
+      </HeroCarousel>
 
       <MovieCarousel
         idSection="EmCartazes"
-        title="Em Cartazes"
-        movies={movies}
+        title="Em Cartaz"
+        seeAllHref="/em-cartaz"
+        movies={nowPlayingMovies}
+        emptyMessage={
+          nowPlaying.success
+            ? "Nenhum filme com sessões abertas no momento."
+            : nowPlaying.error
+        }
       />
+
       <MovieCarousel
         idSection="Lancamentos"
         title="Lançamentos"
-        movies={movies}
+        seeAllHref="/lancamentos"
+        movies={releaseMovies}
+        emptyMessage={
+          releases.success
+            ? "Nenhum lançamento cadastrado no momento."
+            : releases.error
+        }
       />
-      <PromoCandy />
+
+      <HomeBomboniere />
 
       <Footer />
     </>

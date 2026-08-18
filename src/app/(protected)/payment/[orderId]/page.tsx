@@ -12,27 +12,62 @@ import {
 import { getOrder } from "@/src/actions/orderAction";
 
 import PaymentMethods from "@/src/components/payments/PaymentsMethods";
-import CreditCardForm from "@/src/components/payments/CreditCardForm";
 import PixPayment from "@/src/components/payments/PixPayment";
 import PaymentButtons from "@/src/components/payments/PaymentButton";
 import CancelPurchaseModal from "@/src/components/payments/CancelPurchaseModal";
 import ContPurchaseSummary from "@/src/components/payments/PurchaseSummary";
 import { useOrder } from "@/src/context/OrderContext";
-import { PaymentMethod, PurchaseSummary } from "@/src/types/payments";
+import {
+  FINAL_PAYMENT_STATUSES,
+  PAYMENT_METHODS,
+  PAYMENT_STATUSES,
+  PaymentMethod,
+  PaymentStatus,
+  PurchaseSummary,
+} from "@/src/types/payments";
 
 import OrderConfirmedModal from "@/src/components/confirmation/OrderConfirmed";
 
-type PaymentStatus = "PENDING" | "APPROVED" | "REFUSED" | "EXPIRED";
+/**
+ * Espaço no topo da tela de pagamento.
+ *
+ * A `Header` do layout protegido é `fixed` com 4rem (`h-16`) e não empurra o
+ * conteúdo: quem entra abaixo dela precisa reservar o espaço. Esta tela era a
+ * única que não reservava, então o resumo da compra nascia atrás da Header.
+ * `pt-24` = 4rem da Header + 2rem de respiro, igual em todas as resoluções
+ * porque a altura da Header não muda com o breakpoint.
+ */
+const PAGE_TOP_SPACING = "pt-24";
 
 interface Payment {
   _id: string;
   status: PaymentStatus;
+  /** Motivo da recusa devolvido pelo gateway. */
+  failureReason?: string;
 
   pix?: {
     qrCode: string;
     copyPasteCode: string;
     expiresAt: string;
   };
+}
+
+/**
+ * Mensagem para os desfechos que não são aprovação.
+ *
+ * O PIX simulado expira depois de 15 minutos e o administrador pode recusar o
+ * pagamento pelo painel; sem isso a tela apenas parava de consultar, sem dizer
+ * nada, e o usuário ficava olhando para um pagamento que nunca ia concluir.
+ */
+function failureMessage(payment: Payment): string {
+  if (payment.status === PAYMENT_STATUSES.EXPIRED) {
+    return "O prazo para pagamento expirou. Escolha uma forma de pagamento e tente novamente.";
+  }
+
+  return (
+    payment.failureReason ??
+    "Pagamento não autorizado. Escolha outra forma de pagamento ou tente novamente."
+  );
 }
 
 export default function PaymentPage({
@@ -99,7 +134,7 @@ export default function PaymentPage({
   }, [orderId]);
 
   useEffect(() => {
-    if (paymentMethod !== "pix") return;
+    if (paymentMethod !== PAYMENT_METHODS.PIX) return;
     if (!order?._id) return;
     if (payment) return;
 
@@ -108,7 +143,7 @@ export default function PaymentPage({
       try {
         setLoadingPayment(true);
 
-        const response = await createPayment(orderId, "pix");
+        const response = await createPayment(orderId, PAYMENT_METHODS.PIX);
 
         setPayment(response);
       } catch (err) {
@@ -120,8 +155,16 @@ export default function PaymentPage({
     createPix();
   }, [paymentMethod, order?._id, payment]);
 
+  /*
+   * Acompanhamento do pagamento.
+   *
+   * Um pagamento em estado final não é consultado de novo — sem esta guarda, o
+   * `setPayment` feito aqui dentro reiniciaria o efeito e o intervalo voltaria a
+   * consultar uma cobrança já encerrada.
+   */
   useEffect(() => {
     if (!payment?._id || !order) return;
+    if (FINAL_PAYMENT_STATUSES.includes(payment.status)) return;
 
     const interval = setInterval(async () => {
       if (checkingPayment.current) return;
@@ -134,16 +177,28 @@ export default function PaymentPage({
         if (!result) {
           return;
         }
-        if (result.status === "APPROVED") {
+        if (result.status === PAYMENT_STATUSES.APPROVED) {
           clearInterval(interval);
 
           clearOrder();
 
+          // O status guardado é o que a API devolveu: é ele que faz o modal
+          // sair de "Em análise" para "Compra aprovada" e liberar os ingressos.
+          setPayment(result);
           setIsConfirmModalOpen(true);
         }
 
-        if (result.status === "REFUSED" || result.status === "EXPIRED") {
+        if (
+          result.status === PAYMENT_STATUSES.REFUSED ||
+          result.status === PAYMENT_STATUSES.EXPIRED
+        ) {
           clearInterval(interval);
+
+          // O pagamento continua em estado no modal (que passa a mostrar
+          // "Compra recusada" com o motivo). A volta ao estado de escolha
+          // acontece ao fechar o modal, em `handleCloseConfirmation`.
+          setPayment(result);
+          setError(failureMessage(result));
         }
       } catch (error) {
         console.error("Erro verificando pagamento:", error);
@@ -155,11 +210,9 @@ export default function PaymentPage({
     }, 3000);
 
     return () => clearInterval(interval);
-  }, [payment, order, router, clearOrder]);
+  }, [payment, order, clearOrder]);
 
   async function handleConfirmPayment() {
-    console.log("confirmando pagamento");
-
     if (!paymentMethod) {
       setError("Selecione uma forma de pagamento.");
       return;
@@ -170,21 +223,15 @@ export default function PaymentPage({
       return;
     }
 
-    // PIX já é criado automaticamente pelo useEffect
-    if (paymentMethod === "pix") {
-      try {
-        setLoadingPayment(true);
-
-        const response = await createPayment(order._id, "pix");
-
-        setPayment(response);
-        setIsConfirmModalOpen(true);
-      } catch (error) {
-        setError(error instanceof Error ? error.message : "Erro ao gerar PIX");
-      } finally {
-        setLoadingPayment(false);
-      }
-
+    /*
+      Só PIX. Cartão de crédito e débito aparecem na tela como "Em breve" e
+      não são selecionáveis — não existe fluxo de cartão aqui, nem parcial:
+      nenhuma cobrança por cartão é criada enquanto a integração não existir.
+    */
+    if (paymentMethod !== PAYMENT_METHODS.PIX) {
+      setError(
+        "Esta forma de pagamento ainda não está disponível. Utilize o PIX.",
+      );
       return;
     }
 
@@ -192,21 +239,45 @@ export default function PaymentPage({
       setLoadingPayment(true);
       setError(null);
 
-      const method =
-        paymentMethod === "credit" ? "cartao_credito" : "cartao_debito";
-
-      const response = await createPayment(order._id, method);
+      const response = await createPayment(order._id, PAYMENT_METHODS.PIX);
 
       setPayment(response);
+
+      /*
+        Compra confirmada: o modal do ingresso abre já aqui, com o status real
+        que veio da API — pendente, ou seja "Em análise". O polling depois troca
+        esse status para aprovada/recusada. Antes o modal só abria na aprovação,
+        e quem pagava ficava sem nenhum comprovante do que havia acabado de
+        fazer; abrir dizendo "aprovado" seria pior ainda, porque o pagamento
+        nasce pendente.
+      */
       setIsConfirmModalOpen(true);
     } catch (error) {
       console.error(error);
 
-      setError(
-        error instanceof Error ? error.message : "Erro ao criar pagamento.",
-      );
+      setError(error instanceof Error ? error.message : "Erro ao gerar PIX.");
     } finally {
       setLoadingPayment(false);
+    }
+  }
+
+  /**
+   * Fecha o modal do ingresso.
+   *
+   * Quando o desfecho foi recusa ou expiração, é aqui que a tela volta ao estado
+   * de escolha: zerar antes disso apagaria justamente o status que o modal
+   * precisa mostrar. Aprovado não zera nada — a compra terminou, e os botões do
+   * modal levam para os ingressos.
+   */
+  function handleCloseConfirmation() {
+    setIsConfirmModalOpen(false);
+
+    if (
+      payment?.status === PAYMENT_STATUSES.REFUSED ||
+      payment?.status === PAYMENT_STATUSES.EXPIRED
+    ) {
+      setPayment(null);
+      setPaymentMethod(null);
     }
   }
 
@@ -234,16 +305,7 @@ export default function PaymentPage({
 
   if (loadingOrder && !order) {
     return (
-      <div
-        className="
-        flex
-        h-screen
-        mt-20
-        items-center
-        justify-center
-        text-white
-      "
-      >
+      <div className={`${PAGE_TOP_SPACING} flex min-h-screen items-center justify-center text-white`}>
         Carregando pedido...
       </div>
     );
@@ -251,28 +313,14 @@ export default function PaymentPage({
 
   if (!order) {
     return (
-      <div
-        className="
-        flex
-        h-screen
-        items-center
-        justify-center
-        text-red-500
-      "
-      >
+      <div className={`${PAGE_TOP_SPACING} flex min-h-screen items-center justify-center px-6 text-center text-red-500`}>
         {error ?? "Pedido não encontrado"}
       </div>
     );
   }
 
   return (
-    <main
-      className="
-      mx-auto
-      max-w-7xl
-      p-6
-    "
-    >
+    <main className={`${PAGE_TOP_SPACING} mx-auto max-w-7xl px-4 pb-12 sm:px-6`}>
       {error && (
         <p
           className="
@@ -300,11 +348,7 @@ export default function PaymentPage({
         <div className="space-y-6">
           <PaymentMethods value={paymentMethod} onChange={setPaymentMethod} />
 
-          {(paymentMethod === "credit" || paymentMethod === "debit") && (
-            <CreditCardForm method={paymentMethod} total={order.total} />
-          )}
-
-          {paymentMethod === "pix" && payment?.pix && (
+          {paymentMethod === PAYMENT_METHODS.PIX && payment?.pix && (
             <PixPayment
               qrCode={payment.pix.qrCode}
               copyPasteCode={payment.pix.copyPasteCode}
@@ -313,7 +357,7 @@ export default function PaymentPage({
           )}
 
           <PaymentButtons
-            showConfirm={paymentMethod !== "pix"}
+            showConfirm={paymentMethod !== PAYMENT_METHODS.PIX}
             disabled={!paymentMethod || loadingPayment}
             loading={loadingPayment}
             onConfirm={handleConfirmPayment}
@@ -331,10 +375,10 @@ export default function PaymentPage({
       />
       <OrderConfirmedModal
         isOpen={isConfirmModalOpen}
-        onClose={() => {
-          setIsConfirmModalOpen(false);
-        }}
+        onClose={handleCloseConfirmation}
         order={order}
+        paymentStatus={payment?.status}
+        failureReason={payment?.failureReason}
       />
     </main>
   );

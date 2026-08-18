@@ -2,10 +2,13 @@
 
 import { useState } from "react";
 import { SeatType } from "../types/session-types";
+import { TicketType } from "../types/ticket";
+
 export interface SelectedSeat {
   seatNumber: string;
-  type: "INTEIRA" | "MEIA";
+  type: TicketType;
 }
+
 export function useSeatSelection(initialSelected: string[] = []) {
   const [selectedSeats, setSelectedSeats] = useState<SelectedSeat[]>(
     initialSelected.map((seat) => ({
@@ -17,7 +20,7 @@ export function useSeatSelection(initialSelected: string[] = []) {
   const toggleSeat = (
     seatNumber: string,
     seatType: SeatType,
-    ticketType: "INTEIRA" | "MEIA" = "INTEIRA",
+    ticketType: TicketType = "INTEIRA",
   ) => {
     if (seatType === "indisponivel") return;
 
@@ -38,9 +41,24 @@ export function useSeatSelection(initialSelected: string[] = []) {
     });
   };
 
+  /**
+   * Troca inteira/meia de um assento já selecionado.
+   *
+   * A escolha é por ingresso: o usuário pode levar uma inteira e uma meia na
+   * mesma compra. Só o tipo muda — o assento continua selecionado.
+   */
+  const setSeatType = (seatNumber: string, ticketType: TicketType) => {
+    setSelectedSeats((prev) =>
+      prev.map((seat) =>
+        seat.seatNumber === seatNumber ? { ...seat, type: ticketType } : seat,
+      ),
+    );
+  };
+
   return {
     selectedSeats,
     selectedCount: selectedSeats.length,
     toggleSeat,
+    setSeatType,
   };
 }

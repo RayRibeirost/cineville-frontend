@@ -5,11 +5,29 @@ import clsx from "clsx";
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   children: React.ReactNode;
   variant?: "primary" | "secondary";
+  /**
+   * Escala do botão. `md` é o padrão histórico e continua idêntico em todas as
+   * telas que já usavam o componente; `sm` é a versão compacta para espaços
+   * estreitos, como as ações dentro dos cards de filme.
+   */
+  size?: "sm" | "md";
 }
+
+/*
+ * O tamanho é uma prop, e não uma classe passada por fora, porque conflito de
+ * utilitário do Tailwind é resolvido pela ordem no CSS gerado — não pela ordem
+ * no atributo `class`. Um `text-xs` vindo de fora perderia para o `text-sm` da
+ * base e o ajuste simplesmente não apareceria.
+ */
+const sizes = {
+  md: "px-3 py-2 text-sm sm:px-4 sm:py-2.5 sm:text-base",
+  sm: "px-3 py-1.5 text-xs leading-tight",
+};
 
 export default function Button({
   children,
   variant = "primary",
+  size = "md",
   className,
   ...props
 }: ButtonProps) {
@@ -23,13 +41,12 @@ export default function Button({
       {...props}
       className={clsx(
         "inline-flex items-center justify-center rounded-md",
-        "px-3 py-2 sm:px-4 sm:py-2.5",
-        "text-sm sm:text-base",
         "font-bold text-white",
         "whitespace-nowrap",
         "transition-all duration-200",
         "cursor-pointer",
         "disabled:cursor-not-allowed disabled:opacity-50",
+        sizes[size],
         variants[variant],
         className,
       )}

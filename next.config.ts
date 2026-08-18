@@ -1,9 +1,16 @@
 import type { NextConfig } from "next";
+import { MAX_UPLOAD_BYTES } from "./src/utils/upload";
 
 const nextConfig: NextConfig = {
   output: "standalone",
   experimental: {
     optimizePackageImports: ["react-icons"],
+
+    // Cadastro de filme e de produto sobem imagens por Server Action; o
+    // padrão de 1 MB estoura no primeiro banner.
+    serverActions: {
+      bodySizeLimit: MAX_UPLOAD_BYTES,
+    },
   },
 
   poweredByHeader: false,

@@ -61,6 +61,7 @@ export default function MoviePage() {
 
           <CinemaMovieSessions
             groups={details.groups}
+            dates={details.dates}
             onSelectSession={setSelectedSessionId}
           />
         </div>

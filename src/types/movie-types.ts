@@ -1,3 +1,5 @@
+import { CatalogMovie } from "./admin";
+
 export interface BackendActor {
   name: string;
   imageUrl: string;
@@ -36,6 +38,8 @@ export interface BackendCinemaForMovies {
 
 export interface ShowtimeOption {
   sessionId: string;
+  /** "DD/MM/AAAA", vindo de dateTime do backend. */
+  date: string;
   time: string;
 }
 
@@ -58,26 +62,26 @@ export interface MovieDetailsResult {
   };
   cast: BackendActor[];
   groups: CinemaSessionGroup[];
+  /** Dias com sessão disponíveis ("DD/MM/AAAA"), em ordem cronológica. */
+  dates: string[];
 }
+/**
+ * Os cards da Home usam o mesmo modelo de filme das páginas de catálogo
+ * (`/em-cartaz`, `/lancamentos`), para que gênero, duração e classificação
+ * apareçam iguais nos dois lugares.
+ */
 export interface MovieCardProps {
-  movie: {
-    _id: string;
-    title: string;
-    banner: string;
-    genre?: string;
-    ageRating?: string;
-  };
+  movie: CatalogMovie;
+  /** Linha de destaque abaixo do título (ex.: próxima sessão ou estreia). */
+  highlight?: string;
 }
 
 export interface MovieCarouselProps {
   title: string;
   idSection?: string;
-  movies: {
-    _id: string;
-    title: string;
-
-    banner: string;
-    genre?: string;
-    ageRating?: string;
-  }[];
+  movies: CatalogMovie[];
+  /** Rota da listagem completa correspondente à seção. */
+  seeAllHref?: string;
+  /** Mensagem exibida quando não há filmes na seção. */
+  emptyMessage?: string;
 }

@@ -1,11 +1,30 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { PaymentMethod } from "../../types/payments";
+import { PAYMENT_METHODS, PaymentMethod } from "../../types/payments";
 import InputForm from "../ui/InputForm";
 import { masks } from "@/src/utils/masks";
+import { formatCents } from "@/src/utils/currency";
+
+/**
+ * NÃO ESTÁ EM USO NESTA ETAPA.
+ *
+ * Pagamento por cartão é a próxima etapa do projeto: a tela de pagamento marca
+ * crédito e débito como "Em breve" e não renderiza este formulário. O arquivo
+ * fica de pé, compilando, para a etapa em que a integração de cartão existir —
+ * não há nenhum fluxo de cartão pela metade ligado a ele.
+ *
+ * Regras espelhadas de PaymentsService.computeAmount (backend):
+ * só parcela acima de R$ 100,00; até 4x sem juros; acima disso,
+ * 1% de juros por parcela sobre o valor total.
+ */
+const INSTALLMENTS_MIN_AMOUNT_CENTS = 10_000;
+const INTEREST_FREE_INSTALLMENTS = 4;
+const INTEREST_RATE_PER_INSTALLMENT = 0.01;
+
 interface Props {
   method: PaymentMethod;
+  /** Valor total do pedido em centavos. */
   total: number;
 }
 
@@ -25,20 +44,23 @@ export default function CreditCardForm({ method, total }: Props) {
 
   const [errors, setErrors] = useState<Errors>({});
 
-  const showInstallments = method === "credit" && total > 100;
+  const showInstallments =
+    method === PAYMENT_METHODS.CREDIT_CARD &&
+    total > INSTALLMENTS_MIN_AMOUNT_CENTS;
 
   const installmentOptions = useMemo(() => {
     const options = [];
 
     for (let i = 1; i <= 12; i++) {
-      const value = total / i;
+      const interestRate =
+        i <= INTEREST_FREE_INSTALLMENTS ? 0 : INTEREST_RATE_PER_INSTALLMENT * i;
 
-      const interest = i <= 4 ? 0 : total * (0.01 * (i - 4));
+      const totalWithInterest = Math.round(total * (1 + interestRate));
 
       options.push({
         value: i,
-        total: total + interest,
-        installment: (total + interest) / i,
+        total: totalWithInterest,
+        installment: totalWithInterest / i,
       });
     }
 
@@ -166,8 +188,10 @@ export default function CreditCardForm({ method, total }: Props) {
             >
               {installmentOptions.map((option) => (
                 <option key={option.value} value={option.value}>
-                  {option.value}x de R$ {option.installment.toFixed(2)}{" "}
-                  {option.value <= 4 ? "sem juros" : "com juros"}
+                  {option.value}x de {formatCents(option.installment)}{" "}
+                  {option.value <= INTEREST_FREE_INSTALLMENTS
+                    ? "sem juros"
+                    : `com juros (total ${formatCents(option.total)})`}
                 </option>
               ))}
             </select>

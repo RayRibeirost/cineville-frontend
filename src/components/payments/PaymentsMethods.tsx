@@ -1,7 +1,11 @@
 "use client";
 
 import { CreditCard, Landmark, QrCode } from "lucide-react";
-import { PaymentMethod } from "../../types/payments";
+import {
+  PAYMENT_METHODS,
+  PaymentMethod,
+  isPaymentMethodAvailable,
+} from "../../types/payments";
 
 interface PaymentMethodsProps {
   value: PaymentMethod | null;
@@ -10,22 +14,22 @@ interface PaymentMethodsProps {
 
 const methods = [
   {
-    value: "credit",
+    value: PAYMENT_METHODS.PIX,
+    title: "PIX",
+    subtitle: "Aprovação instantânea",
+    icon: QrCode,
+  },
+  {
+    value: PAYMENT_METHODS.CREDIT_CARD,
     title: "Cartão de Crédito",
     subtitle: "Pague em até 12x",
     icon: CreditCard,
   },
   {
-    value: "debit",
+    value: PAYMENT_METHODS.DEBIT_CARD,
     title: "Cartão de Débito",
     subtitle: "Pagamento imediato",
     icon: Landmark,
-  },
-  {
-    value: "pix",
-    title: "PIX",
-    subtitle: "Aprovação instantânea",
-    icon: QrCode,
   },
 ] satisfies {
   value: PaymentMethod;
@@ -34,6 +38,15 @@ const methods = [
   icon: React.ElementType;
 }[];
 
+/**
+ * Formas de pagamento.
+ *
+ * Cartão de crédito e débito continuam na lista de propósito, marcados como
+ * "Em breve": são a próxima etapa do projeto e a tela indica isso ao usuário.
+ * Enquanto não houver integração de verdade, eles não podem ser selecionados —
+ * quem define o que está liberado é `AVAILABLE_PAYMENT_METHODS`, a mesma lista
+ * que impede o disparo da requisição.
+ */
 export default function PaymentMethods({
   value,
   onChange,
@@ -45,20 +58,25 @@ export default function PaymentMethods({
       <div className="space-y-4">
         {methods.map((method) => {
           const Icon = method.icon;
-          const selected = value === method.value;
+          const available = isPaymentMethodAvailable(method.value);
+          const selected = available && value === method.value;
 
           return (
             <button
               key={method.value}
               type="button"
-              onClick={() => onChange(method.value)}
+              disabled={!available}
+              aria-disabled={!available}
+              onClick={() => available && onChange(method.value)}
               className={`
                 w-full rounded-xl border p-4 transition-all
                 flex items-center justify-between
                 ${
-                  selected
-                    ? "border-red-500 bg-red-500/10"
-                    : "border-zinc-700 hover:border-red-500"
+                  !available
+                    ? "cursor-not-allowed border-zinc-800 bg-zinc-900/60 opacity-60"
+                    : selected
+                      ? "cursor-pointer border-red-500 bg-red-500/10"
+                      : "cursor-pointer border-zinc-700 hover:border-red-500"
                 }
               `}
             >
@@ -77,22 +95,36 @@ export default function PaymentMethods({
                 </div>
 
                 <div className="text-left">
-                  <h3 className="font-medium">{method.title}</h3>
+                  <h3 className="flex flex-wrap items-center gap-2 font-medium">
+                    {method.title}
 
-                  <p className="text-sm text-zinc-400">{method.subtitle}</p>
+                    {!available && (
+                      <span className="rounded-full border border-yellow-600/40 bg-yellow-500/10 px-2 py-0.5 text-[11px] font-bold text-yellow-300">
+                        Em breve
+                      </span>
+                    )}
+                  </h3>
+
+                  <p className="text-sm text-zinc-400">
+                    {available
+                      ? method.subtitle
+                      : "Indisponível no momento — em implementação."}
+                  </p>
                 </div>
               </div>
 
-              <div
-                className={`
-                  h-5 w-5 rounded-full border-2 flex items-center justify-center
-                  ${selected ? "border-red-500" : "border-zinc-500"}
-                `}
-              >
-                {selected && (
-                  <div className="h-2.5 w-2.5 rounded-full bg-red-500" />
-                )}
-              </div>
+              {available && (
+                <div
+                  className={`
+                    h-5 w-5 rounded-full border-2 flex items-center justify-center
+                    ${selected ? "border-red-500" : "border-zinc-500"}
+                  `}
+                >
+                  {selected && (
+                    <div className="h-2.5 w-2.5 rounded-full bg-red-500" />
+                  )}
+                </div>
+              )}
             </button>
           );
         })}

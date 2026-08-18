@@ -1,61 +1,61 @@
-"use client";
-
 import Image from "next/image";
-import { ShoppingCart } from "@mui/icons-material";
-import HeadingContent from "@/src/components/ui/HeadingContent";
-import Button from "../ui/Button";
+import { CatalogProduct } from "@/src/types/admin";
+import { formatCents } from "@/src/utils/currency";
+import SnackAddButton from "./SnackAddButton";
 
-export default function PromoCandy() {
+/**
+ * Destaque da bomboniere.
+ *
+ * Antes era um combo fixo no código ("Pipoca + 2 Refris, R$ 40,00") que não
+ * existia no catálogo. Agora recebe um produto real — quem escolhe qual é a
+ * seção da bomboniere.
+ */
+export default function PromoCandy({ product }: { product: CatalogProduct }) {
+  const image = product.imageUrl || "/assets/promo-candy.png";
+  const description = [product.category, product.size]
+    .filter(Boolean)
+    .join(" · ");
+
   return (
-    <section
-      id="bomboniere"
-      className="mx-auto w-full max-w-7xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-20"
-    >
-      <HeadingContent title="Bomboniere" />
+    <div className="mt-10 flex flex-col items-center gap-10 rounded-2xl border border-grayScale-600 bg-gray-surface p-6 lg:flex-row lg:items-stretch lg:gap-10 lg:p-8">
+      <div className="relative aspect-16/10 w-full overflow-hidden rounded-xl bg-grayScale-700 lg:max-w-[50%]">
+        <Image
+          src={image}
+          alt={product.name}
+          fill
+          unoptimized={image.startsWith("http")}
+          sizes="(max-width: 1024px) 100vw, 50vw"
+          className="object-cover"
+        />
+      </div>
 
-      <div className="mt-10 flex flex-col items-center gap-10 lg:mt-16 lg:flex-row lg:items-start lg:justify-between lg:gap-8">
-        <div className="w-full lg:max-w-[50%]">
-          <Image
-            src="/assets/promo-candy.png"
-            alt="Combo Blockbuster"
-            width={650}
-            height={420}
-            className="h-auto w-full rounded-lg object-cover"
-          />
-        </div>
+      <div className="flex w-full flex-col items-start justify-center lg:max-w-[50%]">
+        <span className="mb-4 rounded bg-red-cinema px-2 py-1 text-xs font-bold text-white uppercase">
+          Destaque da bomboniere
+        </span>
 
-        <div className="flex w-full flex-col items-start justify-center lg:max-w-[50%] lg:p-8">
-          <span className="mb-4 rounded bg-red-cinema px-2 py-1 text-xs font-bold uppercase text-white">
-            Oferta Limitada
-          </span>
+        <h3 className="text-3xl leading-tight font-bold text-white sm:text-4xl">
+          {product.name}
+        </h3>
 
-          <h2 className="text-3xl font-bold leading-tight text-white sm:text-4xl lg:text-5xl">
-            Combo BlockBuster:
-            <br />
-            Pipoca + 2 Refris
-          </h2>
+        {description && (
+          <p className="mt-3 text-sm text-grayScale-400">{description}</p>
+        )}
 
-          <p className="mt-6 max-w-full text-base leading-relaxed text-zinc-400 sm:text-lg lg:max-w-[75%]">
-            Aproveite a experiência completa com nosso melhor combo. Garanta
-            agora com 15% de desconto.
-          </p>
+        <p className="mt-6 text-4xl font-bold text-white sm:text-5xl">
+          {formatCents(product.price)}
+        </p>
 
-          <div className="mt-8 flex flex-wrap items-end gap-2 sm:gap-3">
-            <span className="text-4xl font-bold text-white sm:text-5xl lg:text-6xl">
-              R$ 40,00
-            </span>
+        <p className="mt-2 text-xs text-grayScale-500">
+          {product.quantity > 0
+            ? `${product.quantity} disponíveis · limite de ${product.maxLimit} por pedido`
+            : "Sem estoque no momento"}
+        </p>
 
-            <span className="mb-1 text-lg text-zinc-500 line-through sm:mb-2 sm:text-xl lg:text-2xl">
-              R$ 54,00
-            </span>
-          </div>
-
-          <Button className="mt-8 w-full justify-center gap-2 sm:w-auto sm:px-6 sm:py-3 sm:text-lg">
-            <ShoppingCart fontSize="small" />
-            Comprar Agora
-          </Button>
+        <div className="mt-8 w-full sm:max-w-xs">
+          <SnackAddButton product={product} size="lg" />
         </div>
       </div>
-    </section>
+    </div>
   );
 }

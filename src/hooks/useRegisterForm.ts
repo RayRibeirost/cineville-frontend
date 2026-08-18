@@ -22,15 +22,35 @@ const initialState: RegisterState<Partial<RegisterInput>> = {
   inputs: {},
 };
 
+/**
+ * Quanto tempo o modal de sucesso fica na tela antes de levar ao login.
+ *
+ * Eram 3 segundos, tempo insuficiente para ler a mensagem antes de a tela
+ * trocar. Alterar aqui é o único lugar que muda o comportamento — existe um
+ * único timer, guardado em ref para ser cancelado no unmount e quando o
+ * usuário fecha o modal antes do prazo.
+ */
+const SUCCESS_MODAL_DURATION_MS = 4500;
+
 export function useRegisterForm(setIsLogin?: (value: boolean) => void) {
   const [state, formAction, isPending] = useActionState(
     RegisterUser,
     initialState,
   );
 
-  const [showSuccessModal, setShowSuccessModal] = useState(false);
   const router = useRouter();
-  const prevSuccess = useRef(state.success);
+  const redirectTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  /**
+   * O modal é derivado do resultado do cadastro, não copiado para outro estado:
+   * ele está aberto enquanto o cadastro deu certo e ninguém o fechou. Guardar
+   * `showSuccessModal` num `useState` alimentado por efeito era o que provocava
+   * render em cascata (`react-hooks/set-state-in-effect`) — e o efeito passava a
+   * ter duas responsabilidades: abrir o modal e agendar o redirecionamento.
+   */
+  const [modalDismissed, setModalDismissed] = useState(false);
+
+  const showSuccessModal = state.success && !modalDismissed;
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -46,32 +66,50 @@ export function useRegisterForm(setIsLogin?: (value: boolean) => void) {
     {},
   );
 
+  /*
+   * A única responsabilidade do efeito é o timer — nada de estado copiado aqui.
+   *
+   * Ele é idempotente: a limpeza cancela o timer anterior antes de qualquer nova
+   * execução, então nem em desenvolvimento (onde o React monta e desmonta os
+   * efeitos duas vezes) sobra timer duplicado, e o redirecionamento continua
+   * sendo agendado uma vez por cadastro concluído.
+   */
   useEffect(() => {
-    if (state.success && !prevSuccess.current) {
-      const startSequenceTimer = setTimeout(() => {
-        setShowSuccessModal(true);
-        setFormValues({});
-        setTouchedFields({});
-        setClientErrors({});
-      }, 0);
+    if (!state.success || modalDismissed) return;
 
-      const redirectTimer = setTimeout(() => {
-        setShowSuccessModal(false);
-        router.push("/login");
-      }, 3000);
+    redirectTimer.current = setTimeout(() => {
+      redirectTimer.current = null;
+      setModalDismissed(true);
+      router.push("/login");
+    }, SUCCESS_MODAL_DURATION_MS);
 
-      return () => {
-        clearTimeout(startSequenceTimer);
-        clearTimeout(redirectTimer);
-      };
+    return () => {
+      if (redirectTimer.current) {
+        clearTimeout(redirectTimer.current);
+        redirectTimer.current = null;
+      }
+    };
+  }, [state.success, modalDismissed, router]);
+
+  /**
+   * Fechar o modal antes do prazo não deixa o usuário parado na tela de
+   * cadastro: cancela o timer pendente (para não sobrar um `router.push`
+   * atrasado) e segue para o login na hora.
+   */
+  const handleCloseModal = () => {
+    if (redirectTimer.current) {
+      clearTimeout(redirectTimer.current);
+      redirectTimer.current = null;
     }
 
-    prevSuccess.current = state.success;
-  }, [state.success, setIsLogin, router]);
+    setModalDismissed(true);
 
-  const handleCloseModal = () => {
-    setShowSuccessModal(false);
-    if (setIsLogin) setIsLogin(true);
+    if (setIsLogin) {
+      setIsLogin(true);
+      return;
+    }
+
+    router.push("/login");
   };
 
   const handleChange = (
@@ -140,7 +178,14 @@ export function useRegisterForm(setIsLogin?: (value: boolean) => void) {
     }
   };
 
+  /*
+   * Cadastro concluído esvazia o formulário por trás do modal — antes isso era
+   * feito com três `setState` dentro do efeito. Derivar é equivalente para a
+   * tela (os campos ficam em branco) e não gera renderização em cascata.
+   */
   const getValue = (field: keyof RegisterInput): string => {
+    if (state.success) return "";
+
     const val = formValues[field] ?? state.inputs?.[field];
     return val !== null && val !== undefined && typeof val !== "boolean"
       ? String(val)
@@ -148,11 +193,15 @@ export function useRegisterForm(setIsLogin?: (value: boolean) => void) {
   };
 
   const getChecked = (field: keyof RegisterInput): boolean => {
+    if (state.success) return false;
+
     const val = formValues[field] ?? state.inputs?.[field];
     return Boolean(val);
   };
 
   const getError = (field: keyof RegisterInput) => {
+    if (state.success) return undefined;
+
     const isDirty = touchedFields[field as string];
     if (clientErrors[field]) return clientErrors[field]![0];
     if (!isDirty && state.errors?.[field]) return state.errors[field]![0];

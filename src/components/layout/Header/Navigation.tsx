@@ -15,15 +15,15 @@ export default function Navigation({
         mobile ? "flex flex-col gap-6" : "hidden md:flex items-center gap-8"
       }`}
     >
-      <Link href="#EmCartazes" onClick={onNavigate}>
-        Em cartazes
+      <Link href="/em-cartaz" onClick={onNavigate}>
+        Em cartaz
       </Link>
 
-      <Link href="#Lancamentos" onClick={onNavigate}>
+      <Link href="/lancamentos" onClick={onNavigate}>
         Lançamentos
       </Link>
 
-      <Link href="#bomboniere" onClick={onNavigate}>
+      <Link href="/bomboniere" onClick={onNavigate}>
         Bomboniere
       </Link>
     </nav>

@@ -9,10 +9,14 @@ export type LoginState = {
   user?: UserPayload;
 };
 
+export type UserRole = "USER" | "ADMIN";
+
 export interface UserPayload {
   sub: string;
   email: string;
   name: string;
+  surname?: string;
+  role: UserRole;
   iat: number;
   exp: number;
 }
@@ -35,4 +39,5 @@ export interface AuthContextType {
   setUser: (user: UserPayload | null) => void;
   logout: () => Promise<void>;
   isAuthenticated: boolean;
+  isAdmin: boolean;
 }

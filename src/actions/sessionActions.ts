@@ -86,6 +86,12 @@ export async function getSessionDetails(sessionId: string): Promise<
       audio: session.roomType,
       room: session.roomName,
       screenType: `Tela - ${session.roomType}`,
+      /*
+        Preço da sessão em centavos, como o backend guarda. Fica também dentro
+        de `sessionInfo` porque é ele que a tela recebe: o campo existia no
+        tipo, chegava sempre vazio, e a prévia de inteira/meia mostrava R$ 0,00.
+      */
+      price: session.price,
     },
     seatRows: buildSeatLayout(session.seats),
     price: session.price,

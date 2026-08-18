@@ -1,59 +1,86 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { ConfirmationNumber, Add } from "@mui/icons-material";
 
 import Button from "../../ui/Button";
+import MoviePoster from "../../ui/MoviePoster";
 import { MovieCardProps } from "@/src/types/movie-types";
+import { classificationColor, movieMetaLine } from "@/src/utils/movie";
 
-export default function MovieCard({ movie }: MovieCardProps) {
-  const movieBanner = movie.banner || "/assets/movie-placeholder.png";
-
+/**
+ * Card usado nos carrosséis da Home.
+ *
+ * `h-full` + `mt-auto` no rodapé mantêm todos os cards do mesmo tamanho
+ * independente do comprimento do título; o pôster fica preso em 2:3 para que
+ * imagens com proporções diferentes não estiquem a linha.
+ *
+ * A régua das ações é o `@container`, não a viewport. O carrossel mostra 4
+ * cards por vez em telas grandes e 2 em telas médias, ou seja: a tela cresce e
+ * o card encolhe. Com `sm:flex-row` os dois botões viravam linha justamente
+ * onde o card era mais estreito, estouravam a largura e o "Detalhes" era
+ * cortado pelo `overflow-hidden` do card. Agora eles só ficam lado a lado
+ * quando o próprio card tem largura para isso.
+ *
+ * Os botões usam `size="sm"` (fonte 12px, padding menor, ícone de 16px): o
+ * texto do card é curto e não precisa da escala dos botões de página. Como
+ * ambos são `flex-1 min-w-0` com `truncate`, o pior caso é o texto encurtar —
+ * nunca vazar o card.
+ */
+export default function MovieCard({ movie, highlight }: MovieCardProps) {
   return (
-    <article className="overflow-hidden rounded-lg bg-zinc-900 shadow-lg transition-transform duration-300 hover:-translate-y-1">
-      <div className="relative aspect-[2/3]">
-        <Image
-          src={movieBanner}
+    <article className="group @container flex h-full flex-col overflow-hidden rounded-xl border border-grayScale-600 bg-gray-surface transition-all duration-300 hover:-translate-y-1 hover:border-red-cinema">
+      <Link href={`/movies/${movie._id}`} className="relative block aspect-2/3">
+        <MoviePoster
+          src={movie.banner}
           alt={movie.title}
-          fill
-          className="object-cover transition-transform duration-300 hover:scale-105"
-          unoptimized={movie.banner?.startsWith("http")}
+          sizes="(max-width: 640px) 60vw, (max-width: 1024px) 33vw, 25vw"
+          className="object-cover transition-transform duration-500 group-hover:scale-105"
         />
-      </div>
 
-      <div className="space-y-3 p-3 sm:p-4">
-        <div>
-          <h3 className="line-clamp-1 text-base font-bold text-white sm:text-lg">
-            {movie.title}
-          </h3>
+        <span
+          className={`absolute top-2 left-2 z-10 rounded px-1.5 py-0.5 text-[11px] font-black text-white ${classificationColor(
+            movie.classification,
+          )}`}
+        >
+          {movie.classification}
+        </span>
+      </Link>
 
-          <div className="mt-2 flex items-center gap-2">
-            <span className="text-xs text-zinc-400 sm:text-sm">
-              {movie.genre || "Cinema"}
-            </span>
+      <div className="flex flex-1 flex-col gap-2 p-4">
+        <h3 className="line-clamp-2 min-h-12 font-black text-white">
+          {movie.title}
+        </h3>
 
-            <span className="rounded bg-lime-500 px-1.5 py-0.5 text-[10px] font-bold text-black sm:text-xs">
-              {movie.ageRating || "L"}
-            </span>
-          </div>
-        </div>
+        <p className="line-clamp-1 text-xs text-grayScale-400">
+          {movieMetaLine(movie.genres, movie.duration)}
+        </p>
 
-        <div className="flex flex-col gap-2 sm:flex-row">
-          <Link href={`/movies/${movie._id}`} className="flex-1">
-            <Button className="flex w-full items-center justify-center gap-2">
-              <ConfirmationNumber fontSize="small" />
-              <span>Ingressos</span>
+        {highlight && (
+          <p className="line-clamp-1 text-xs font-bold text-red-cinema">
+            {highlight}
+          </p>
+        )}
+
+        <div className="mt-auto flex flex-col gap-2 pt-2 @min-[15rem]:flex-row">
+          <Link href={`/movies/${movie._id}`} className="min-w-0 flex-1">
+            <Button
+              size="sm"
+              className="flex w-full items-center justify-center gap-1.5"
+            >
+              <ConfirmationNumber sx={{ fontSize: 16 }} />
+              <span className="truncate">Ingressos</span>
             </Button>
           </Link>
 
-          <Link href={`/movies/${movie._id}`} className="sm:w-auto">
+          <Link href={`/movies/${movie._id}`} className="min-w-0 flex-1">
             <Button
+              size="sm"
               variant="secondary"
-              className="flex w-full items-center justify-center gap-2 "
+              className="flex w-full items-center justify-center gap-1.5"
             >
-              <Add fontSize="small" />
-              <span>Detalhes</span>
+              <Add sx={{ fontSize: 16 }} />
+              <span className="truncate">Detalhes</span>
             </Button>
           </Link>
         </div>
