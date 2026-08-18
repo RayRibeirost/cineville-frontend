@@ -2,6 +2,7 @@ import type { NextConfig } from "next";
 import { MAX_UPLOAD_BYTES } from "./src/utils/upload";
 
 const nextConfig: NextConfig = {
+  output: "standalone",
   experimental: {
     optimizePackageImports: ["react-icons"],
 

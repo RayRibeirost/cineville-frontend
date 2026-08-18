@@ -2,8 +2,8 @@
 
 import Link from "next/link";
 import { ArrowLeft, Eye } from "lucide-react";
-import { useActionState, useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { useActionState, useEffect, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { resetPassword } from "@/src/actions/resetPasswordActions";
 import { ResetPasswordState } from "@/src/types/forgotPassword";
 import { InferInput } from "valibot";
@@ -25,6 +25,7 @@ const initialState: ResetPasswordState<Partial<ResetPasswordInput>> = {
 
 export default function ResetPassword() {
   const searchParams = useSearchParams();
+  const router = useRouter();
 
   const token = searchParams.get("token") ?? "";
 
@@ -32,6 +33,16 @@ export default function ResetPassword() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const [state, action, pending] = useActionState(resetPassword, initialState);
+
+  useEffect(() => {
+    if (state.success) {
+      const timer = setTimeout(() => {
+        router.push("/login");
+      }, 2000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [state.success, router]);
 
   return (
     <>
