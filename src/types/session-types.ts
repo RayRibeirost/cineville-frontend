@@ -1,5 +1,6 @@
 import { BackendSeat, SeatRow } from "../utils/seat-rows";
 import { SelectedSeat } from "@/src/hooks/useSeatSelection";
+import { TicketType } from "./ticket";
 
 export type SeatType =
   | "comum"
@@ -42,7 +43,7 @@ export interface SeatGridProps {
   toggleSeat: (
     seatNumber: string,
     seatType: SeatType,
-    ticketType?: "INTEIRA" | "MEIA",
+    ticketType?: TicketType,
   ) => void;
   screenType: string;
   room: string;
@@ -51,6 +52,13 @@ export interface SeatGridProps {
 export interface SeatMapSidebarProps {
   totalSeatsCount: number;
   selectedCount: number;
+}
+
+export interface TicketTypesPanelProps {
+  selectedSeats: SelectedSeat[];
+  /** Preço da sessão em centavos — base da prévia de inteira e meia. */
+  sessionPrice?: number;
+  onChangeType: (seatNumber: string, ticketType: TicketType) => void;
 }
 
 export interface SeatMapFooterProps {

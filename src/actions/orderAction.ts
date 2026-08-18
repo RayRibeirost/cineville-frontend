@@ -1,15 +1,19 @@
 "use server";
 
 import { cookies } from "next/headers";
+import { TicketType } from "@/src/types/ticket";
+import { TICKET_TYPE_LABELS, ticketPriceFromSession } from "@/src/utils/ticket";
 
 export interface SeatDto {
   seatNumber: string;
-  type: "INTEIRA" | "MEIA";
+  type: TicketType;
 }
 
 interface OrderSeat {
   seatNumber: string;
-  type: "INTEIRA" | "MEIA";
+  type: TicketType;
+  /** Valor oficial do ingresso, em centavos, calculado pelo backend. */
+  pricePaid?: number;
 }
 
 interface OrderProduct {
@@ -133,12 +137,16 @@ export async function getOrder(orderId: string) {
         seatNumber: seat.seatNumber,
         type: seat.type,
 
-        description: seat.type === "MEIA" ? "Meia entrada" : "Inteira",
+        description: `${TICKET_TYPE_LABELS[seat.type] ?? seat.type} · Assento ${seat.seatNumber}`,
 
+        /*
+          O valor exibido é o que o backend gravou no pedido. Recalcular aqui
+          faria a tela discordar da cobrança se a regra da meia mudar — o
+          fallback só existe para pedidos antigos, sem `pricePaid`.
+        */
         price:
-          seat.type === "MEIA"
-            ? (order.session?.price ?? 0) / 2
-            : (order.session?.price ?? 0),
+          seat.pricePaid ??
+          ticketPriceFromSession(order.session?.price, seat.type),
       })) ?? [],
 
     products:

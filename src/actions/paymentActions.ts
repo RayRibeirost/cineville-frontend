@@ -1,6 +1,10 @@
 "use server";
 
 import { cookies } from "next/headers";
+import {
+  PaymentMethod,
+  isPaymentMethodAvailable,
+} from "@/src/types/payments";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -24,8 +28,20 @@ async function getResponseData(response: Response) {
 
 export async function createPayment(
   orderId: string,
-  method: "pix" | "cartao_credito" | "cartao_debito",
+  method: PaymentMethod,
 ) {
+  /*
+   * Cartão ainda não é uma forma de pagamento do sistema. A tela já não
+   * permite escolher, e a verificação também vive aqui para que nenhuma
+   * requisição de cobrança por cartão saia do frontend — nem por um caminho
+   * de código futuro que esqueça a regra.
+   */
+  if (!isPaymentMethodAvailable(method)) {
+    throw new Error(
+      "Esta forma de pagamento ainda não está disponível. Utilize o PIX.",
+    );
+  }
+
   const token = (await cookies()).get("auth_token")?.value;
 
   if (!token) {

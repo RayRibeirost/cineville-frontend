@@ -6,6 +6,8 @@ import { useSeatSelection } from "@/src/hooks/useSeatSelection";
 import { SeatMapHeader } from "./SeatMapHeader";
 import { SeatMapSidebar } from "./SeatMapSidebar";
 import { SeatMapFooter } from "./SeatMapFooter";
+import { TicketTypesPanel } from "./TicketTypesPanel";
+import { ticketPriceFromSession } from "@/src/utils/ticket";
 import { SeatGrid } from "./SeatMapGrid";
 import { SeatRow } from "@/src/utils/seat-rows";
 import { getSessionDetails } from "@/src/actions/sessionActions";
@@ -32,7 +34,8 @@ export default function SeatMapModal({
 }) {
   const router = useRouter();
   const { setOrder } = useOrder();
-  const { selectedSeats, selectedCount, toggleSeat } = useSeatSelection();
+  const { selectedSeats, selectedCount, toggleSeat, setSeatType } =
+    useSeatSelection();
   const [sessionInfo, setSessionInfo] = useState<SessionInfo | null>(null);
   const [seatRows, setSeatRows] = useState<SeatRow[]>([]);
   const [loadError, setLoadError] = useState<string | null>(null);
@@ -78,7 +81,7 @@ export default function SeatMapModal({
             quantity: item.quantity,
             price: item.price,
           })),
-          total: result.order.total,
+          total: result.order.totalAmount ?? result.order.total ?? prev.total,
         };
       });
 
@@ -230,16 +233,15 @@ export default function SeatMapModal({
           tickets: selectedSeats.map((seat) => ({
             seatNumber: seat.seatNumber,
             type: seat.type,
-            price:
-              seat.type === "MEIA"
-                ? (sessionInfo.price ?? 0) / 2
-                : (sessionInfo.price ?? 0),
+            price: ticketPriceFromSession(sessionInfo.price, seat.type),
           })),
 
           products: [],
 
-          total: order.total,
-          discount: 0,
+          // `totalAmount` é o campo do pedido no backend; `total` era um nome
+          // que nunca chegou a existir na resposta e deixava o resumo em zero.
+          total: order.totalAmount ?? order.total ?? 0,
+          discount: order.discountAmount ?? 0,
         };
 
         setOrder(orderData);
@@ -359,10 +361,16 @@ export default function SeatMapModal({
                   />
                 </div>
 
-                <div className="w-full xl:w-[320px]">
+                <div className="flex w-full flex-col gap-4 xl:w-[320px]">
                   <SeatMapSidebar
                     totalSeatsCount={totalSeatsCount}
                     selectedCount={selectedCount}
+                  />
+
+                  <TicketTypesPanel
+                    selectedSeats={selectedSeats}
+                    sessionPrice={sessionInfo.price}
+                    onChangeType={setSeatType}
                   />
                 </div>
               </div>

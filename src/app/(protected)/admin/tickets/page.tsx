@@ -1,12 +1,25 @@
 import { getAllTickets } from "@/src/actions/ticketsActions";
 import TicketsManager from "@/src/components/admin/tickets/TicketsManager";
+import { ADMIN_PAGE_SIZE, parsePageParam } from "@/src/utils/pagination";
+import { TicketStatus } from "@/src/types/ticket";
 
 export const metadata = {
   title: "Ingressos | Admin SmallVille",
 };
 
-export default async function AdminTicketsPage() {
-  const result = await getAllTickets();
+export default async function AdminTicketsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ page?: string; status?: string }>;
+}) {
+  const { page: pageParam, status } = await searchParams;
+  const page = parsePageParam(pageParam);
+
+  const result = await getAllTickets(
+    page,
+    ADMIN_PAGE_SIZE,
+    status as TicketStatus | undefined,
+  );
 
   return (
     <section className="flex flex-col gap-6">
@@ -23,7 +36,12 @@ export default async function AdminTicketsPage() {
           {result.error}
         </p>
       ) : (
-        <TicketsManager tickets={result.data} />
+        <TicketsManager
+          tickets={result.data.items}
+          page={result.data.page}
+          limit={result.data.limit}
+          total={result.data.total}
+        />
       )}
     </section>
   );

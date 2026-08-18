@@ -10,6 +10,11 @@ import {
   RoomType,
 } from "@/src/types/admin";
 import { TicketType } from "@/src/types/ticket";
+import {
+  PAYMENT_STATUSES,
+  REJECTION_REASON_MAX_LENGTH,
+  REJECTION_REASON_MIN_LENGTH,
+} from "@/src/types/payments";
 
 /** Valores de OrderStatus no backend (português). */
 export type OrderStatus =
@@ -62,6 +67,14 @@ export interface Order {
 
   paymentApproved: boolean;
   ticketAvailable: boolean;
+  /**
+   * Motivo informado na recusa do pagamento, quando existir.
+   *
+   * Vive no pagamento (`payment.failureReason`), não no pedido: depende do
+   * backend expor esse dado junto do pedido — enquanto não expuser, o campo
+   * chega vazio e a tela mostra apenas o status "Pagamento recusado".
+   */
+  paymentFailureReason?: string;
 
   movieTitle?: string;
   movieBanner?: string;
@@ -143,6 +156,12 @@ interface RawOrder {
   paymentApproved: boolean;
   ticketGeneratedAt?: string;
   createdAt: string;
+  /**
+   * Motivo da recusa. Aceita as duas formas que o backend pode adotar: um
+   * campo achatado no pedido ou o pagamento embutido.
+   */
+  paymentFailureReason?: string;
+  payment?: { status?: string; failureReason?: string };
 }
 
 /** Envelope de `GET /orders` — `{ items, total, page, limit }`, sem `data`. */
@@ -215,6 +234,9 @@ function toOrder(raw: RawOrder): Order {
 
     paymentApproved: !!raw.paymentApproved,
     ticketAvailable: !!raw.ticketGeneratedAt && (raw.tickets?.length ?? 0) > 0,
+
+    paymentFailureReason:
+      raw.paymentFailureReason ?? raw.payment?.failureReason ?? undefined,
 
     movieTitle: movie?.title ?? session?.movieTitle,
     movieBanner: movie?.banner,
@@ -309,7 +331,7 @@ export async function approveOrderPayment(
 
   if (!result.success) return result;
 
-  if (result.data?.status === "REFUSED") {
+  if (result.data?.status === PAYMENT_STATUSES.REFUSED) {
     return {
       success: false,
       error:
@@ -318,11 +340,60 @@ export async function approveOrderPayment(
     };
   }
 
+  revalidateOrderViews();
+
+  return { success: true, data: null };
+}
+
+/**
+ * Recusa o pagamento pendente de um pedido — só administrador.
+ *
+ * Contrapartida de `approveOrderPayment`: enquanto o gateway é mockado, é o
+ * administrador que decide o desfecho de um PIX que ninguém escaneou. A rota é
+ * `POST /payments/orders/:orderId/reject` (`PaymentsService.rejectOrderPayment`)
+ * e aceita apenas `pendente → recusado`; aprovado, recusado e expirado são
+ * definitivos e a própria API recusa a mudança.
+ *
+ * O motivo é opcional, mas quando enviado o backend exige de 3 a 255
+ * caracteres — por isso um texto mais curto é descartado aqui em vez de virar
+ * um 400. Sem motivo, o backend grava o padrão.
+ *
+ * O pedido recusado NÃO gera ingresso: quem emite ingresso é
+ * `fulfillPaidOrder`, disparado apenas na aprovação.
+ */
+export async function rejectOrderPayment(
+  orderId: string,
+  reason?: string,
+): Promise<ActionResult<null>> {
+  const trimmedReason = reason?.trim() ?? "";
+
+  const body =
+    trimmedReason.length >= REJECTION_REASON_MIN_LENGTH
+      ? { reason: trimmedReason.slice(0, REJECTION_REASON_MAX_LENGTH) }
+      : {};
+
+  const result = await apiRequest<{ status?: string }>(
+    `/payments/orders/${orderId}/reject`,
+    {
+      method: "POST",
+      body,
+      fallbackError:
+        "Não foi possível recusar o pagamento. Tente novamente.",
+    },
+  );
+
+  if (!result.success) return result;
+
+  revalidateOrderViews();
+
+  return { success: true, data: null };
+}
+
+/** As três telas que mostram o desfecho de um pagamento. */
+function revalidateOrderViews() {
   revalidatePath("/admin/orders");
   revalidatePath("/admin/tickets");
   revalidatePath("/meus-pedidos");
-
-  return { success: true, data: null };
 }
 
 /**

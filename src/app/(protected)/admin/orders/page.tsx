@@ -1,12 +1,26 @@
-import { getAllOrders } from "@/src/actions/myOrdersActions";
+import { getAllOrders, OrderStatus } from "@/src/actions/myOrdersActions";
 import MyOrdersList from "@/src/components/orders/MyOrdersList";
+import { ADMIN_PAGE_SIZE, parsePageParam } from "@/src/utils/pagination";
 
 export const metadata = {
   title: "Pedidos | Admin SmallVille",
 };
 
-export default async function AdminOrdersPage() {
-  const result = await getAllOrders(1, 50);
+export default async function AdminOrdersPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ page?: string; status?: string }>;
+}) {
+  const { page: pageParam, status } = await searchParams;
+  const page = parsePageParam(pageParam);
+
+  // O filtro de status vai para a API: paginar 10 em 10 sobre o recorte certo,
+  // e não sobre tudo para filtrar depois na tela.
+  const result = await getAllOrders(
+    page,
+    ADMIN_PAGE_SIZE,
+    status as OrderStatus | undefined,
+  );
 
   return (
     <section className="flex flex-col gap-6">
@@ -28,6 +42,9 @@ export default async function AdminOrdersPage() {
           orders={result.data.items}
           admin
           emptyMessage="Nenhum pedido registrado até o momento."
+          page={result.data.page}
+          limit={result.data.limit}
+          total={result.data.total}
         />
       )}
     </section>

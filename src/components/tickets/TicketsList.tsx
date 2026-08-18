@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { Ticket, TicketStatus } from "@/src/types/ticket";
+import AdminPagination from "@/src/components/admin/AdminPagination";
 import TicketStub from "./TicketStub";
 import TicketDownloadButton from "./TicketDownloadButton";
 
@@ -19,12 +20,19 @@ interface TicketsListProps {
   searchable?: boolean;
   /** Texto exibido quando o usuário ainda não tem nenhum ingresso. */
   emptyMessage?: string;
+  /**
+   * Paginação, quando a lista vem de uma rota paginada (`GET /tickets`).
+   * Ausente em "Meus Ingressos", porque `/tickets/my-tickets` devolve todos os
+   * ingressos do próprio usuário de uma vez.
+   */
+  pagination?: { page: number; limit: number; total: number };
 }
 
 export default function TicketsList({
   tickets,
   searchable = false,
   emptyMessage = "Você ainda não tem ingressos. Escolha um filme e garanta o seu.",
+  pagination,
 }: TicketsListProps) {
   const [filter, setFilter] = useState<TicketStatus | "all">("all");
   const [search, setSearch] = useState("");
@@ -94,7 +102,9 @@ export default function TicketsList({
 
       {!visible.length ? (
         <p className="rounded-xl border border-grayScale-600 bg-gray-surface px-6 py-10 text-center text-sm text-grayScale-400">
-          Nenhum ingresso encontrado com esses filtros.
+          {pagination
+            ? "Nenhum ingresso desta página corresponde aos filtros."
+            : "Nenhum ingresso encontrado com esses filtros."}
         </p>
       ) : (
         <div className="flex flex-col gap-5">
@@ -108,6 +118,15 @@ export default function TicketsList({
             </div>
           ))}
         </div>
+      )}
+
+      {pagination && (
+        <AdminPagination
+          page={pagination.page}
+          limit={pagination.limit}
+          total={pagination.total}
+          itemLabel="ingressos"
+        />
       )}
     </div>
   );

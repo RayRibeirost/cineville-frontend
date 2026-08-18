@@ -83,6 +83,15 @@ interface RawTicketsPage {
   limit?: number;
 }
 
+/** Uma página de ingressos, já no formato que as telas usam. */
+export interface TicketsPage {
+  items: Ticket[];
+  /** Total no servidor, não o tamanho da página. */
+  total: number;
+  page: number;
+  limit: number;
+}
+
 function isObject<T>(value: T | string | undefined): value is T {
   return typeof value === "object" && value !== null;
 }
@@ -194,16 +203,22 @@ export async function getMyTickets(): Promise<ActionResult<Ticket[]>> {
  *
  * `GET /tickets` é sensível ao papel no backend (`findAllForRequester`):
  * usuário comum recebe os próprios ingressos, administrador recebe todos.
- * A rota é paginada, então pedimos um limite alto — a tela filtra em memória.
+ *
+ * A paginação é a da API: pedimos apenas os registros da página pedida e
+ * devolvemos o total para a tela montar os controles. Antes pedíamos 100 de
+ * uma vez e a tela ficava com o que caísse nesse limite.
  */
 export async function getAllTickets(
   page = 1,
-  limit = 100,
-): Promise<ActionResult<Ticket[]>> {
+  limit = 10,
+  status?: TicketStatus,
+): Promise<ActionResult<TicketsPage>> {
   const params = new URLSearchParams({
     page: String(page),
     limit: String(limit),
   });
+
+  if (status) params.set("status", status);
 
   const result = await apiRequest<RawTicket[] | RawTicketsPage>(
     `/tickets?${params}`,
@@ -212,7 +227,19 @@ export async function getAllTickets(
 
   if (!result.success) return result;
 
-  return { success: true, data: await buildTickets(toTicketArray(result.data)) };
+  const items = await buildTickets(toTicketArray(result.data));
+
+  const raw = Array.isArray(result.data) ? undefined : result.data;
+
+  return {
+    success: true,
+    data: {
+      items,
+      total: raw?.total ?? items.length,
+      page: raw?.page ?? page,
+      limit: raw?.limit ?? limit,
+    },
+  };
 }
 
 /**

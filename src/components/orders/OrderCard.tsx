@@ -1,8 +1,9 @@
 import Link from "next/link";
 import { Order, OrderStatus } from "@/src/actions/myOrdersActions";
 import { formatCents } from "@/src/utils/currency";
+import { TICKET_TYPE_LABELS } from "@/src/utils/ticket";
 import OrderStatusBadge from "./OrderStatusBadge";
-import ApprovePaymentButton from "./ApprovePaymentButton";
+import PaymentDecisionActions from "./PaymentDecisionActions";
 
 /** Pedidos que ainda dá para pagar (PAYABLE_STATUSES no backend). */
 const PAYABLE: OrderStatus[] = [
@@ -38,7 +39,10 @@ interface OrderCardProps {
   showUser?: boolean;
   /** Esconde o botão de retomar pagamento (o admin não paga pelo usuário). */
   showActions?: boolean;
-  /** Libera a aprovação manual do pagamento — só na visão de administrador. */
+  /**
+   * Libera aprovar/recusar o pagamento — só na visão de administrador, e só
+   * enquanto o pagamento estiver pendente.
+   */
   showApprove?: boolean;
 }
 
@@ -109,7 +113,7 @@ export default function OrderCard({
             <Row
               key={seat.seatNumber}
               label={`Assento ${seat.seatNumber} · ${
-                seat.type === "MEIA" ? "Meia entrada" : "Inteira"
+                TICKET_TYPE_LABELS[seat.type] ?? seat.type
               }`}
               value={formatCents(seat.pricePaid)}
             />
@@ -167,13 +171,31 @@ export default function OrderCard({
       </div>
 
       {/*
+        O motivo é do usuário: é ele que precisa entender por que a compra não
+        foi confirmada. Aparece nos dois lados, porque a mesma tela serve de
+        detalhe do pedido para usuário e administrador.
+      */}
+      {order.status === "pagamento_recusado" && order.paymentFailureReason && (
+        <div className="mt-5 rounded-lg border border-red-500/40 bg-red-500/10 px-4 py-3">
+          <p className="text-[11px] font-bold tracking-[0.08em] text-red-300 uppercase">
+            Motivo da recusa
+          </p>
+
+          <p className="mt-1 text-xs text-red-200">
+            {order.paymentFailureReason}
+          </p>
+        </div>
+      )}
+
+      {/*
         Só em "pagamento_pendente": é o único status em que existe um
         pagamento aguardando no backend. Em "pedido_realizado" o usuário nem
-        escolheu a forma de pagamento, e em "pagamento_recusado" a tentativa
-        anterior já foi encerrada — nos dois casos a rota responderia 404.
+        escolheu a forma de pagamento, e depois de aprovado ou recusado o
+        desfecho é definitivo — nos dois casos a rota responderia erro, então
+        as ações saem da tela.
       */}
       {showApprove && order.status === "pagamento_pendente" && (
-        <ApprovePaymentButton orderId={order.id} />
+        <PaymentDecisionActions orderId={order.id} />
       )}
 
       {showActions && (

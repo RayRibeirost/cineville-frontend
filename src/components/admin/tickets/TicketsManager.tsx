@@ -1,9 +1,12 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import AdminTable, { AdminColumn } from "../AdminTable";
+import AdminPagination from "../AdminPagination";
 import { Ticket, TicketStatus } from "@/src/types/ticket";
 import { formatCents } from "@/src/utils/currency";
+import { TICKET_TYPE_LABELS } from "@/src/utils/ticket";
+import { useQueryParams } from "@/src/hooks/useQueryParams";
 
 const STATUS_LABELS: Record<TicketStatus, string> = {
   valido: "Válido",
@@ -17,25 +20,49 @@ const STATUS_CLASSES: Record<TicketStatus, string> = {
   cancelado: "border-red-500/40 bg-red-500/10 text-red-300",
 };
 
+interface TicketsManagerProps {
+  tickets: Ticket[];
+  /** Paginação da API (`GET /tickets?page=&limit=`). */
+  page: number;
+  limit: number;
+  total: number;
+}
+
 /**
- * Listagem administrativa de ingressos.
+ * Listagem administrativa de ingressos, 10 por página.
  *
- * O backend não pagina `GET /tickets`, então a busca e o filtro acontecem
- * sobre a lista já carregada. Quando a rota ganhar paginação, é aqui que ela
- * entra.
+ * Página e filtro de status vão para a API — o filtro "somente válidos" usa
+ * `?status=valido`, então vale para a base inteira. A busca por texto não tem
+ * equivalente na API, por isso filtra apenas os ingressos da página aberta, e o
+ * campo diz isso.
  */
-export default function TicketsManager({ tickets }: { tickets: Ticket[] }) {
-  const [search, setSearch] = useState("");
-  const [onlyValid, setOnlyValid] = useState(false);
+export default function TicketsManager({
+  tickets,
+  page,
+  limit,
+  total,
+}: TicketsManagerProps) {
+  const { searchParams, update, isPending } = useQueryParams();
+
+  const onlyValid = searchParams.get("status") === "valido";
+  const queryTerm = searchParams.get("q") ?? "";
+
+  const [search, setSearch] = useState(queryTerm);
+
+  useEffect(() => {
+    if (search === queryTerm) return;
+
+    const timer = setTimeout(() => update({ q: search || null }), 350);
+
+    return () => clearTimeout(timer);
+  }, [search, queryTerm, update]);
 
   const rows = useMemo(() => {
     const term = search.trim().toLowerCase();
 
+    if (!term) return tickets;
+
     return tickets.filter((ticket) => {
-      if (onlyValid && ticket.status !== "valido") return false;
-
-      if (!term) return true;
-
       return [
         ticket.code,
         ticket.movieTitle,
@@ -48,7 +75,7 @@ export default function TicketsManager({ tickets }: { tickets: Ticket[] }) {
         .filter(Boolean)
         .some((field) => field!.toLowerCase().includes(term));
     });
-  }, [tickets, search, onlyValid]);
+  }, [tickets, search]);
 
   const columns: AdminColumn<Ticket>[] = [
     {
@@ -93,7 +120,7 @@ export default function TicketsManager({ tickets }: { tickets: Ticket[] }) {
         <span>
           {ticket.seatNumber}
           <span className="ml-1 text-xs text-grayScale-400">
-            ({ticket.type === "MEIA" ? "Meia" : "Inteira"})
+            ({TICKET_TYPE_LABELS[ticket.type] ?? ticket.type})
           </span>
         </span>
       ),
@@ -120,8 +147,11 @@ export default function TicketsManager({ tickets }: { tickets: Ticket[] }) {
         <button
           type="button"
           aria-pressed={onlyValid}
-          onClick={() => setOnlyValid((value) => !value)}
-          className={`w-fit shrink-0 cursor-pointer rounded-lg border px-4 py-2 text-xs font-bold transition-all ${
+          disabled={isPending}
+          onClick={() =>
+            update({ status: onlyValid ? null : "valido", page: null })
+          }
+          className={`w-fit shrink-0 cursor-pointer rounded-lg border px-4 py-2 text-xs font-bold transition-all disabled:cursor-not-allowed ${
             onlyValid
               ? "border-red-cinema bg-red-cinema text-white"
               : "border-grayScale-600 bg-gray-surface text-grayScale-400 hover:border-red-cinema hover:text-white"
@@ -134,21 +164,30 @@ export default function TicketsManager({ tickets }: { tickets: Ticket[] }) {
           type="search"
           value={search}
           onChange={(event) => setSearch(event.target.value)}
-          placeholder="Buscar por código, usuário, filme ou assento"
-          aria-label="Buscar ingressos"
+          placeholder="Buscar nesta página: código, usuário, filme ou assento"
+          aria-label="Buscar ingressos nesta página"
           className="w-full rounded-lg border border-grayScale-600 bg-gray-surface px-4 py-2 text-sm text-grayScale-200 outline-none placeholder:text-grayScale-500 focus:border-red-cinema sm:w-80"
         />
       </div>
 
-      <p className="text-xs text-grayScale-400">
-        {rows.length} de {tickets.length} ingressos
-      </p>
+      <div className={isPending ? "opacity-60" : ""}>
+        <AdminTable
+          rows={rows}
+          columns={columns}
+          rowKey={(ticket) => ticket._id}
+          emptyMessage={
+            search
+              ? "Nenhum ingresso desta página corresponde à busca."
+              : "Nenhum ingresso encontrado."
+          }
+        />
+      </div>
 
-      <AdminTable
-        rows={rows}
-        columns={columns}
-        rowKey={(ticket) => ticket._id}
-        emptyMessage="Nenhum ingresso encontrado."
+      <AdminPagination
+        page={page}
+        limit={limit}
+        total={total}
+        itemLabel="ingressos"
       />
     </div>
   );

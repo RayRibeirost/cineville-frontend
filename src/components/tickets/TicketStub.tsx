@@ -1,6 +1,7 @@
-import Image from "next/image";
+import MoviePoster from "@/src/components/ui/MoviePoster";
 import { Ticket, TicketStatus } from "@/src/types/ticket";
 import { formatCents } from "@/src/utils/currency";
+import { TICKET_TYPE_LABELS } from "@/src/utils/ticket";
 
 interface TicketStubProps {
   ticket: Ticket;
@@ -32,7 +33,6 @@ const STATUS_META: Record<TicketStatus, { label: string; className: string }> = 
  * na geração do PDF, para que os três mostrem exatamente a mesma coisa.
  */
 export default function TicketStub({ ticket, holderLabel }: TicketStubProps) {
-  const banner = ticket.movieBanner || "/assets/movie-placeholder.png";
   const [date, time] = ticket.sessionDateTime?.split(" ") ?? [];
   const holder = holderLabel ?? ticket.holderName;
   const status = STATUS_META[ticket.status] ?? STATUS_META.valido;
@@ -41,11 +41,9 @@ export default function TicketStub({ ticket, holderLabel }: TicketStubProps) {
     <article className="flex w-full overflow-hidden rounded-2xl border border-grayScale-600 bg-gray-surface">
       {/* Pôster real do filme */}
       <div className="relative w-24 shrink-0 sm:w-36 lg:w-44">
-        <Image
-          src={banner}
+        <MoviePoster
+          src={ticket.movieBanner}
           alt={ticket.movieTitle}
-          fill
-          unoptimized={banner.startsWith("http")}
           sizes="176px"
           className="object-cover"
         />
@@ -94,10 +92,7 @@ export default function TicketStub({ ticket, holderLabel }: TicketStubProps) {
             <Field label="Data" value={date} />
             <Field label="Horário" value={time} />
             <Field label="Assento" value={ticket.seatNumber} />
-            <Field
-              label="Tipo"
-              value={ticket.type === "MEIA" ? "Meia entrada" : "Inteira"}
-            />
+            <Field label="Tipo" value={TICKET_TYPE_LABELS[ticket.type]} />
 
             {holder && <Field label="Titular" value={holder} />}
 

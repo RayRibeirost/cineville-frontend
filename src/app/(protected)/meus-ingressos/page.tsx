@@ -4,19 +4,46 @@ import Footer from "@/src/components/layout/Footer/Footer";
 import TicketsList from "@/src/components/tickets/TicketsList";
 import { getAllTickets, getMyTickets } from "@/src/actions/ticketsActions";
 import { getServerUser } from "@/src/lib/auth";
+import { ADMIN_PAGE_SIZE, parsePageParam } from "@/src/utils/pagination";
+import type { Ticket } from "@/src/types/ticket";
 
 export const metadata = {
   title: "Meus Ingressos | SmallVille",
 };
 
-export default async function MeusIngressosPage() {
+export default async function MeusIngressosPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ page?: string }>;
+}) {
   const user = await getServerUser();
   const isAdmin = user?.role === "ADMIN";
+  const page = parsePageParam((await searchParams).page);
 
-  // Regra do backend: `GET /tickets/my-tickets` filtra pelo usuário do token e
-  // `GET /tickets` é exclusiva de admin. Aqui só escolhemos qual chamar — quem
-  // decide o que cada papel enxerga é a API.
-  const result = isAdmin ? await getAllTickets() : await getMyTickets();
+  /*
+   * Regra do backend: `GET /tickets/my-tickets` filtra pelo usuário do token e
+   * devolve todos os ingressos dele; `GET /tickets` é a rota paginada que o
+   * administrador usa para ver o sistema inteiro. Aqui só escolhemos qual
+   * chamar — quem decide o que cada papel enxerga é a API.
+   */
+  const result = isAdmin
+    ? await getAllTickets(page, ADMIN_PAGE_SIZE)
+    : await getMyTickets();
+
+  const tickets: Ticket[] = !result.success
+    ? []
+    : Array.isArray(result.data)
+      ? result.data
+      : result.data.items;
+
+  const pagination =
+    result.success && !Array.isArray(result.data)
+      ? {
+          page: result.data.page,
+          limit: result.data.limit,
+          total: result.data.total,
+        }
+      : undefined;
 
   return (
     <>
@@ -49,8 +76,9 @@ export default async function MeusIngressosPage() {
             </div>
           ) : (
             <TicketsList
-              tickets={result.data}
+              tickets={tickets}
               searchable={isAdmin}
+              pagination={pagination}
               emptyMessage={
                 isAdmin
                   ? "Nenhum ingresso emitido até o momento."

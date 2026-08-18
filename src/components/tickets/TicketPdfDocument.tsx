@@ -1,5 +1,6 @@
 import { Ticket } from "@/src/types/ticket";
 import { formatCents } from "@/src/utils/currency";
+import { TICKET_TYPE_LABELS } from "@/src/utils/ticket";
 
 /**
  * Versão do ingresso que vira PDF.
@@ -22,10 +23,7 @@ export default function TicketPdfDocument({ ticket }: { ticket: Ticket }) {
     { label: "Data", value: date },
     { label: "Horário", value: time },
     { label: "Assento", value: ticket.seatNumber },
-    {
-      label: "Tipo",
-      value: ticket.type === "MEIA" ? "Meia entrada" : "Inteira",
-    },
+    { label: "Tipo", value: TICKET_TYPE_LABELS[ticket.type] },
     { label: "Sessão", value: [ticket.roomType, ticket.language].filter(Boolean).join(" · ") },
     { label: "Valor pago", value: formatCents(ticket.price) },
   ];

@@ -1,5 +1,5 @@
-import Image from "next/image";
 import Link from "next/link";
+import MoviePoster from "@/src/components/ui/MoviePoster";
 import { CatalogMovie } from "@/src/types/admin";
 import { classificationColor, movieMetaLine } from "@/src/utils/movie";
 
@@ -13,22 +13,18 @@ export default function CatalogMovieCard({
   movie,
   highlight,
 }: CatalogMovieCardProps) {
-  const banner = movie.banner || "/assets/movie-placeholder.png";
-
   return (
     <article className="group flex h-full flex-col overflow-hidden rounded-xl border border-grayScale-600 bg-gray-surface transition-all duration-300 hover:-translate-y-1 hover:border-red-cinema">
       <Link href={`/movies/${movie._id}`} className="relative aspect-2/3 block">
-        <Image
-          src={banner}
+        <MoviePoster
+          src={movie.banner}
           alt={movie.title}
-          fill
-          unoptimized={banner.startsWith("http")}
           sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
           className="object-cover transition-transform duration-500 group-hover:scale-105"
         />
 
         <span
-          className={`absolute top-2 left-2 rounded px-1.5 py-0.5 text-[11px] font-black text-white ${classificationColor(
+          className={`absolute top-2 left-2 z-10 rounded px-1.5 py-0.5 text-[11px] font-black text-white ${classificationColor(
             movie.classification,
           )}`}
         >
