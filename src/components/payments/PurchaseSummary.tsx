@@ -1,15 +1,12 @@
 import { PurchaseSummary as Summary } from "../../types/payments";
+import { formatCents } from "@/src/utils/currency";
 
 interface Props {
   purchase: Summary;
 }
 
 export default function ContPurchaseSummary({ purchase }: Props) {
-  const formatCurrency = (value: number) =>
-    new Intl.NumberFormat("pt-BR", {
-      style: "currency",
-      currency: "BRL",
-    }).format(value / 100);
+  const formatCurrency = formatCents;
 
   return (
     <aside className="rounded-xl bg-zinc-900 border border-zinc-800 p-6">
@@ -78,14 +75,14 @@ export default function ContPurchaseSummary({ purchase }: Props) {
           <span>Descontos</span>
 
           <span className="text-green-500">
-            - R$ {formatCurrency(purchase.discount ?? 0)}
+            - {formatCurrency(purchase.discount ?? 0)}
           </span>
         </div>
 
         <div className="flex justify-between text-lg font-bold text-red-500">
           <span>Total</span>
 
-          <span>R$ {formatCurrency(purchase.total ?? 0)}</span>
+          <span>{formatCurrency(purchase.total ?? 0)}</span>
         </div>
       </div>
     </aside>

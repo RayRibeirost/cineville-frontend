@@ -27,12 +27,32 @@ type PaymentStatus = "PENDING" | "APPROVED" | "REFUSED" | "EXPIRED";
 interface Payment {
   _id: string;
   status: PaymentStatus;
+  /** Motivo da recusa devolvido pelo gateway. */
+  failureReason?: string;
 
   pix?: {
     qrCode: string;
     copyPasteCode: string;
     expiresAt: string;
   };
+}
+
+/**
+ * Mensagem para os desfechos que não são aprovação.
+ *
+ * O gateway mockado recusa ~15% dos cartões e expira o PIX depois de 15
+ * minutos; sem isso a tela apenas parava de consultar, sem dizer nada, e o
+ * usuário ficava olhando para um pagamento que nunca ia concluir.
+ */
+function failureMessage(payment: Payment): string {
+  if (payment.status === "EXPIRED") {
+    return "O prazo para pagamento expirou. Escolha uma forma de pagamento e tente novamente.";
+  }
+
+  return (
+    payment.failureReason ??
+    "Pagamento não autorizado. Escolha outra forma de pagamento ou tente novamente."
+  );
 }
 
 export default function PaymentPage({
@@ -144,6 +164,13 @@ export default function PaymentPage({
 
         if (result.status === "REFUSED" || result.status === "EXPIRED") {
           clearInterval(interval);
+
+          // Zerar o pagamento devolve a tela ao estado de escolha: sem isso o
+          // PIX recusado continuaria na tela e o botão de confirmar seguiria
+          // apontando para uma cobrança já encerrada.
+          setPayment(null);
+          setPaymentMethod(null);
+          setError(failureMessage(result));
         }
       } catch (error) {
         console.error("Erro verificando pagamento:", error);
@@ -158,8 +185,6 @@ export default function PaymentPage({
   }, [payment, order, router, clearOrder]);
 
   async function handleConfirmPayment() {
-    console.log("confirmando pagamento");
-
     if (!paymentMethod) {
       setError("Selecione uma forma de pagamento.");
       return;
@@ -178,7 +203,6 @@ export default function PaymentPage({
         const response = await createPayment(order._id, "pix");
 
         setPayment(response);
-        setIsConfirmModalOpen(true);
       } catch (error) {
         setError(error instanceof Error ? error.message : "Erro ao gerar PIX");
       } finally {
@@ -197,8 +221,10 @@ export default function PaymentPage({
 
       const response = await createPayment(order._id, method);
 
+      // A confirmação quem abre é o polling, ao ver APPROVED. O pagamento
+      // nasce PENDING: abrir o modal aqui anunciaria como concluída uma
+      // compra que o gateway ainda pode recusar.
       setPayment(response);
-      setIsConfirmModalOpen(true);
     } catch (error) {
       console.error(error);
 
@@ -310,6 +336,17 @@ export default function PaymentPage({
               copyPasteCode={payment.pix.copyPasteCode}
               expiresIn={new Date(payment.pix.expiresAt).getTime()}
             />
+          )}
+
+          {/*
+            O cartão é resolvido de forma assíncrona pelo gateway, então há
+            uma janela entre criar a cobrança e saber o desfecho. Sem este
+            aviso a tela fica idêntica à de antes do clique.
+          */}
+          {paymentMethod !== "pix" && payment?.status === "PENDING" && (
+            <p className="rounded-lg border border-yellow-600/30 bg-yellow-500/10 p-4 text-sm text-yellow-300">
+              Processando o pagamento... Aguarde a confirmação da operadora.
+            </p>
           )}
 
           <PaymentButtons

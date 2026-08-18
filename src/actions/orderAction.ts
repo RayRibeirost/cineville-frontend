@@ -44,9 +44,6 @@ export async function createOrder(sessionId: string, seats: SeatDto[]) {
 
   const data = await response.json();
 
-  console.log("CREATE ORDER STATUS:", response.status);
-  console.log("CREATE ORDER DATA:", data);
-
   if (!response.ok) {
     return {
       success: false,
@@ -118,7 +115,7 @@ export async function getOrder(orderId: string) {
   }
 
   const order = data.data ?? data;
-  console.log(JSON.stringify(order, null, 2));
+
   const formattedOrder = {
     _id: order._id,
 
@@ -163,27 +160,13 @@ export async function getOrder(orderId: string) {
   return formattedOrder;
 }
 
-export async function checkoutOrder(orderId: string) {
-  const token = (await cookies()).get("auth_token")?.value;
-
-  const response = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/orders/${orderId}/checkout`,
-    {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    },
-  );
-
-  const data = await response.json();
-
-  console.log("STATUS:", response.status);
-  console.log("BACKEND RESPONSE:", data);
-
-  return {
-    success: true,
-    orderId: "MOCK-12345",
-    message: "Pedido criado com sucesso",
-  };
-}
+/*
+ * Não existe mais uma ação de "checkout" no frontend.
+ *
+ * A finalização da compra (ocupar assentos, baixar estoque e emitir os
+ * ingressos) é disparada pelo próprio backend quando o pagamento é aprovado,
+ * em `OrdersService.fulfillPaidOrder` — a rota `POST /orders/:id/checkout` foi
+ * removida de lá justamente para não existirem duas portas de entrada para a
+ * mesma transição. Quem acompanha o resultado é a tela de pagamento, pelo
+ * status retornado em `getPaymentStatus`.
+ */

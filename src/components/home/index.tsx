@@ -1,14 +1,22 @@
 import Header from "@/src/components/layout/Header";
 import Hero from "@/src/components/home/Hero";
 import MovieCarousel from "@/src/components/layout/Carousel/MovieCarousel";
-import PromoCandy from "@/src/components/home/PromoCandy";
+import HomeBomboniere from "@/src/components/home/HomeBomboniere";
 import Footer from "@/src/components/layout/Footer/Footer";
-import { getAllMovies } from "@/src/actions/movieActions";
+import {
+  getNowPlayingMovies,
+  getUpcomingReleases,
+} from "@/src/actions/catalogActions";
 import { clsx } from "clsx";
 
 export default async function HomePage() {
-  const result = await getAllMovies();
-  const movies = result.success ? result.data : [];
+  // Duas listas diferentes: "Em Cartaz" olha a grade de sessões, "Lançamentos"
+  // olha a data de estreia. Antes as duas seções recebiam a mesma lista de
+  // filmes, então mostravam exatamente o mesmo conteúdo.
+  const [nowPlaying, releases] = await Promise.all([
+    getNowPlayingMovies(),
+    getUpcomingReleases(),
+  ]);
 
   return (
     <>
@@ -24,15 +32,29 @@ export default async function HomePage() {
 
       <MovieCarousel
         idSection="EmCartazes"
-        title="Em Cartazes"
-        movies={movies}
+        title="Em Cartaz"
+        seeAllHref="/em-cartaz"
+        movies={nowPlaying.success ? nowPlaying.data : []}
+        emptyMessage={
+          nowPlaying.success
+            ? "Nenhum filme com sessões abertas no momento."
+            : nowPlaying.error
+        }
       />
+
       <MovieCarousel
         idSection="Lancamentos"
         title="Lançamentos"
-        movies={movies}
+        seeAllHref="/lancamentos"
+        movies={releases.success ? releases.data : []}
+        emptyMessage={
+          releases.success
+            ? "Nenhum lançamento cadastrado no momento."
+            : releases.error
+        }
       />
-      <PromoCandy />
+
+      <HomeBomboniere />
 
       <Footer />
     </>

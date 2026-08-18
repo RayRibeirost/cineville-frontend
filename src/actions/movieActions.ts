@@ -9,10 +9,12 @@ import {
   ShowtimeOption,
 } from "../types/movie-types";
 import { buildAuthHeaders } from "./http";
+import { parseBrDate } from "../utils/date";
 
-function extractTime(dateTime: string): string {
-  const parts = dateTime.split(" ");
-  return parts[1] ?? "";
+/** dateTime chega do backend como "DD/MM/AAAA HH:MM". */
+function splitDateTime(dateTime: string): { date: string; time: string } {
+  const [date = "", time = ""] = dateTime.split(" ");
+  return { date, time };
 }
 
 export async function getAllMovies(): Promise<
@@ -81,9 +83,12 @@ export async function getMovieWithSessions(
     const cinema = cinemaMap.get(session.cinemaId);
     const key = `${session.cinemaId}-${session.roomType}-${session.language}`;
 
+    const { date, time } = splitDateTime(session.dateTime);
+
     const showtime: ShowtimeOption = {
       sessionId: session._id,
-      time: extractTime(session.dateTime),
+      date,
+      time,
     };
 
     const existing = groupsMap.get(key);
@@ -104,10 +109,18 @@ export async function getMovieWithSessions(
 
   const groups = Array.from(groupsMap.values()).map((group) => ({
     ...group,
-    showtimes: [...group.showtimes].sort((a, b) =>
-      a.time.localeCompare(b.time),
+    showtimes: [...group.showtimes].sort(
+      (a, b) =>
+        parseBrDate(a.date).getTime() - parseBrDate(b.date).getTime() ||
+        a.time.localeCompare(b.time),
     ),
   }));
+
+  const dates = Array.from(
+    new Set(data.sessions.map((s) => splitDateTime(s.dateTime).date)),
+  )
+    .filter(Boolean)
+    .sort((a, b) => parseBrDate(a).getTime() - parseBrDate(b).getTime());
 
   return {
     success: true,
@@ -121,6 +134,7 @@ export async function getMovieWithSessions(
       },
       cast: data.movie.cast,
       groups,
+      dates,
     },
   };
 }

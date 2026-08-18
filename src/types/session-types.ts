@@ -25,6 +25,8 @@ export interface SessionInfo {
 }
 
 export interface SeatProps {
+  /** Ex.: "A10". Usado no aria-label e no title do assento. */
+  seatNumber: string;
   type: SeatType;
   isSelected: boolean;
   onClick: () => void;

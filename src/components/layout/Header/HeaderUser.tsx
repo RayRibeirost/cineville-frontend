@@ -3,18 +3,23 @@
 import { useState } from "react";
 import Person from "@mui/icons-material/Person";
 import Diamond from "@mui/icons-material/Diamond";
+import DashboardIcon from "@mui/icons-material/SpaceDashboard";
 import { useAuth } from "@/src/context/AuthContext";
 import Link from "next/link";
 import LogoutButton from "../../ui/LogoutButton";
+import AdminBadge from "../../admin/AdminBadge";
 
 export default function HeaderUser() {
   const [open, setOpen] = useState(false);
-  const { user } = useAuth();
+  const { user, isAdmin } = useAuth();
 
   return (
     <>
       <div className="flex items-center gap-2 sm:gap-4">
-        <Link href="/points" className="flex items-center gap-2 text-white">
+        <Link
+          href="/points"
+          className="flex items-center gap-2 text-white"
+        >
           <Diamond className="text-[22px] sm:text-[26px] hover:text-blue-400 hover:scale-110 transition-all duration-500 cursor-pointer" />
         </Link>
 
@@ -60,9 +65,22 @@ export default function HeaderUser() {
             <p className="text-gray-500 text-xs sm:text-sm text-center break-all">
               {user?.email}
             </p>
+
+            <AdminBadge className="mt-3" />
           </div>
 
           <nav className="flex flex-col gap-3 sm:gap-4 flex-1">
+            {isAdmin && (
+              <Link
+                href="/admin"
+                onClick={() => setOpen(false)}
+                className="flex items-center gap-2 rounded-lg border border-red-cinema/40 bg-red-cinema/10 px-3 py-2 text-base font-bold text-red-cinema transition-colors hover:bg-red-cinema/20"
+              >
+                <DashboardIcon className="text-[20px]" />
+                Dashboard Admin
+              </Link>
+            )}
+
             <Link
               href="/perfil"
               onClick={() => setOpen(false)}
@@ -77,6 +95,14 @@ export default function HeaderUser() {
               className="py-2 text-base  transition-colors"
             >
               Meus Pedidos
+            </Link>
+
+            <Link
+              href="/meus-ingressos"
+              onClick={() => setOpen(false)}
+              className="py-2 text-base  transition-colors"
+            >
+              Meus Ingressos
             </Link>
 
             <Link

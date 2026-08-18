@@ -17,16 +17,16 @@ export default function Footer() {
           <ul className="space-y-3">
             <li>
               <Link
-                href="/"
+                href="/em-cartaz"
                 className="transition-colors hover:text-red-cinema"
               >
-                Em cartazes
+                Em cartaz
               </Link>
             </li>
 
             <li>
               <Link
-                href="/"
+                href="/lancamentos"
                 className="transition-colors hover:text-red-cinema"
               >
                 Lançamentos
@@ -35,7 +35,7 @@ export default function Footer() {
 
             <li>
               <Link
-                href="/"
+                href="/bomboniere"
                 className="transition-colors hover:text-red-cinema"
               >
                 Bomboniere

@@ -14,7 +14,11 @@ import BomboniereModal from "../bomboniere/BomboniereModal";
 import { Product } from "@/src/components/layout/Carousel/ProductCard";
 import { addProductsToOrder } from "@/src/actions/orderAction";
 import type { CartItem } from "@/src/types/cart";
-import { getBomboniere } from "../../actions/productAction";
+import { getBomboniere, type ProductResponse } from "../../actions/productAction";
+import {
+  clearSnackPreselection,
+  readSnackPreselection,
+} from "@/src/lib/snackPreselection";
 import { useRouter } from "next/navigation";
 import { useOrder } from "@/src/context/OrderContext";
 export default function SeatMapModal({
@@ -37,6 +41,7 @@ export default function SeatMapModal({
   const [isOpenBomboniere, setIsOpenBomboniere] = useState(false);
   const [orderId, setOrderId] = useState("");
   const [cart, setCart] = useState<CartItem[]>([]);
+  const [productsError, setProductsError] = useState<string | null>(null);
 
   const [bebidas, setBebidas] = useState<Product[]>([]);
   const [comidas, setComidas] = useState<Product[]>([]);
@@ -53,9 +58,15 @@ export default function SeatMapModal({
       const result = await addProductsToOrder(orderId, products);
 
       if (!result.success) {
-        alert(result.error);
+        setProductsError(result.error ?? "Erro ao adicionar produtos.");
         return;
       }
+
+      setProductsError(null);
+
+      // A pré-seleção da Home já virou pedido: mantê-la faria os mesmos itens
+      // reaparecerem na próxima compra.
+      clearSnackPreselection();
 
       setOrder((prev) => {
         if (!prev) return prev;
@@ -73,18 +84,19 @@ export default function SeatMapModal({
 
       setIsOpenBomboniere(false);
       onClose();
-      console.log("INDO PARA PAYMENT:", orderId);
-      console.log("OrderId:", orderId);
       router.push(`/payment/${orderId}`);
     } catch (error) {
-      console.error(error);
+      console.error("[bomboniere] falha ao adicionar produtos", error);
+
+      setProductsError(
+        "Não foi possível adicionar os produtos. Tente novamente.",
+      );
     }
   };
   useEffect(() => {
     if (!isOpen) return;
 
     getSessionDetails(sessionId).then((result) => {
-      console.log("RESULTADO:", result);
       if (!result.success) {
         setLoadError(result.error);
         return;
@@ -106,56 +118,66 @@ export default function SeatMapModal({
       const result = await getBomboniere();
 
       if (!result.success || !result.products) {
-        console.error(result.error);
+        setProductsError(result.error ?? "Erro ao carregar a bomboniere.");
         return;
       }
 
+      setProductsError(null);
+
       const products = result.products;
-      console.log("Produtos:", products);
 
-      console.log(
-        products.map((p) => ({
-          nome: p.name,
-          categoria: p.category,
-        })),
-      );
-      setBebidas(
-        products
-          .filter((p) => p.category === "BEBIDAS")
-          .map((p) => ({
-            id: p._id,
-            name: p.name,
-            size: p.size ?? "",
-            price: p.price / 100,
-            limit: p.maxLimit,
-            image: p.imageUrl,
-          })),
-      );
+      // `price` do backend vem em centavos; o card da bomboniere trabalha em
+      // reais.
+      const toProduct = (product: ProductResponse): Product => ({
+        id: product._id,
+        name: product.name,
+        size: product.size ?? "",
+        price: product.price / 100,
+        limit: Math.max(
+          0,
+          Math.min(product.maxLimit || 0, product.quantity || 0),
+        ),
+        image: product.imageUrl,
+      });
 
-      setComidas(
-        products
-          .filter((p) => p.category === "COMIDAS")
-          .map((p) => ({
-            id: p._id,
-            name: p.name,
-            size: p.size ?? "",
-            price: p.price / 100,
-            limit: p.maxLimit,
-            image: p.imageUrl,
-          })),
-      );
+      const byCategory = (category: ProductResponse["category"]) =>
+        products.filter((p) => p.category === category).map(toProduct);
 
-      setCombos(
-        products
-          .filter((p) => p.category === "COMBOS")
-          .map((p) => ({
-            id: p._id,
-            name: p.name,
-            size: p.size ?? "",
-            price: p.price / 100,
-            limit: p.maxLimit,
-            image: p.imageUrl,
-          })),
+      setBebidas(byCategory("BEBIDAS"));
+      setComidas(byCategory("COMIDAS"));
+      setCombos(byCategory("COMBOS"));
+
+      // Traz o que o usuário já tinha separado na Home, limitado ao que a
+      // sessão de fato permite comprar.
+      const preselection = readSnackPreselection();
+
+      if (!preselection.length) return;
+
+      const catalog = new Map(products.map((p) => [p._id, p]));
+
+      setCart(
+        preselection.flatMap(({ productId, quantity }) => {
+          const product = catalog.get(productId);
+
+          if (!product) return [];
+
+          const limit = Math.max(
+            0,
+            Math.min(product.maxLimit || 0, product.quantity || 0),
+          );
+
+          if (limit <= 0) return [];
+
+          return [
+            {
+              id: product._id,
+              name: product.name,
+              size: product.size ?? "",
+              price: product.price / 100,
+              quantity: Math.min(quantity, limit),
+            },
+          ];
+        }),
       );
     }
 
@@ -169,9 +191,6 @@ export default function SeatMapModal({
   );
 
   async function handleConfirm() {
-    console.log("SESSION ID:", sessionId);
-    console.log("SESSION INFO:", sessionInfo);
-    console.log("SELECTED SEATS:", selectedSeats);
     if (!sessionInfo) {
       setPurchaseError("Sessão não encontrada.");
       return;
@@ -376,6 +395,7 @@ export default function SeatMapModal({
         onAdd={handleAdd}
         onRemove={handleRemove}
         onCheckout={handleCheckout}
+        error={productsError}
       />
     </>
   );
