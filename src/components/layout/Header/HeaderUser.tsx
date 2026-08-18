@@ -106,7 +106,7 @@ export default function HeaderUser() {
             </Link>
 
             <Link
-              href="/programaPonto"
+              href="/points"
               onClick={() => setOpen(false)}
               className="py-2 text-base  transition-colors"
             >
