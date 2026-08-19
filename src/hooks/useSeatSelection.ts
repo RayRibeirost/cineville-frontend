@@ -41,12 +41,7 @@ export function useSeatSelection(initialSelected: string[] = []) {
     });
   };
 
-  /**
-   * Troca inteira/meia de um assento já selecionado.
-   *
-   * A escolha é por ingresso: o usuário pode levar uma inteira e uma meia na
-   * mesma compra. Só o tipo muda — o assento continua selecionado.
-   */
+  /** Troca inteira/meia de um assento já selecionado. */
   const setSeatType = (seatNumber: string, ticketType: TicketType) => {
     setSelectedSeats((prev) =>
       prev.map((seat) =>

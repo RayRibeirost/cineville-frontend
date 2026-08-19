@@ -1,11 +1,4 @@
-/**
- * Constantes e leitura de parâmetros de paginação.
- *
- * Fica fora dos componentes de propósito: as páginas (server components)
- * precisam desses valores para montar a requisição, e um módulo marcado com
- * "use client" não pode ser executado no servidor — seus exports viram
- * referências para o cliente.
- */
+/** Constantes e leitura de parâmetros de paginação. */
 
 /** Itens por página nas listagens administrativas. */
 export const ADMIN_PAGE_SIZE = 10;

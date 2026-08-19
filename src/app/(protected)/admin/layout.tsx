@@ -29,7 +29,16 @@ export default async function AdminLayout({
           <div className="flex flex-col gap-8 lg:flex-row">
             <AdminSidebar />
 
-            <main className="flex-1">{children}</main>
+            {/*
+              `min-w-0` é o que impede uma seção larga (tabela, gráfico) de
+              esticar a coluna de conteúdo. Um item de flex tem
+              `min-width: auto`, ou seja, ele NUNCA encolhe abaixo do seu
+              conteúdo: sem isto, `flex-1` cresce além dos 1280px do container
+              e o overflow escapa para a página inteira, virando barra
+              horizontal na janela. Com `min-width: 0` o conteúdo respeita a
+              largura da coluna e quem rola é o container interno da seção.
+            */}
+            <main className="min-w-0 flex-1">{children}</main>
           </div>
         </div>
       </div>

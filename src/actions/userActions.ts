@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { cookies } from "next/headers";
 import { apiRequest } from "@/src/lib/api";
 import { getServerUser } from "@/src/lib/auth";
 import { ActionResult } from "@/src/types/admin";
@@ -21,6 +22,8 @@ export interface UserProfile {
   city: string;
   state: string;
   gender?: string;
+  /** Instante ISO da criação da conta (timestamps do Mongoose). */
+  createdAt?: string;
 }
 
 /** Campos que o usuário pode alterar no perfil (UpdateUserDto do backend). */
@@ -75,4 +78,24 @@ export async function updateMyProfile(
   if (result.success) revalidatePath("/perfil");
 
   return result;
+}
+
+/** Exclui a conta do próprio usuário. */
+export async function deleteMyAccount(): Promise<ActionResult<null>> {
+  const user = await getServerUser();
+
+  if (!user) {
+    return { success: false, error: "Sessão expirada. Faça login novamente." };
+  }
+
+  const result = await apiRequest<null>(`/users/${user.sub}`, {
+    method: "DELETE",
+    fallbackError: "Não foi possível excluir sua conta.",
+  });
+
+  if (!result.success) return result;
+
+  (await cookies()).delete("auth_token");
+
+  return { success: true, data: null };
 }

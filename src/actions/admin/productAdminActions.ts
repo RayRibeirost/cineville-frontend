@@ -9,9 +9,8 @@ const STOCK_PATH = "/admin/stock";
 
 /**
  * O backend usa `@Transform(({ value }) => Number(value))` sem guarda de
- * `undefined` em maxLimit/quantity/price e converte `isAvailable` ausente
- * para `false`. Por isso todo update envia o produto inteiro, nunca um
- * patch parcial — senão campos omitidos viram NaN ou false.
+ * `undefined` em maxLimit/quantity/price e converte `isAvailable` ausente para
+ * `false`.
  */
 function buildProductFormData(
   product: Omit<AdminProduct, "_id" | "imageUrl">,
@@ -105,10 +104,7 @@ export async function deleteProduct(id: string): Promise<ActionResult<null>> {
   return result;
 }
 
-/**
- * Ajuste de estoque. Relê o produto para reenviar o payload completo,
- * trocando apenas a quantidade (ver comentário em buildProductFormData).
- */
+/** Ajuste de estoque. */
 export async function updateStock(
   id: string,
   quantity: number,

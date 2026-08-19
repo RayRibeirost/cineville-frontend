@@ -3,14 +3,14 @@ import { CatalogProduct } from "@/src/types/admin";
 import { formatCents } from "@/src/utils/currency";
 import SnackAddButton from "./SnackAddButton";
 
-/**
- * Destaque da bomboniere.
- *
- * Antes era um combo fixo no código ("Pipoca + 2 Refris, R$ 40,00") que não
- * existia no catálogo. Agora recebe um produto real — quem escolhe qual é a
- * seção da bomboniere.
- */
-export default function PromoCandy({ product }: { product: CatalogProduct }) {
+/** Destaque da bomboniere. */
+export default function PromoCandy({
+  product,
+  canPurchase = true,
+}: {
+  product: CatalogProduct;
+  canPurchase?: boolean;
+}) {
   const image = product.imageUrl || "/assets/promo-candy.png";
   const description = [product.category, product.size]
     .filter(Boolean)
@@ -53,7 +53,7 @@ export default function PromoCandy({ product }: { product: CatalogProduct }) {
         </p>
 
         <div className="mt-8 w-full sm:max-w-xs">
-          <SnackAddButton product={product} size="lg" />
+          <SnackAddButton product={product} size="lg" canPurchase={canPurchase} />
         </div>
       </div>
     </div>

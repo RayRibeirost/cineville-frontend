@@ -33,11 +33,7 @@ async function fetchMovies(): Promise<ActionResult<CatalogMovie[]>> {
   return { success: true, data: result.data ?? [] };
 }
 
-/**
- * "Em Cartaz": filmes com pelo menos uma sessão ainda por acontecer.
- * É o critério real — quem define o que está em cartaz é a grade de sessões,
- * não a data de estreia.
- */
+/** "Em Cartaz": filmes com pelo menos uma sessão ainda por acontecer. */
 export async function getNowPlayingMovies(): Promise<
   ActionResult<NowPlayingMovie[]>
 > {
@@ -96,7 +92,7 @@ export async function getNowPlayingMovies(): Promise<
 
 /**
  * "Lançamentos": estreias futuras primeiro, seguidas das que aconteceram
- * dentro da janela recente. Ordena da estreia mais próxima para a mais antiga.
+ * dentro da janela recente.
  */
 export async function getUpcomingReleases(): Promise<
   ActionResult<CatalogMovie[]>
@@ -125,13 +121,8 @@ export async function getUpcomingReleases(): Promise<
 
 export type BomboniereCatalog = Record<ProductCategory, CatalogProduct[]>;
 
-/**
- * Catálogo da bomboniere agrupado por categoria.
- *
- * ATENÇÃO: `/products` tem `@UseGuards(AuthGuard)` na classe do controller,
- * então esta rota exige token mesmo sendo só listagem. Visitante deslogado
- * recebe 401 aqui.
- */
+/** Catálogo da bomboniere agrupado por categoria. Rota pública: o visitante
+ * deslogado recebe os mesmos produtos. */
 export async function getBomboniereCatalog(): Promise<
   ActionResult<BomboniereCatalog>
 > {

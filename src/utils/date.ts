@@ -13,10 +13,7 @@ export function parseBrDate(date: string): Date {
   return new Date(year, month - 1, day);
 }
 
-/**
- * "DD/MM/AAAA HH:MM" (formato de `dateTime` da sessão) → Date local.
- * Retorna null quando o formato não bate, para o chamador decidir o que fazer.
- */
+/** "DD/MM/AAAA HH:MM" (formato de `dateTime` da sessão) → Date local. */
 export function parseBrDateTime(dateTime: string): Date | null {
   const [datePart, timePart] = dateTime?.split(" ") ?? [];
 
@@ -88,4 +85,25 @@ export function formatDayLabel(date: string): string {
   const [day, month] = date.split("/");
 
   return `${weekday.charAt(0).toUpperCase()}${weekday.slice(1)} ${day}/${month}`;
+}
+
+/** ISO 8601 → "DD/MM/AAAA HH:MM", o formato usado em todo o sistema. */
+export function isoToBrDateTime(value?: string | null): string | undefined {
+  if (!value) return undefined;
+
+  const date = new Date(value);
+
+  return Number.isNaN(date.getTime()) ? undefined : formatBrDateTime(date);
+}
+
+/** "AAAA-MM-DD" + "HH:MM" → instante ISO, para enviar ao backend. */
+export function brFormToIso(date: string, time: string): string | null {
+  if (!date) return null;
+
+  const [year = 0, month = 0, day = 0] = date.split("-").map(Number);
+  const [hours = 0, minutes = 0] = (time || "00:00").split(":").map(Number);
+
+  const parsed = new Date(year, month - 1, day, hours, minutes, 0, 0);
+
+  return Number.isNaN(parsed.getTime()) ? null : parsed.toISOString();
 }

@@ -7,6 +7,7 @@ import {
   UpdateProfileInput,
   UserProfile,
 } from "@/src/actions/userActions";
+import { useAuth } from "@/src/context/AuthContext";
 import { BRAZIL_STATES } from "@/src/types/admin";
 import { masks } from "@/src/utils/masks";
 import AdminField, { adminInputClass } from "../admin/AdminField";
@@ -19,6 +20,7 @@ interface Props {
 
 export default function ProfileForm({ profile }: Props) {
   const router = useRouter();
+  const { updateUser } = useAuth();
   const [isPending, startTransition] = useTransition();
 
   const [form, setForm] = useState<UpdateProfileInput>({
@@ -64,13 +66,20 @@ export default function ProfileForm({ profile }: Props) {
         return;
       }
 
+      // Só depois do OK da API, e com a resposta do backend na frente do que
+      // foi digitado: o menu lateral lê deste mesmo contexto e atualiza na hora.
+      updateUser({
+        name: result.data?.name ?? form.name,
+        surname: result.data?.surname ?? form.surname,
+      });
+
       setSuccess("Perfil atualizado com sucesso.");
       router.refresh();
     });
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-6">
+    <form onSubmit={handleSubmit} className="flex flex-col gap-5">
       {error && (
         <p
           role="alert"
@@ -89,8 +98,8 @@ export default function ProfileForm({ profile }: Props) {
         </p>
       )}
 
-      <section className="rounded-xl border border-grayScale-600 bg-gray-surface p-6">
-        <h2 className="mb-5 text-sm font-black uppercase text-grayScale-400">
+      <section className="rounded-xl border border-grayScale-600 bg-gray-surface p-5">
+        <h2 className="mb-4 text-sm font-black uppercase text-grayScale-400">
           Dados pessoais
         </h2>
 
@@ -153,8 +162,8 @@ export default function ProfileForm({ profile }: Props) {
         </div>
       </section>
 
-      <section className="rounded-xl border border-grayScale-600 bg-gray-surface p-6">
-        <h2 className="mb-5 text-sm font-black uppercase text-grayScale-400">
+      <section className="rounded-xl border border-grayScale-600 bg-gray-surface p-5">
+        <h2 className="mb-4 text-sm font-black uppercase text-grayScale-400">
           Endereço
         </h2>
 

@@ -30,12 +30,7 @@ export async function createPayment(
   orderId: string,
   method: PaymentMethod,
 ) {
-  /*
-   * Cartão ainda não é uma forma de pagamento do sistema. A tela já não
-   * permite escolher, e a verificação também vive aqui para que nenhuma
-   * requisição de cobrança por cartão saia do frontend — nem por um caminho
-   * de código futuro que esqueça a regra.
-   */
+  /** Cartão ainda não é uma forma de pagamento do sistema. */
   if (!isPaymentMethodAvailable(method)) {
     throw new Error(
       "Esta forma de pagamento ainda não está disponível. Utilize o PIX.",

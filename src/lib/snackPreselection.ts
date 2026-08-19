@@ -1,16 +1,4 @@
-/**
- * Pré-seleção da bomboniere feita fora do fluxo de compra (na Home, por
- * exemplo).
- *
- * Por que não é um pedido de verdade: no backend, `POST /orders` exige
- * `sessionId` e assentos — não existe pedido só de bomboniere. Então o que a
- * Home guarda é uma intenção de compra, que o modal da bomboniere carrega já
- * preenchida quando o usuário escolhe a sessão. O pedido continua sendo criado
- * num lugar só, em `PATCH /orders/:id/products`.
- *
- * Fica no localStorage porque precisa sobreviver à navegação entre a Home e a
- * página do filme, que são páginas diferentes.
- */
+/** Pré-seleção da bomboniere feita fora do fluxo de compra (na Home, por exemplo). */
 
 export interface SnackPreselectionItem {
   productId: string;
@@ -82,8 +70,8 @@ export function getSnackQuantity(productId: string): number {
 }
 
 /**
- * Assinatura para `useSyncExternalStore`: avisa a tela sempre que a
- * pré-seleção muda, inclusive quando a mudança veio de outro card.
+ * Assinatura para `useSyncExternalStore`: avisa a tela sempre que a pré-
+ * seleção muda, inclusive quando a mudança veio de outro card.
  */
 export function subscribeToSnackPreselection(onChange: () => void): () => void {
   if (!isBrowser()) return () => {};

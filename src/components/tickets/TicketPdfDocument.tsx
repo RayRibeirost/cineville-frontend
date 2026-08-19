@@ -2,18 +2,7 @@ import { Ticket } from "@/src/types/ticket";
 import { formatCents } from "@/src/utils/currency";
 import { TICKET_TYPE_LABELS } from "@/src/utils/ticket";
 
-/**
- * Versão do ingresso que vira PDF.
- *
- * Estilos inline e cores em hexadecimal de propósito: o html2pdf.js rasteriza
- * a tela com html2canvas, que não entende as cores `oklch` que o Tailwind 4
- * gera para a paleta padrão. Uma classe utilitária a mais aqui derruba a
- * geração inteira do arquivo.
- *
- * Também não usa o pôster: as imagens vêm do Firebase Storage e uma resposta
- * sem cabeçalho CORS deixaria o ingresso com um buraco no lugar da capa. O QR
- * é data URL, então sempre desenha.
- */
+/** Versão do ingresso que vira PDF. */
 export default function TicketPdfDocument({ ticket }: { ticket: Ticket }) {
   const [date, time] = ticket.sessionDateTime?.split(" ") ?? [];
 

@@ -60,11 +60,7 @@ export default function MovieCarousel({
           className="mt-8"
         >
           {movies.map((movie) => (
-            /*
-              `!h-auto` desliga a altura fixa que o Swiper aplica no slide.
-              Sem isso, o card com `h-full` copia a altura do slide mais alto
-              da lista e o carrossel fica com cards desalinhados.
-            */
+            /** `!h-auto` desliga a altura fixa que o Swiper aplica no slide. */
             <SwiperSlide key={movie._id} className="h-auto!">
               <MovieCard movie={movie} />
             </SwiperSlide>

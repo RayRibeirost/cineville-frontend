@@ -37,6 +37,8 @@ export interface ApiSuccessResponse {
 export interface AuthContextType {
   user: UserPayload | null;
   setUser: (user: UserPayload | null) => void;
+  /** Atualiza campos de exibição (nome, sobrenome) da sessão em andamento. */
+  updateUser: (changes: Partial<UserPayload>) => void;
   logout: () => Promise<void>;
   isAuthenticated: boolean;
   isAdmin: boolean;

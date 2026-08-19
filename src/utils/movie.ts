@@ -1,8 +1,4 @@
-/**
- * Cores da tarja de classificação indicativa, seguindo o padrão brasileiro.
- * Compartilhado por todos os cards de filme para que a Home e as páginas de
- * catálogo mostrem exatamente a mesma tarja.
- */
+/** Cores da tarja de classificação indicativa, seguindo o padrão brasileiro. */
 const CLASSIFICATION_COLORS: Record<string, string> = {
   L: "bg-green-600",
   "6": "bg-blue-500",

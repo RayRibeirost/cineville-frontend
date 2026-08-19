@@ -1,7 +1,4 @@
-/**
- * O backend trabalha com valores em centavos (totalAmount: 4500 = R$ 45,00).
- * Toda formatação de dinheiro deve passar por aqui para evitar divergência.
- */
+/** O backend trabalha com valores em centavos (totalAmount: 4500 = R$ 45,00). */
 export function formatCents(valueInCents: number) {
   return new Intl.NumberFormat("pt-BR", {
     style: "currency",
@@ -21,4 +18,14 @@ export function inputToCents(value: string): number | null {
   if (!normalized || !/^\d+(\.\d{1,2})?$/.test(normalized)) return null;
 
   return Math.round(Number(normalized) * 100);
+}
+
+/** Versão curta para eixo de gráfico ("R$ 1,2 mil" em vez de "R$ 1.234,56"). */
+export function formatCentsCompact(valueInCents: number) {
+  return new Intl.NumberFormat("pt-BR", {
+    style: "currency",
+    currency: "BRL",
+    notation: "compact",
+    maximumFractionDigits: 1,
+  }).format((valueInCents ?? 0) / 100);
 }

@@ -53,17 +53,7 @@ export async function updateCinema(
   return result;
 }
 
-/**
- * Sincroniza o cartaz de um cinema com a seleção da tela.
- *
- * Não existe rota de "substituir a lista": o backend expõe um POST por filme
- * anexado e um DELETE por filme removido (`/cinemas/:id/movies/:movieId`). O
- * diff mora aqui para a tela mandar só a seleção final.
- *
- * A lista atual é relida do servidor em vez de vir do cliente porque duas
- * abas de admin abertas no mesmo cinema partiriam de estados diferentes — o
- * que estava na tela pode não ser mais o que está no banco.
- */
+/** Sincroniza o cartaz de um cinema com a seleção da tela. */
 export async function setCinemaMovies(
   cinemaId: string,
   movieIds: string[],

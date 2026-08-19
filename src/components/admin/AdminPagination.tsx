@@ -16,14 +16,7 @@ interface AdminPaginationProps {
   itemLabel?: string;
 }
 
-/**
- * Paginação das listagens administrativas.
- *
- * A página vai na URL (`?page=`) e é o servidor que devolve apenas aquela
- * fatia — nada de carregar todos os registros para cortar no navegador. Os
- * outros parâmetros da URL (filtro, busca) são preservados, então paginar não
- * perde o que o administrador já tinha filtrado.
- */
+/** Paginação das listagens administrativas. */
 export default function AdminPagination({
   page,
   limit,

@@ -1,7 +1,4 @@
-/**
- * Enums e formatos espelhados do backend (smallville-backend).
- * Valores de dinheiro sempre em centavos; datas sempre "DD/MM/AAAA".
- */
+/** Enums e formatos espelhados do backend (smallville-backend). */
 
 export const MOVIE_GENRES = [
   "Ação",
@@ -101,11 +98,7 @@ export interface AdminProduct {
   imageUrl: string;
 }
 
-/**
- * As telas públicas consomem os mesmos modelos de domínio do admin.
- * Estes aliases existem só para o código de catálogo não importar
- * um tipo com prefixo "Admin".
- */
+/** As telas públicas consomem os mesmos modelos de domínio do admin. */
 export type CatalogMovie = AdminMovie;
 export type CatalogProduct = AdminProduct;
 

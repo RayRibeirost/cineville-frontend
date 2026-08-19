@@ -125,8 +125,18 @@ body {
   background: var(--color-red-cinema);
 }
 
+/*
+  `height` junto com `width`, e não só `width`.
+
+  Esta regra é mais específica que a de `::-webkit-scrollbar` global, então
+  redefinir apenas a largura deixava a barra HORIZONTAL na altura padrão do
+  navegador (~15px) com o polegar vermelho ocupando quase tudo — era o que
+  parecia uma faixa horizontal estranha embaixo do gráfico de 30 dias, em vez
+  de uma barra fina como no resto do sistema.
+*/
 .custom-scroll::-webkit-scrollbar {
   width: 8px;
+  height: 8px;
 }
 
 .custom-scroll::-webkit-scrollbar-track {

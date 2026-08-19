@@ -22,14 +22,7 @@ const initialState: RegisterState<Partial<RegisterInput>> = {
   inputs: {},
 };
 
-/**
- * Quanto tempo o modal de sucesso fica na tela antes de levar ao login.
- *
- * Eram 3 segundos, tempo insuficiente para ler a mensagem antes de a tela
- * trocar. Alterar aqui é o único lugar que muda o comportamento — existe um
- * único timer, guardado em ref para ser cancelado no unmount e quando o
- * usuário fecha o modal antes do prazo.
- */
+/** Quanto tempo o modal de sucesso fica na tela antes de levar ao login. */
 const SUCCESS_MODAL_DURATION_MS = 4500;
 
 export function useRegisterForm(setIsLogin?: (value: boolean) => void) {
@@ -42,11 +35,8 @@ export function useRegisterForm(setIsLogin?: (value: boolean) => void) {
   const redirectTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   /**
-   * O modal é derivado do resultado do cadastro, não copiado para outro estado:
-   * ele está aberto enquanto o cadastro deu certo e ninguém o fechou. Guardar
-   * `showSuccessModal` num `useState` alimentado por efeito era o que provocava
-   * render em cascata (`react-hooks/set-state-in-effect`) — e o efeito passava a
-   * ter duas responsabilidades: abrir o modal e agendar o redirecionamento.
+   * O modal é derivado do resultado do cadastro, não copiado para outro
+   * estado: ele está aberto enquanto o cadastro deu certo e ninguém o fechou.
    */
   const [modalDismissed, setModalDismissed] = useState(false);
 
@@ -66,14 +56,7 @@ export function useRegisterForm(setIsLogin?: (value: boolean) => void) {
     {},
   );
 
-  /*
-   * A única responsabilidade do efeito é o timer — nada de estado copiado aqui.
-   *
-   * Ele é idempotente: a limpeza cancela o timer anterior antes de qualquer nova
-   * execução, então nem em desenvolvimento (onde o React monta e desmonta os
-   * efeitos duas vezes) sobra timer duplicado, e o redirecionamento continua
-   * sendo agendado uma vez por cadastro concluído.
-   */
+  /** A única responsabilidade do efeito é o timer — nada de estado copiado aqui. */
   useEffect(() => {
     if (!state.success || modalDismissed) return;
 
@@ -178,10 +161,9 @@ export function useRegisterForm(setIsLogin?: (value: boolean) => void) {
     }
   };
 
-  /*
+  /**
    * Cadastro concluído esvazia o formulário por trás do modal — antes isso era
-   * feito com três `setState` dentro do efeito. Derivar é equivalente para a
-   * tela (os campos ficam em branco) e não gera renderização em cascata.
+   * feito com três `setState` dentro do efeito.
    */
   const getValue = (field: keyof RegisterInput): string => {
     if (state.success) return "";

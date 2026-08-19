@@ -139,11 +139,7 @@ export async function getOrder(orderId: string) {
 
         description: `${TICKET_TYPE_LABELS[seat.type] ?? seat.type} · Assento ${seat.seatNumber}`,
 
-        /*
-          O valor exibido é o que o backend gravou no pedido. Recalcular aqui
-          faria a tela discordar da cobrança se a regra da meia mudar — o
-          fallback só existe para pedidos antigos, sem `pricePaid`.
-        */
+        /** O valor exibido é o que o backend gravou no pedido. */
         price:
           seat.pricePaid ??
           ticketPriceFromSession(order.session?.price, seat.type),
@@ -168,13 +164,4 @@ export async function getOrder(orderId: string) {
   return formattedOrder;
 }
 
-/*
- * Não existe mais uma ação de "checkout" no frontend.
- *
- * A finalização da compra (ocupar assentos, baixar estoque e emitir os
- * ingressos) é disparada pelo próprio backend quando o pagamento é aprovado,
- * em `OrdersService.fulfillPaidOrder` — a rota `POST /orders/:id/checkout` foi
- * removida de lá justamente para não existirem duas portas de entrada para a
- * mesma transição. Quem acompanha o resultado é a tela de pagamento, pelo
- * status retornado em `getPaymentStatus`.
- */
+/** Não existe mais uma ação de "checkout" no frontend. */

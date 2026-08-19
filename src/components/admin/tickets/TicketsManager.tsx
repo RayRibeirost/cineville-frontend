@@ -28,14 +28,7 @@ interface TicketsManagerProps {
   total: number;
 }
 
-/**
- * Listagem administrativa de ingressos, 10 por página.
- *
- * Página e filtro de status vão para a API — o filtro "somente válidos" usa
- * `?status=valido`, então vale para a base inteira. A busca por texto não tem
- * equivalente na API, por isso filtra apenas os ingressos da página aberta, e o
- * campo diz isso.
- */
+/** Listagem administrativa de ingressos, 10 por página. */
 export default function TicketsManager({
   tickets,
   page,

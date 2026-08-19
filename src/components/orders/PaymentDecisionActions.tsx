@@ -19,16 +19,7 @@ interface PaymentDecisionActionsProps {
 const BUTTON_BASE =
   "inline-flex cursor-pointer items-center rounded-md px-4 py-2 text-sm font-bold transition-all hover:scale-105 disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:scale-100";
 
-/**
- * Decisão do administrador sobre um pagamento pendente: aprovar ou recusar.
- *
- * EXISTE PORQUE O GATEWAY É MOCKADO — o PIX simulado nunca recebe a
- * confirmação do banco, então quem dá o desfecho é o painel. Sai de cena junto
- * com o mock, quando um gateway real passar a resolver por webhook.
- *
- * A recusa pede confirmação e aceita um motivo: é uma ação que o usuário final
- * enxerga no pedido dele, e um clique errado não deve derrubar uma venda.
- */
+/** Decisão do administrador sobre um pagamento pendente: aprovar ou recusar. */
 export default function PaymentDecisionActions({
   orderId,
 }: PaymentDecisionActionsProps) {

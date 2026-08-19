@@ -1,7 +1,8 @@
 "use client";
 
+import Link from "next/link";
 import { useCallback, useState, useSyncExternalStore } from "react";
-import { ShoppingCart, Check } from "@mui/icons-material";
+import { ShoppingCart, Check, Lock } from "@mui/icons-material";
 import { CatalogProduct } from "@/src/types/admin";
 import {
   getSnackQuantity,
@@ -13,18 +14,15 @@ interface SnackAddButtonProps {
   product: CatalogProduct;
   /** Botão maior, usado no destaque da bomboniere. */
   size?: "sm" | "lg";
+  /** O visitante pode comprar? */
+  canPurchase?: boolean;
 }
 
-/**
- * Controle de quantidade + "adicionar" de um produto da bomboniere.
- *
- * A escolha vira pré-seleção (`snackPreselection`), carregada pelo modal da
- * bomboniere na hora de comprar o ingresso — o backend não cria pedido sem
- * assento, então não há carrinho de produtos isolado.
- */
+/** Controle de quantidade + "adicionar" de um produto da bomboniere. */
 export default function SnackAddButton({
   product,
   size = "sm",
+  canPurchase = true,
 }: SnackAddButtonProps) {
   const maxQuantity = Math.max(
     0,
@@ -47,6 +45,23 @@ export default function SnackAddButton({
   if (!product.isAvailable || product.quantity <= 0) {
     return (
       <p className="text-xs text-grayScale-500">Indisponível no momento.</p>
+    );
+  }
+
+  // Visitante VÊ o produto, mas no lugar do controle de quantidade recebe o
+  // convite para o login.
+  if (!canPurchase) {
+    return (
+      <Link
+        href="/login"
+        aria-label={`Entrar para comprar ${product.name}`}
+        className={`flex w-full cursor-pointer items-center justify-center gap-1.5 rounded-md border border-red-cinema/50 bg-red-cinema/10 font-bold text-red-cinema transition-all hover:bg-red-cinema hover:text-white ${
+          isLarge ? "px-6 py-3 text-base" : "px-3 py-2 text-xs"
+        }`}
+      >
+        <Lock sx={{ fontSize: isLarge ? 20 : 16 }} />
+        Entrar para comprar
+      </Link>
     );
   }
 

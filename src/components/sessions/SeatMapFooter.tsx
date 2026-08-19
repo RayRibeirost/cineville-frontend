@@ -9,11 +9,8 @@ export function SeatMapFooter({
   selectedCount,
   onConfirm,
   isLoading,
+  blockedMessage,
 }: SeatMapFooterProps) {
-  const handleContinue = () => {
-    onConfirm();
-  };
-
   return (
     <div className="mt-8 flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-neutral-800 pt-6">
       <div className="flex flex-wrap items-center gap-3 text-[10px] font-bold tracking-wider text-neutral-300">
@@ -35,7 +32,8 @@ export function SeatMapFooter({
       <Button
         type="button"
         onClick={onConfirm}
-        disabled={selectedCount === 0}
+        disabled={selectedCount === 0 || !!blockedMessage}
+        title={blockedMessage}
         className=" disabled:cursor-not-allowed disabled:bg-neutral-800 disabled:text-neutral-500"
       >
         {isLoading ? "Reservando..." : "Continuar"}

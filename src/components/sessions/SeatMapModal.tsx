@@ -7,7 +7,7 @@ import { SeatMapHeader } from "./SeatMapHeader";
 import { SeatMapSidebar } from "./SeatMapSidebar";
 import { SeatMapFooter } from "./SeatMapFooter";
 import { TicketTypesPanel } from "./TicketTypesPanel";
-import { ticketPriceFromSession } from "@/src/utils/ticket";
+import { resolveTicketPrice } from "@/src/utils/ticket";
 import { SeatGrid } from "./SeatMapGrid";
 import { SeatRow } from "@/src/utils/seat-rows";
 import { getSessionDetails } from "@/src/actions/sessionActions";
@@ -23,6 +23,10 @@ import {
 } from "@/src/lib/snackPreselection";
 import { useRouter } from "next/navigation";
 import { useOrder } from "@/src/context/OrderContext";
+import {
+  SALES_STATUS_LABELS,
+  isSessionOnSale,
+} from "@/src/types/sales-control";
 export default function SeatMapModal({
   isOpen,
   onClose,
@@ -193,9 +197,22 @@ export default function SeatMapModal({
     0,
   );
 
+  // Fora do período de venda o botão fica desabilitado, com o motivo na tela.
+  const salesStatus = sessionInfo?.salesStatus;
+
+  const salesBlockedMessage =
+    salesStatus && !isSessionOnSale({ salesStatus })
+      ? `${SALES_STATUS_LABELS[salesStatus]}. Esta sessão não está disponível para compra.`
+      : undefined;
+
   async function handleConfirm() {
     if (!sessionInfo) {
       setPurchaseError("Sessão não encontrada.");
+      return;
+    }
+
+    if (salesBlockedMessage) {
+      setPurchaseError(salesBlockedMessage);
       return;
     }
 
@@ -233,7 +250,11 @@ export default function SeatMapModal({
           tickets: selectedSeats.map((seat) => ({
             seatNumber: seat.seatNumber,
             type: seat.type,
-            price: ticketPriceFromSession(sessionInfo.price, seat.type),
+            price: resolveTicketPrice(
+              sessionInfo.prices,
+              sessionInfo.price,
+              seat.type,
+            ),
           })),
 
           products: [],
@@ -370,10 +391,20 @@ export default function SeatMapModal({
                   <TicketTypesPanel
                     selectedSeats={selectedSeats}
                     sessionPrice={sessionInfo.price}
+                    prices={sessionInfo.prices}
                     onChangeType={setSeatType}
                   />
                 </div>
               </div>
+
+              {salesBlockedMessage && (
+                <p
+                  role="alert"
+                  className="mt-4 rounded-lg border border-red-500/40 bg-red-500/10 px-4 py-3 text-center text-sm text-red-400"
+                >
+                  {salesBlockedMessage}
+                </p>
+              )}
 
               {purchaseError && (
                 <p className="mt-4 text-center text-sm text-red-500">
@@ -387,6 +418,7 @@ export default function SeatMapModal({
                   selectedCount={selectedCount}
                   onConfirm={handleConfirm}
                   isLoading={isPending}
+                  blockedMessage={salesBlockedMessage}
                 />
               </div>
             </>

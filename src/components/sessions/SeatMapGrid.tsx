@@ -47,11 +47,12 @@ export function SeatGrid({
                       ? "indisponivel"
                       : seat.type;
 
-                    // `seat.id` nunca é preenchido por `buildSeatLayout`, então
-                    // esta comparação era sempre falsa e o assento escolhido
-                    // jamais chegava a renderizar o estado selecionado. A
-                    // seleção é identificada pelo número do assento, que é o
-                    // que o hook guarda.
+                    /**
+                     * `seat.id` nunca é preenchido por `buildSeatLayout`,
+                     * então esta comparação era sempre falsa e o assento
+                     * escolhido jamais chegava a renderizar o estado
+                     * selecionado.
+                     */
                     const isSelected = selectedSeats.some(
                       (selected) => selected.seatNumber === seat.seatNumber,
                     );

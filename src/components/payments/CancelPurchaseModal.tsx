@@ -18,11 +18,10 @@ export default function CancelPurchaseModal({
   if (!open) return null;
 
   return (
-    /*
-      `z-99` fica acima da Header (`z-50`) do layout protegido: com o mesmo
-      z-index, quem ficasse por cima dependia da ordem de renderização.
-      Centralizado com `p-4` para nunca encostar nas bordas no mobile.
-    */
+    /**
+     * `z-99` fica acima da Header (`z-50`) do layout protegido: com o mesmo
+     * z-index, quem ficasse por cima dependia da ordem de renderização.
+     */
     <div className="fixed inset-0 z-99 flex items-center justify-center overflow-y-auto bg-black/70 p-4 backdrop-blur-sm">
       <div className="w-full max-w-md rounded-2xl border border-zinc-800 bg-zinc-900 shadow-2xl">
         <div className="flex flex-col items-center p-8">

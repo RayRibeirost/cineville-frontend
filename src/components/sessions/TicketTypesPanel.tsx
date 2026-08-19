@@ -3,22 +3,17 @@
 import { TicketTypesPanelProps } from "@/src/types/session-types";
 import { TicketType } from "@/src/types/ticket";
 import { formatCents } from "@/src/utils/currency";
-import { TICKET_TYPE_OPTIONS, ticketPriceFromSession } from "@/src/utils/ticket";
+import { TICKET_TYPE_OPTIONS, resolveTicketPrice } from "@/src/utils/ticket";
 
-/**
- * Escolha de inteira/meia para cada ingresso da compra.
- *
- * A seleção é individual por assento: dá para levar uma inteira e uma meia na
- * mesma compra. Os valores mostrados aqui são só a prévia — quem calcula o
- * preço cobrado é o backend, a partir do preço da sessão.
- */
+/** Escolha de inteira/meia para cada ingresso da compra. */
 export function TicketTypesPanel({
   selectedSeats,
   sessionPrice,
+  prices,
   onChangeType,
 }: TicketTypesPanelProps) {
   const total = selectedSeats.reduce(
-    (sum, seat) => sum + ticketPriceFromSession(sessionPrice, seat.type),
+    (sum, seat) => sum + resolveTicketPrice(prices, sessionPrice, seat.type),
     0,
   );
 
@@ -52,7 +47,8 @@ export function TicketTypesPanel({
                         seatNumber={seat.seatNumber}
                         value={option.value}
                         label={option.label}
-                        price={ticketPriceFromSession(
+                        price={resolveTicketPrice(
+                          prices,
                           sessionPrice,
                           option.value,
                         )}
@@ -96,11 +92,11 @@ function TypeOption({
   checked: boolean;
   onSelect: () => void;
 }) {
-  /*
-    Radio nativo (apenas visualmente escondido) em vez de um botão com
-    aria-checked: o navegador já entrega navegação por setas dentro do grupo,
-    foco visível e leitura correta pelo leitor de tela.
-  */
+  /**
+   * Radio nativo (apenas visualmente escondido) em vez de um botão com aria-
+   * checked: o navegador já entrega navegação por setas dentro do grupo, foco
+   * visível e leitura correta pelo leitor de tela.
+   */
   return (
     <label
       className={`flex flex-1 cursor-pointer items-center gap-2 rounded-lg border px-3 py-2 transition-colors has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-red-500 ${

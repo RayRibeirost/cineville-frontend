@@ -4,6 +4,7 @@ import Link from "next/link";
 import ContactSupport from "@mui/icons-material/ContactSupport";
 import { SuportButtonProps } from "@/src/types";
 
+/** Atalho flutuante para o atendimento. */
 export default function SuportButton({
   phone,
   message = "Olá! Gostaria de mais informações.",
@@ -15,26 +16,41 @@ export default function SuportButton({
       href={url}
       target="_blank"
       rel="noopener noreferrer"
-      aria-label="Conversar no WhatsApp"
+      aria-label="Abrir o suporte SmallVille"
+      title="Suporte"
       className="
         fixed
-        bottom-6
-        right-6
+        bottom-5
+        right-5
         z-50
         flex
-        h-16
-        w-16
+        h-14
+        w-14
         items-center
         justify-center
         rounded-full
-        bg-sucess
+        border
+        border-white/10
+        bg-red-cinema
         text-white
         shadow-lg
+        shadow-black/40
         transition-all
         duration-300
+        hover:bg-button-primary-hover
         hover:scale-110
         hover:shadow-2xl
+        focus-visible:outline-none
+        focus-visible:ring-2
+        focus-visible:ring-red-cinema
+        focus-visible:ring-offset-2
+        focus-visible:ring-offset-deep-black
         active:scale-95
+        active:bg-red-cinema
+        sm:bottom-6
+        sm:right-6
+        sm:h-16
+        sm:w-16
       "
     >
       <ContactSupport fontSize={"large"} />

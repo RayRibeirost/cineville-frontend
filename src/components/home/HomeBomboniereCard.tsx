@@ -3,11 +3,13 @@ import { CatalogProduct } from "@/src/types/admin";
 import { formatCents } from "@/src/utils/currency";
 import SnackAddButton from "./SnackAddButton";
 
-/** Produto da bomboniere na vitrine da Home, com controle de quantidade. */
+/** Produto da bomboniere na vitrine da Home. */
 export default function HomeBomboniereCard({
   product,
+  canPurchase = true,
 }: {
   product: CatalogProduct;
+  canPurchase?: boolean;
 }) {
   const image = product.imageUrl || "/assets/promo-candy.png";
   const soldOut = !product.isAvailable || product.quantity <= 0;
@@ -48,7 +50,7 @@ export default function HomeBomboniereCard({
         </p>
 
         <div className="mt-auto pt-4">
-          <SnackAddButton product={product} />
+          <SnackAddButton product={product} canPurchase={canPurchase} />
         </div>
       </div>
     </article>

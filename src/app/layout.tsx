@@ -1,36 +1,18 @@
 import { montserrat, inter } from "@/src/lib/fonts";
 import { AuthProvider } from "../context/AuthContext";
-import { UserPayload } from "../types";
-import { cookies } from "next/headers";
-import { jwtDecode } from "jwt-decode";
+import { getSessionUser } from "../lib/auth";
 import "./globals.css";
 import SuportButton from "../components/ui/SuportButton";
 import VLibras from "../components/Vlibras";
 import { OrderProvider } from "../context/OrderContext";
 
-async function getUserFromCookie(): Promise<UserPayload | null> {
-  const cookieStore = await cookies();
-  const token = cookieStore.get("auth_token");
-
-  if (!token) return null;
-
-  try {
-    const user = jwtDecode<UserPayload>(token.value);
-
-    if (user.exp < Date.now() / 1000) return null;
-
-    return user;
-  } catch {
-    return null;
-  }
-}
-
+/** Semeado com `getSessionUser`: o JWT guarda o nome do login, não o atual. */
 export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const user = await getUserFromCookie();
+  const user = await getSessionUser();
   return (
     <html lang="pt-BR" className={`${inter.variable} ${montserrat.variable}`}>
       <body className="bg-secondary-700 min-h-screen">

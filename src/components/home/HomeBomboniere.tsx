@@ -9,12 +9,7 @@ import { PRODUCT_CATEGORIES, CatalogProduct } from "@/src/types/admin";
 /** Quantos produtos a Home mostra antes de mandar para o catálogo completo. */
 const HOME_PRODUCTS_LIMIT = 8;
 
-/**
- * Bomboniere na Home, com os produtos reais cadastrados no backend.
- *
- * Intercala as categorias para que a vitrine não fique só de combos quando uma
- * categoria tem muito mais itens que as outras.
- */
+/** Bomboniere na Home, com os produtos reais cadastrados no backend. */
 function pickHighlights(
   catalog: Partial<Record<string, CatalogProduct[]>>,
 ): CatalogProduct[] {
@@ -43,10 +38,12 @@ function pickHighlights(
 export default async function HomeBomboniere() {
   const user = await getServerUser();
 
-  // `GET /products/availables` exige token no backend; sem login não há o que
-  // buscar, então mostramos o convite em vez de um erro.
-  const result = user ? await getBomboniereCatalog() : null;
-  const catalog = result?.success ? result.data : undefined;
+  // A vitrine é pública. O que a conta habilita é a COMPRA: `canPurchase`
+  // desce até `SnackAddButton`, que troca o controle de quantidade pelo
+  // convite ao login.
+  const result = await getBomboniereCatalog();
+  const catalog = result.success ? result.data : undefined;
+  const canPurchase = !!user;
 
   // Destaque: primeiro combo disponível. Sem combos cadastrados, a Home
   // simplesmente não mostra o banner — em vez de inventar uma oferta.
@@ -79,20 +76,7 @@ export default async function HomeBomboniere() {
         aparece no carrinho quando finalizar a compra do ingresso.
       </p>
 
-      {!user ? (
-        <div className="mt-8 rounded-xl border border-grayScale-600 bg-gray-surface px-6 py-12 text-center">
-          <p className="text-sm text-grayScale-400">
-            Entre na sua conta para ver os produtos disponíveis na bomboniere.
-          </p>
-
-          <Link
-            href="/login"
-            className="mt-5 inline-flex items-center justify-center rounded-md bg-button-primary px-5 py-2.5 text-sm font-bold text-white transition-all hover:scale-105"
-          >
-            Entrar
-          </Link>
-        </div>
-      ) : result && !result.success ? (
+      {!result.success ? (
         <p className="mt-8 rounded-lg border border-red-500/40 bg-red-500/10 px-4 py-3 text-sm text-red-400">
           {result.error}
         </p>
@@ -102,12 +86,31 @@ export default async function HomeBomboniere() {
         </p>
       ) : (
         <>
-          {featured && <PromoCandy product={featured} />}
+          {!canPurchase && (
+            <p className="mt-6 rounded-lg border border-red-cinema/40 bg-red-cinema/10 px-4 py-3 text-sm text-grayScale-300">
+              Você pode ver todos os produtos por aqui.{" "}
+              <Link
+                href="/login"
+                className="font-bold text-red-cinema underline underline-offset-2 hover:text-white"
+              >
+                Entre na sua conta
+              </Link>{" "}
+              para separar os itens e finalizar a compra.
+            </p>
+          )}
+
+          {featured && (
+            <PromoCandy product={featured} canPurchase={canPurchase} />
+          )}
 
           {!!highlights.length && (
             <div className="mt-8 grid grid-cols-2 gap-5 sm:grid-cols-3 lg:grid-cols-4">
               {highlights.map((product) => (
-                <HomeBomboniereCard key={product._id} product={product} />
+                <HomeBomboniereCard
+                  key={product._id}
+                  product={product}
+                  canPurchase={canPurchase}
+                />
               ))}
             </div>
           )}

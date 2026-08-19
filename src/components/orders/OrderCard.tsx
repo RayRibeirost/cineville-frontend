@@ -1,9 +1,12 @@
 import Link from "next/link";
-import { Order, OrderStatus } from "@/src/actions/myOrdersActions";
+import type { Order, OrderStatus } from "@/src/types/order";
 import { formatCents } from "@/src/utils/currency";
 import { TICKET_TYPE_LABELS } from "@/src/utils/ticket";
+import { canRequestRefund } from "@/src/types/refund";
 import OrderStatusBadge from "./OrderStatusBadge";
+import OrderRefundPanel from "./OrderRefundPanel";
 import PaymentDecisionActions from "./PaymentDecisionActions";
+import RefundRequestAction from "./RefundRequestAction";
 
 /** Pedidos que ainda dá para pagar (PAYABLE_STATUSES no backend). */
 const PAYABLE: OrderStatus[] = [
@@ -188,6 +191,13 @@ export default function OrderCard({
       )}
 
       {/*
+        Situação do reembolso, quando existir solicitação. Aparece nos dois
+        lados — o comprador acompanha a análise, e o administrador vê o mesmo
+        na listagem de pedidos.
+      */}
+      <OrderRefundPanel order={order} />
+
+      {/*
         Só em "pagamento_pendente": é o único status em que existe um
         pagamento aguardando no backend. Em "pedido_realizado" o usuário nem
         escolheu a forma de pagamento, e depois de aprovado ou recusado o
@@ -216,6 +226,21 @@ export default function OrderCard({
             >
               Ver ingressos ({order.ticketsCount})
             </Link>
+          )}
+
+          {/*
+            `canRequestRefund` espelha `isRefundAllowed` do backend: pedido
+            pago, em `pagamento_aprovado` ou `pedido_cancelado`, e sem
+            solicitação anterior. Assim que existe `refund.requestedAt` o botão
+            não volta — quem informa a situação passa a ser o
+            `OrderRefundPanel` acima ("em análise", "aprovado", "recusado").
+
+            Fica sob `showActions`, ou seja, só na visão do comprador: solicitar
+            reembolso é ato do dono do pedido, e a rota é do dono. O
+            administrador decide, mas não solicita pelo cliente.
+          */}
+          {canRequestRefund(order) && (
+            <RefundRequestAction orderId={order.id} total={order.total} />
           )}
         </div>
       )}

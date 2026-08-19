@@ -38,15 +38,7 @@ const methods = [
   icon: React.ElementType;
 }[];
 
-/**
- * Formas de pagamento.
- *
- * Cartão de crédito e débito continuam na lista de propósito, marcados como
- * "Em breve": são a próxima etapa do projeto e a tela indica isso ao usuário.
- * Enquanto não houver integração de verdade, eles não podem ser selecionados —
- * quem define o que está liberado é `AVAILABLE_PAYMENT_METHODS`, a mesma lista
- * que impede o disparo da requisição.
- */
+/** Formas de pagamento. */
 export default function PaymentMethods({
   value,
   onChange,

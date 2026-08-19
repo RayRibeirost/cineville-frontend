@@ -1,4 +1,8 @@
-import { OrderStatus } from "@/src/actions/myOrdersActions";
+import type { OrderStatus } from "@/src/types/order";
+import {
+  REFUND_STATUS_LABELS,
+  REFUND_STATUS_TONES,
+} from "@/src/types/refund";
 
 /** Rótulo e cor de cada OrderStatus do backend. */
 const STATUS_META: Record<OrderStatus, { label: string; className: string }> = {
@@ -26,17 +30,18 @@ const STATUS_META: Record<OrderStatus, { label: string; className: string }> = {
     label: "Expirado",
     className: "border-grayScale-600 bg-grayScale-700 text-grayScale-400",
   },
+  // Os status de reembolso vêm de `types/refund.ts`, para não duplicar rótulos.
   reembolso_solicitado: {
-    label: "Reembolso solicitado",
-    className: "border-yellow-500/40 bg-yellow-500/10 text-yellow-300",
+    label: REFUND_STATUS_LABELS.reembolso_solicitado,
+    className: REFUND_STATUS_TONES.reembolso_solicitado,
   },
   reembolso_aprovado: {
-    label: "Reembolso aprovado",
-    className: "border-green-500/40 bg-green-500/10 text-green-300",
+    label: REFUND_STATUS_LABELS.reembolso_aprovado,
+    className: REFUND_STATUS_TONES.reembolso_aprovado,
   },
   reembolso_recusado: {
-    label: "Reembolso recusado",
-    className: "border-red-500/40 bg-red-500/10 text-red-300",
+    label: REFUND_STATUS_LABELS.reembolso_recusado,
+    className: REFUND_STATUS_TONES.reembolso_recusado,
   },
 };
 

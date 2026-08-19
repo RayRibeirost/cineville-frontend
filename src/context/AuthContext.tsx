@@ -7,6 +7,13 @@ import { UserPayload, AuthContextType } from "../types";
 
 const AuthContext = createContext({} as AuthContextType);
 
+/** Assinatura do que o servidor mandou. */
+function identityKey(user: UserPayload | null): string {
+  if (!user) return "";
+
+  return [user.sub, user.name, user.surname, user.email, user.role].join("|");
+}
+
 export function AuthProvider({
   children,
   initialUser,
@@ -14,16 +21,24 @@ export function AuthProvider({
   children: ReactNode;
   initialUser: UserPayload | null;
 }) {
-  // const DEV_USER: UserPayload = {
-  //   sub: "123456",
-  //   name: "Kaynan Teixeira",
-  //   email: "kaynan@email.com",
-  //   iat: Math.floor(Date.now() / 1000),
-  //   exp: Math.floor(Date.now() / 1000) + 86400,
-  // };
-
   const [user, setUser] = useState<UserPayload | null>(initialUser || null);
+
+  // Reagir a `initialUser` novo (login, logout, perfil salvo) sem desfazer o
+  // que `updateUser` mudou no cliente.
+  const serverKey = identityKey(initialUser);
+  const [seededKey, setSeededKey] = useState(serverKey);
+
+  if (seededKey !== serverKey) {
+    setSeededKey(serverKey);
+    setUser(initialUser || null);
+  }
+
   const router = useRouter();
+
+  /** Atualiza os dados de exibição do usuário logado sem refazer a sessão. */
+  function updateUser(changes: Partial<UserPayload>) {
+    setUser((current) => (current ? { ...current, ...changes } : current));
+  }
 
   async function logout() {
     await logoutAction();
@@ -37,6 +52,7 @@ export function AuthProvider({
       value={{
         user,
         setUser,
+        updateUser,
         logout,
         isAuthenticated: !!user,
         isAdmin: user?.role === "ADMIN",

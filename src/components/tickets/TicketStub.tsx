@@ -25,13 +25,7 @@ const STATUS_META: Record<TicketStatus, { label: string; className: string }> = 
   },
 };
 
-/**
- * O ingresso em si. Todo campo vem do documento do ingresso e da sessão
- * ligada a ele — não existe imagem, código ou assento fixo aqui.
- *
- * É o mesmo componente usado na confirmação da compra, em "Meus Ingressos" e
- * na geração do PDF, para que os três mostrem exatamente a mesma coisa.
- */
+/** O ingresso em si. */
 export default function TicketStub({ ticket, holderLabel }: TicketStubProps) {
   const [date, time] = ticket.sessionDateTime?.split(" ") ?? [];
   const holder = holderLabel ?? ticket.holderName;
@@ -119,11 +113,7 @@ export default function TicketStub({ ticket, holderLabel }: TicketStubProps) {
               />
             </div>
           ) : (
-            /*
-              Ingressos emitidos antes do backend passar a assinar o QR não
-              têm payload. Gerar um aqui produziria um código sem assinatura,
-              que a portaria recusaria — então mostramos só o número.
-            */
+            /** Ingressos emitidos antes do backend passar a assinar o QR não têm payload. */
             <div className="flex h-20 w-20 items-center justify-center rounded-lg border border-dashed border-grayScale-600 p-2 text-center sm:h-24 sm:w-24">
               <span className="text-[10px] leading-tight text-grayScale-500">
                 QR indisponível
