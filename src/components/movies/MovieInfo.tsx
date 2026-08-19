@@ -19,7 +19,7 @@ export default function MovieInfo({
       </div>
 
       <div className="w-full md:w-72 bg-gray-surface rounded-xl p-6 flex flex-col gap-4 h-fit">
-        <h3 className="text-lg font-bold mb-2">Movie Info</h3>
+        <h3 className="text-lg font-bold mb-2">Informações do Filme</h3>
         <div className="flex justify-between border-b border-grayScale-600 pb-3">
           <span className="text-grayScale-400 text-sm">Diretor</span>
           <span className="font-semibold text-sm">{director}</span>

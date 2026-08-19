@@ -14,8 +14,7 @@ const HERO_SIZE = 5;
 
 export default async function HomePage() {
   // Duas listas diferentes: "Em Cartaz" olha a grade de sessões, "Lançamentos"
-  // olha a data de estreia. Antes as duas seções recebiam a mesma lista de
-  // filmes, então mostravam exatamente o mesmo conteúdo.
+  // olha a data de estreia.
   const [nowPlaying, releases] = await Promise.all([
     getNowPlayingMovies(),
     getUpcomingReleases(),
@@ -24,11 +23,9 @@ export default async function HomePage() {
   const nowPlayingMovies = nowPlaying.success ? nowPlaying.data : [];
   const releaseMovies = releases.success ? releases.data : [];
 
-  /*
+  /**
    * O destaque usa os filmes que já estão em cartaz — são os que o botão
-   * "Comprar Ingresso" consegue levar a uma sessão de verdade. Sem nenhum em
-   * cartaz, cai para os lançamentos. As duas listas já foram buscadas acima:
-   * a rotação não faz nenhuma requisição nova.
+   * "Comprar Ingresso" consegue levar a uma sessão de verdade.
    */
   const heroMovies: CatalogMovie[] = (
     nowPlayingMovies.length ? nowPlayingMovies : releaseMovies

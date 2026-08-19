@@ -1,24 +1,14 @@
-import { Classification, MovieLanguage, RoomType } from "./admin";
+import type { Classification, MovieLanguage, RoomType } from "./admin";
 
 export type TicketType = "INTEIRA" | "MEIA";
 
 /** Espelha `TicketStatus` do backend (tickets/enums/ticket-status.enum.ts). */
 export type TicketStatus = "valido" | "utilizado" | "cancelado";
 
-/**
- * Ingresso como a tela precisa dele.
- *
- * O backend já devolve filme, sessão, cinema, pedido e usuário populados em
- * `/tickets`, `/tickets/:id` e `/tickets/my-tickets` — este tipo é o mesmo
- * conteúdo achatado, sem nenhuma informação inventada pelo frontend.
- */
+/** Ingresso como a tela precisa dele. */
 export interface Ticket {
   _id: string;
-  /**
-   * `ticketNumber` do backend ("SMV-20260818-9F3AC1B2"). Opcional no schema
-   * (`sparse`) porque ingressos emitidos antes do campo existir não têm
-   * número — nesses casos a tela cai no id do documento.
-   */
+  /** `ticketNumber` do backend ("SMV-20260818-9F3AC1B2"). */
   ticketNumber?: string;
   /** O que é exibido como código do ingresso. */
   code: string;
@@ -30,11 +20,7 @@ export interface Ticket {
   purchasedAt: string;
   status: TicketStatus;
 
-  /**
-   * Conteúdo assinado do QR (`ticketNumber.HMAC`), emitido pelo backend.
-   * Ausente em ingressos antigos — e nesse caso não geramos um substituto,
-   * porque um QR sem a assinatura do servidor não passaria na portaria.
-   */
+  /** Conteúdo assinado do QR (`ticketNumber.HMAC`), emitido pelo backend. */
   qrPayload?: string;
   /** PNG em data URL gerado a partir de `qrPayload`. */
   qrImage?: string;

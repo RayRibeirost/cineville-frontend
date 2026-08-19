@@ -21,11 +21,11 @@ const ROTATION_MS = 10_000;
 
 const REDUCED_MOTION_QUERY = "(prefers-reduced-motion: reduce)";
 
-/*
+/**
  * A preferência de movimento é estado de fora do React, então é lida com
- * `useSyncExternalStore` em vez de um `useState` alimentado por efeito: nada de
- * render extra no primeiro paint, e o valor nunca fica atrasado em relação ao
- * sistema operacional. No servidor não há `matchMedia`, e o snapshot é `false`.
+ * `useSyncExternalStore` em vez de um `useState` alimentado por efeito: nada
+ * de render extra no primeiro paint, e o valor nunca fica atrasado em relação
+ * ao sistema operacional.
  */
 function subscribeReducedMotion(onChange: () => void) {
   const query = window.matchMedia(REDUCED_MOTION_QUERY);
@@ -52,14 +52,7 @@ interface HeroCarouselProps {
   children?: React.ReactNode;
 }
 
-/**
- * Destaque rotativo da Home.
- *
- * Troca de filme a cada 10 segundos usando os filmes que a página já buscou —
- * nenhuma requisição nova a cada troca. O timer vive num único `useEffect` que
- * depende do índice atual, então qualquer troca manual reinicia a contagem de
- * 10 segundos em vez de acumular um segundo timer.
- */
+/** Destaque rotativo da Home. */
 export default function HeroCarousel({
   movies,
   highlights,

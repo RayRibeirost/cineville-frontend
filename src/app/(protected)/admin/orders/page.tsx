@@ -1,4 +1,5 @@
-import { getAllOrders, OrderStatus } from "@/src/actions/myOrdersActions";
+import { getAllOrders } from "@/src/actions/myOrdersActions";
+import type { OrderStatus } from "@/src/types/order";
 import MyOrdersList from "@/src/components/orders/MyOrdersList";
 import { ADMIN_PAGE_SIZE, parsePageParam } from "@/src/utils/pagination";
 

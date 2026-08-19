@@ -8,25 +8,7 @@ import MoviePoster from "../../ui/MoviePoster";
 import { MovieCardProps } from "@/src/types/movie-types";
 import { classificationColor, movieMetaLine } from "@/src/utils/movie";
 
-/**
- * Card usado nos carrosséis da Home.
- *
- * `h-full` + `mt-auto` no rodapé mantêm todos os cards do mesmo tamanho
- * independente do comprimento do título; o pôster fica preso em 2:3 para que
- * imagens com proporções diferentes não estiquem a linha.
- *
- * A régua das ações é o `@container`, não a viewport. O carrossel mostra 4
- * cards por vez em telas grandes e 2 em telas médias, ou seja: a tela cresce e
- * o card encolhe. Com `sm:flex-row` os dois botões viravam linha justamente
- * onde o card era mais estreito, estouravam a largura e o "Detalhes" era
- * cortado pelo `overflow-hidden` do card. Agora eles só ficam lado a lado
- * quando o próprio card tem largura para isso.
- *
- * Os botões usam `size="sm"` (fonte 12px, padding menor, ícone de 16px): o
- * texto do card é curto e não precisa da escala dos botões de página. Como
- * ambos são `flex-1 min-w-0` com `truncate`, o pior caso é o texto encurtar —
- * nunca vazar o card.
- */
+/** Card usado nos carrosséis da Home. */
 export default function MovieCard({ movie, highlight }: MovieCardProps) {
   return (
     <article className="group @container flex h-full flex-col overflow-hidden rounded-xl border border-grayScale-600 bg-gray-surface transition-all duration-300 hover:-translate-y-1 hover:border-red-cinema">

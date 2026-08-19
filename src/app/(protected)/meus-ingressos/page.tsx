@@ -1,5 +1,4 @@
 import Link from "next/link";
-import Header from "@/src/components/layout/Header";
 import Footer from "@/src/components/layout/Footer/Footer";
 import TicketsList from "@/src/components/tickets/TicketsList";
 import { getAllTickets, getMyTickets } from "@/src/actions/ticketsActions";
@@ -20,11 +19,10 @@ export default async function MeusIngressosPage({
   const isAdmin = user?.role === "ADMIN";
   const page = parsePageParam((await searchParams).page);
 
-  /*
+  /**
    * Regra do backend: `GET /tickets/my-tickets` filtra pelo usuário do token e
    * devolve todos os ingressos dele; `GET /tickets` é a rota paginada que o
-   * administrador usa para ver o sistema inteiro. Aqui só escolhemos qual
-   * chamar — quem decide o que cada papel enxerga é a API.
+   * administrador usa para ver o sistema inteiro.
    */
   const result = isAdmin
     ? await getAllTickets(page, ADMIN_PAGE_SIZE)
@@ -47,8 +45,6 @@ export default async function MeusIngressosPage({
 
   return (
     <>
-      <Header />
-
       <div className="bg-deep-black text-grayScale-200 min-h-screen pt-16">
         <div className="mx-auto max-w-5xl px-5 py-10 sm:px-6">
           <header className="mb-8">

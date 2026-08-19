@@ -22,10 +22,11 @@ export const Seat = React.memo(
     const baseClasses =
       "flex h-[clamp(26px,3.4vh,44px)] w-[clamp(24px,2.8vw,40px)] items-center justify-center rounded-lg text-sm font-extrabold border shadow-sm transition-all duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white ";
 
-    // Três estados bem separados: o disponível é claro e neutro, o hover
-    // levanta e tinge a borda de vermelho, e o selecionado troca o fundo
-    // inteiro para o vermelho da marca com anel e escala. Antes o selecionado
-    // era só um cinza médio, quase indistinguível do branco disponível.
+    /**
+     * Três estados bem separados: o disponível é claro e neutro, o hover
+     * levanta e tinge a borda de vermelho, e o selecionado troca o fundo
+     * inteiro para o vermelho da marca com anel e escala.
+     */
     let stateClasses =
       "cursor-pointer border-black/10 bg-white text-black hover:-translate-y-0.5 hover:border-red-cinema hover:bg-neutral-100 hover:shadow-md";
 

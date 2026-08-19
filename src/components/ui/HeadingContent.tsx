@@ -1,11 +1,4 @@
-/**
- * Título de seção com a régua vermelha do SmallVille.
- *
- * O "Ver Todos" que ficava aqui apontava para `href="#"` — não levava a lugar
- * nenhum e aparecia em toda seção que usa este componente. Quem tem listagem
- * completa (Em Cartaz, Lançamentos, Bomboniere) passa o próprio link ao lado
- * do título, para que o atalho só exista onde há destino.
- */
+/** Título de seção com a régua vermelha do SmallVille. */
 export default function HeadingContent({ title }: { title: string }) {
   return (
     <div className="mb-10 flex items-center gap-3 sm:mb-16 sm:gap-4">

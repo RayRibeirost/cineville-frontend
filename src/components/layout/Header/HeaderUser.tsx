@@ -8,6 +8,8 @@ import { useAuth } from "@/src/context/AuthContext";
 import Link from "next/link";
 import LogoutButton from "../../ui/LogoutButton";
 import AdminBadge from "../../admin/AdminBadge";
+import NotificationBell from "../../notifications/NotificationBell";
+import NotificationBellBoundary from "../../notifications/NotificationBellBoundary";
 
 export default function HeaderUser() {
   const [open, setOpen] = useState(false);
@@ -15,7 +17,19 @@ export default function HeaderUser() {
 
   return (
     <>
-      <div className="flex items-center gap-2 sm:gap-4">
+      <div className="flex items-center gap-3 sm:gap-4">
+        {/*
+          O painel do sino é desenhado em um portal no `body` e se posiciona
+          pela medida do ícone, então não depende de nenhuma âncora aqui — o
+          que importa neste ponto é a cerca em volta, que impede uma falha das
+          notificações de derrubar a Header.
+        */}
+        <div className="flex items-center">
+          <NotificationBellBoundary>
+            <NotificationBell />
+          </NotificationBellBoundary>
+        </div>
+
         <Link
           href="/points"
           className="flex items-center gap-2 text-white"
@@ -87,6 +101,14 @@ export default function HeaderUser() {
               className="py-2 text-base  transition-colors"
             >
               Meu Perfil
+            </Link>
+
+            <Link
+              href="/notificacoes"
+              onClick={() => setOpen(false)}
+              className="py-2 text-base  transition-colors"
+            >
+              Notificações
             </Link>
 
             <Link

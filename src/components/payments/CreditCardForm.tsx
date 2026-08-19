@@ -6,18 +6,7 @@ import InputForm from "../ui/InputForm";
 import { masks } from "@/src/utils/masks";
 import { formatCents } from "@/src/utils/currency";
 
-/**
- * NÃO ESTÁ EM USO NESTA ETAPA.
- *
- * Pagamento por cartão é a próxima etapa do projeto: a tela de pagamento marca
- * crédito e débito como "Em breve" e não renderiza este formulário. O arquivo
- * fica de pé, compilando, para a etapa em que a integração de cartão existir —
- * não há nenhum fluxo de cartão pela metade ligado a ele.
- *
- * Regras espelhadas de PaymentsService.computeAmount (backend):
- * só parcela acima de R$ 100,00; até 4x sem juros; acima disso,
- * 1% de juros por parcela sobre o valor total.
- */
+/** NÃO ESTÁ EM USO NESTA ETAPA. */
 const INSTALLMENTS_MIN_AMOUNT_CENTS = 10_000;
 const INTEREST_FREE_INSTALLMENTS = 4;
 const INTEREST_RATE_PER_INSTALLMENT = 0.01;

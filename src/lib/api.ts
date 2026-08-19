@@ -28,13 +28,11 @@ interface RequestOptions {
   /** Para rotas multipart (filmes e produtos). */
   formData?: FormData;
   fallbackError?: string;
+  /** Devolve o envelope inteiro em vez de apenas `data`. */
+  keepEnvelope?: boolean;
 }
 
-/**
- * Chama o backend já autenticado e normaliza a resposta.
- * O backend responde `{ message, data }` na maioria das rotas — desembrulhamos
- * `data` quando existir.
- */
+/** Chama o backend já autenticado e normaliza a resposta. */
 export async function apiRequest<T>(
   path: string,
   options: RequestOptions = {},
@@ -44,6 +42,7 @@ export async function apiRequest<T>(
     body,
     formData,
     fallbackError = "Não foi possível concluir a operação.",
+    keepEnvelope = false,
   } = options;
 
   try {
@@ -69,7 +68,7 @@ export async function apiRequest<T>(
     }
 
     const data =
-      payload && typeof payload === "object" && "data" in payload
+      !keepEnvelope && payload && typeof payload === "object" && "data" in payload
         ? (payload as { data: T }).data
         : (payload as T);
 

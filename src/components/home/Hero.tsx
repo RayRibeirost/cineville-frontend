@@ -16,13 +16,7 @@ interface HeroProps {
 const ACTION_BASE =
   "inline-flex items-center justify-center gap-2 rounded-md px-4 py-2.5 text-sm font-bold text-white transition-all duration-200 sm:text-base";
 
-/**
- * Conteúdo de um destaque da Home.
- *
- * Só apresenta: quem decide qual filme aparece e quando trocar é o
- * `HeroCarousel`. Antes este componente trazia título, nota e sinopse escritos
- * no próprio JSX, e o botão levava para `/movies/1` — um id que não existe.
- */
+/** Conteúdo de um destaque da Home. */
 export default function Hero({ movie, highlight }: HeroProps) {
   const meta = movieMetaLine(movie.genres, movie.duration);
 

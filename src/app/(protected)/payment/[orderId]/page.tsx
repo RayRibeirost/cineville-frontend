@@ -28,15 +28,7 @@ import {
 
 import OrderConfirmedModal from "@/src/components/confirmation/OrderConfirmed";
 
-/**
- * Espaço no topo da tela de pagamento.
- *
- * A `Header` do layout protegido é `fixed` com 4rem (`h-16`) e não empurra o
- * conteúdo: quem entra abaixo dela precisa reservar o espaço. Esta tela era a
- * única que não reservava, então o resumo da compra nascia atrás da Header.
- * `pt-24` = 4rem da Header + 2rem de respiro, igual em todas as resoluções
- * porque a altura da Header não muda com o breakpoint.
- */
+/** Espaço no topo da tela de pagamento. */
 const PAGE_TOP_SPACING = "pt-24";
 
 interface Payment {
@@ -52,13 +44,7 @@ interface Payment {
   };
 }
 
-/**
- * Mensagem para os desfechos que não são aprovação.
- *
- * O PIX simulado expira depois de 15 minutos e o administrador pode recusar o
- * pagamento pelo painel; sem isso a tela apenas parava de consultar, sem dizer
- * nada, e o usuário ficava olhando para um pagamento que nunca ia concluir.
- */
+/** Mensagem para os desfechos que não são aprovação. */
 function failureMessage(payment: Payment): string {
   if (payment.status === PAYMENT_STATUSES.EXPIRED) {
     return "O prazo para pagamento expirou. Escolha uma forma de pagamento e tente novamente.";
@@ -155,13 +141,7 @@ export default function PaymentPage({
     createPix();
   }, [paymentMethod, order?._id, payment]);
 
-  /*
-   * Acompanhamento do pagamento.
-   *
-   * Um pagamento em estado final não é consultado de novo — sem esta guarda, o
-   * `setPayment` feito aqui dentro reiniciaria o efeito e o intervalo voltaria a
-   * consultar uma cobrança já encerrada.
-   */
+  /** Acompanhamento do pagamento. */
   useEffect(() => {
     if (!payment?._id || !order) return;
     if (FINAL_PAYMENT_STATUSES.includes(payment.status)) return;
@@ -223,11 +203,7 @@ export default function PaymentPage({
       return;
     }
 
-    /*
-      Só PIX. Cartão de crédito e débito aparecem na tela como "Em breve" e
-      não são selecionáveis — não existe fluxo de cartão aqui, nem parcial:
-      nenhuma cobrança por cartão é criada enquanto a integração não existir.
-    */
+    /** Só PIX. */
     if (paymentMethod !== PAYMENT_METHODS.PIX) {
       setError(
         "Esta forma de pagamento ainda não está disponível. Utilize o PIX.",
@@ -243,14 +219,10 @@ export default function PaymentPage({
 
       setPayment(response);
 
-      /*
-        Compra confirmada: o modal do ingresso abre já aqui, com o status real
-        que veio da API — pendente, ou seja "Em análise". O polling depois troca
-        esse status para aprovada/recusada. Antes o modal só abria na aprovação,
-        e quem pagava ficava sem nenhum comprovante do que havia acabado de
-        fazer; abrir dizendo "aprovado" seria pior ainda, porque o pagamento
-        nasce pendente.
-      */
+      /**
+       * Compra confirmada: o modal do ingresso abre já aqui, com o status real
+       * que veio da API — pendente, ou seja "Em análise".
+       */
       setIsConfirmModalOpen(true);
     } catch (error) {
       console.error(error);
@@ -261,14 +233,7 @@ export default function PaymentPage({
     }
   }
 
-  /**
-   * Fecha o modal do ingresso.
-   *
-   * Quando o desfecho foi recusa ou expiração, é aqui que a tela volta ao estado
-   * de escolha: zerar antes disso apagaria justamente o status que o modal
-   * precisa mostrar. Aprovado não zera nada — a compra terminou, e os botões do
-   * modal levam para os ingressos.
-   */
+  /** Fecha o modal do ingresso. */
   function handleCloseConfirmation() {
     setIsConfirmModalOpen(false);
 

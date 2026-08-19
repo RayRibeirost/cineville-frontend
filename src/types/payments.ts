@@ -1,14 +1,6 @@
-import { TicketType } from "./ticket";
+import type { TicketType } from "./ticket";
 
-/**
- * Enums de pagamento espelhados do backend (smallville-backend).
- *
- * Os valores são EXATAMENTE os do backend — `PaymentMethod` e `PaymentStatus`
- * em `src/payments/enums/`. Antes a tela usava rótulos próprios ("credit",
- * "APPROVED") e traduzia na borda; a tradução ficava fora de sincronia e o
- * polling do PIX nunca reconhecia a aprovação, porque comparava "APPROVED"
- * com o "aprovado" que o backend devolve.
- */
+/** Enums de pagamento espelhados do backend (smallville-backend). */
 export const PAYMENT_METHODS = {
   PIX: "pix",
   CREDIT_CARD: "cartao_credito",
@@ -17,6 +9,13 @@ export const PAYMENT_METHODS = {
 
 export type PaymentMethod =
   (typeof PAYMENT_METHODS)[keyof typeof PAYMENT_METHODS];
+
+/** Rótulos exibidos ao usuário. Os valores continuam sendo os do backend. */
+export const PAYMENT_METHOD_LABELS: Record<PaymentMethod, string> = {
+  pix: "PIX",
+  cartao_credito: "Cartão de crédito",
+  cartao_debito: "Cartão de débito",
+};
 
 export const PAYMENT_STATUSES = {
   PENDING: "pendente",
@@ -35,26 +34,14 @@ export const FINAL_PAYMENT_STATUSES: PaymentStatus[] = [
   PAYMENT_STATUSES.EXPIRED,
 ];
 
-/**
- * Formas de pagamento que o sistema realmente processa hoje.
- *
- * Cartão de crédito e débito continuam listados na tela como "Em breve" —
- * são etapa seguinte do projeto e não existe fluxo implementado para eles.
- * Enquanto não existir, nenhuma requisição de pagamento por cartão sai daqui.
- */
+/** Formas de pagamento que o sistema realmente processa hoje. */
 export const AVAILABLE_PAYMENT_METHODS: PaymentMethod[] = [PAYMENT_METHODS.PIX];
 
 export function isPaymentMethodAvailable(method: PaymentMethod): boolean {
   return AVAILABLE_PAYMENT_METHODS.includes(method);
 }
 
-/**
- * Limites de `RejectPaymentDto.reason` no backend
- * (`@MinLength(3)` / `@MaxLength(255)`).
- *
- * Ficam aqui, junto do resto do contrato de pagamento, e não no arquivo de
- * server actions: um módulo `"use server"` só pode exportar funções async.
- */
+/** Limites de `RejectPaymentDto.reason` no backend (`@MinLength(3)` / `@MaxLength(255)`). */
 export const REJECTION_REASON_MIN_LENGTH = 3;
 export const REJECTION_REASON_MAX_LENGTH = 255;
 

@@ -1,12 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowLeft, Mail } from "lucide-react";
-import { useActionState, useEffect } from "react";
+import { ArrowLeft, Mail, MailCheck } from "lucide-react";
+import { useActionState } from "react";
 import { forgotPassword } from "@/src/actions/forgotPasswordActions";
 import Button from "@/src/components/ui/Button";
 import InputForm from "../ui/InputForm";
-import { useRouter } from "next/navigation";
 
 const initialState = {
   success: false,
@@ -16,34 +15,55 @@ const initialState = {
   },
 };
 
+/** Pedido de recuperação de senha. */
 export default function ForgotPassword() {
   const [state, action, pending] = useActionState(forgotPassword, initialState);
 
-  const router = useRouter();
+  if (state.success) {
+    return (
+      <div className="flex flex-col items-center gap-4 text-center">
+        <MailCheck size={44} className="text-sucess" aria-hidden="true" />
 
-  useEffect(() => {
-    if (state.success) {
-      router.push("/reset-password");
-    }
-  }, [state.success, router]);
+        <p className="text-sm text-grayScale-200">
+          {state.message || "Um link de recuperação foi enviado."}
+        </p>
+
+        <p className="text-xs text-grayScale-400">
+          Abra o e-mail e clique em <strong>Redefinir minha senha</strong>. O
+          link vale por 1 hora e só pode ser usado uma vez. Se não encontrar a
+          mensagem, verifique a caixa de spam.
+        </p>
+
+        <Link
+          href="/login"
+          className="mt-2 flex items-center justify-center gap-2 text-sm text-grayScale-400 transition hover:text-grayScale-200"
+        >
+          <ArrowLeft size={16} />
+          Voltar para login
+        </Link>
+      </div>
+    );
+  }
+
   return (
     <>
       <form action={action} className="mt-8 space-y-6">
         <div>
           <label
             htmlFor="email"
-            className="mb-2 block text-xs font-medium uppercase tracking-wide text-grayScale-400"
+            className="mb-2 block text-xs font-medium tracking-wide text-grayScale-400 uppercase"
           >
             E-mail
           </label>
 
-          <div className="flex items-center rounded-md border border-grayScale-600 bg-grayScale-700 px-3 focus:border-red-cinema transition-all">
+          <div className="flex items-center rounded-md border border-grayScale-600 bg-grayScale-700 px-3 transition-all focus:border-red-cinema">
             <Mail size={18} className="text-red-cinema" />
 
             <InputForm
               id="email"
               name="email"
               type="email"
+              autoComplete="email"
               defaultValue={state.inputs?.email}
               placeholder="nome@exemplo.com"
               hasIcon={true}
@@ -58,11 +78,7 @@ export default function ForgotPassword() {
         </div>
 
         {state.message && (
-          <p
-            className={`text-center text-sm ${
-              state.success ? "text-sucess" : "text-error"
-            }`}
-          >
+          <p role="alert" className="text-center text-sm text-error">
             {state.message}
           </p>
         )}

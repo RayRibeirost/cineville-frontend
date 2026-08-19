@@ -3,16 +3,7 @@
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useTransition } from "react";
 
-/**
- * Estado de listagem (página, filtro, busca) na URL.
- *
- * Fica na URL de propósito: é o que permite a página buscar apenas os 10
- * registros daquela página no servidor e, ao mesmo tempo, manter filtro e
- * pesquisa ao trocar de página, voltar pelo histórico ou recarregar a tela.
- *
- * `isPending` acompanha a navegação para as listagens mostrarem carregamento
- * durante a troca de página.
- */
+/** Estado de listagem (página, filtro, busca) na URL. */
 export function useQueryParams() {
   const router = useRouter();
   const pathname = usePathname();
@@ -38,12 +29,7 @@ export function useQueryParams() {
     [pathname, searchParams],
   );
 
-  /**
-   * Navega para a mesma tela com os parâmetros alterados.
-   *
-   * Quem chama decide o que acontece com `page`: um filtro novo passa
-   * `page: null` (volta para a primeira), a paginação passa o número da página.
-   */
+  /** Navega para a mesma tela com os parâmetros alterados. */
   const update = useCallback(
     (changes: Record<string, string | number | null>) => {
       startTransition(() => {

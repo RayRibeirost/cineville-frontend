@@ -1,4 +1,5 @@
 import { CatalogMovie } from "./admin";
+import { SalesStatus } from "./sales-control";
 
 export interface BackendActor {
   name: string;
@@ -41,6 +42,8 @@ export interface ShowtimeOption {
   /** "DD/MM/AAAA", vindo de dateTime do backend. */
   date: string;
   time: string;
+  /** Estado de venda da sessão, quando o backend o devolve. */
+  salesStatus?: SalesStatus;
 }
 
 export interface CinemaSessionGroup {
@@ -66,9 +69,9 @@ export interface MovieDetailsResult {
   dates: string[];
 }
 /**
- * Os cards da Home usam o mesmo modelo de filme das páginas de catálogo
- * (`/em-cartaz`, `/lancamentos`), para que gênero, duração e classificação
- * apareçam iguais nos dois lugares.
+ * Os cards da Home usam o mesmo modelo de filme das páginas de catálogo (`/em-
+ * cartaz`, `/lancamentos`), para que gênero, duração e classificação apareçam
+ * iguais nos dois lugares.
  */
 export interface MovieCardProps {
   movie: CatalogMovie;

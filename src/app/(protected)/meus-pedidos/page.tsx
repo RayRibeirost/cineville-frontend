@@ -1,7 +1,7 @@
-import Header from "@/src/components/layout/Header";
 import Footer from "@/src/components/layout/Footer/Footer";
 import MyOrdersList from "@/src/components/orders/MyOrdersList";
-import { getMyOrders, OrderStatus } from "@/src/actions/myOrdersActions";
+import { getMyOrders } from "@/src/actions/myOrdersActions";
+import type { OrderStatus } from "@/src/types/order";
 import { ADMIN_PAGE_SIZE, parsePageParam } from "@/src/utils/pagination";
 
 export default async function MeusPedidosPage({
@@ -20,8 +20,6 @@ export default async function MeusPedidosPage({
 
   return (
     <>
-      <Header />
-
       <div className="bg-deep-black text-grayScale-200 min-h-screen pt-16">
         <div className="mx-auto max-w-4xl px-5 py-10 sm:px-6">
           <h1 className="mb-8 text-3xl font-black">Meus Pedidos</h1>

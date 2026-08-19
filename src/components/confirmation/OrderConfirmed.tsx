@@ -29,10 +29,7 @@ interface OrderConfirmedModalProps {
   isOpen: boolean;
   onClose: () => void;
   order: PurchaseSummary | undefined;
-  /**
-   * Status real do pagamento, como a API devolve em `GET /payments/:id`.
-   * Nunca deduzido na tela: é ele que define o que o usuário lê aqui.
-   */
+  /** Status real do pagamento, como a API devolve em `GET /payments/:id`. */
   paymentStatus?: PaymentStatus | null;
   /** Motivo da recusa (`payment.failureReason`), quando existir. */
   failureReason?: string;
@@ -47,13 +44,7 @@ type StatusMeta = {
   iconClass: string;
 };
 
-/**
- * Um pagamento pendente NÃO é uma compra aprovada.
- *
- * O gateway é mockado e o PIX nasce pendente até um administrador aprovar, por
- * isso o texto padrão é "em análise". Anunciar aprovação aqui prometeria um
- * ingresso que o backend ainda não emitiu.
- */
+/** Um pagamento pendente NÃO é uma compra aprovada. */
 const STATUS_META: Record<PaymentStatus, StatusMeta> = {
   [PAYMENT_STATUSES.PENDING]: {
     title: "Compra realizada!",
@@ -102,11 +93,7 @@ export default function OrderConfirmedModal({
 }: OrderConfirmedModalProps) {
   const router = useRouter();
 
-  /**
-   * Resultado da última busca junto com a chave do pedido que a originou.
-   * Guardar a chave permite derivar `loading` em vez de chamar `setLoading`
-   * dentro do efeito: um `setState` síncrono ali dispara render em cascata.
-   */
+  /** Resultado da última busca junto com a chave do pedido que a originou. */
   const [fetched, setFetched] = useState<{
     key: string;
     tickets: Ticket[];
@@ -121,10 +108,9 @@ export default function OrderConfirmedModal({
   const meta = STATUS_META[status] ?? STATUS_META[PAYMENT_STATUSES.PENDING];
   const StatusIcon = meta.icon;
 
-  /*
+  /**
    * Os ingressos só existem depois que o backend aprova o pagamento
-   * (`fulfillPaidOrder`), então a busca acontece apenas nesse caso. Pedir antes
-   * voltaria sempre uma lista vazia e daria a impressão de que algo falhou.
+   * (`fulfillPaidOrder`), então a busca acontece apenas nesse caso.
    */
   const requestKey =
     isOpen && orderId && isApproved ? `${orderId}:${reloadToken}` : null;
@@ -170,11 +156,10 @@ export default function OrderConfirmedModal({
   if (!isOpen || !order) return null;
 
   return createPortal(
-    /*
-      `pt-24` reserva a altura da Header fixa (4rem) mais respiro, para o cartão
-      não nascer colado no topo nem parecer cortar a Header. `overflow-y-auto`
-      com `items-start` mantém o scroll do próprio modal em telas baixas.
-    */
+    /**
+     * `pt-24` reserva a altura da Header fixa (4rem) mais respiro, para o
+     * cartão não nascer colado no topo nem parecer cortar a Header.
+     */
     <div className="fixed inset-0 z-9999 flex min-h-screen items-start justify-center overflow-y-auto bg-deep-black/75 px-4 pt-24 pb-8 backdrop-blur-lg">
       <div
         className="relative flex w-full max-w-220 flex-col items-center rounded-3xl bg-gray-surface px-5 pt-5 pb-6 text-white sm:px-7"
@@ -232,10 +217,10 @@ export default function OrderConfirmedModal({
                 </button>
               </div>
             ) : !tickets.length ? (
-              /*
-                Pagamento aprovado, ingresso ainda não emitido: melhor dizer
-                isso do que mostrar um ingresso inventado.
-              */
+              /**
+               * Pagamento aprovado, ingresso ainda não emitido: melhor dizer
+               * isso do que mostrar um ingresso inventado.
+               */
               <div className="rounded-xl border border-grayScale-600 bg-deep-black px-6 py-8 text-center">
                 <p className="text-sm text-grayScale-400">
                   Seu pagamento foi aprovado e os ingressos estão sendo emitidos.

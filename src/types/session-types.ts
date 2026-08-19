@@ -1,6 +1,11 @@
 import { BackendSeat, SeatRow } from "../utils/seat-rows";
 import { SelectedSeat } from "@/src/hooks/useSeatSelection";
 import { TicketType } from "./ticket";
+import {
+  BackendSessionSalesEnvelope,
+  SalesStatus,
+  TicketPriceSet,
+} from "./sales-control";
 
 export type SeatType =
   | "comum"
@@ -23,6 +28,14 @@ export interface SessionInfo {
   screenType: string;
 
   price?: number;
+
+  /** Estado de venda resolvido pelo backend. */
+  salesStatus?: SalesStatus;
+  /** "DD/MM/AAAA HH:MM" */
+  salesStartAt?: string;
+  salesEndAt?: string;
+  /** Preços oficiais de inteira e meia desta sessão, em centavos. */
+  prices?: TicketPriceSet;
 }
 
 export interface SeatProps {
@@ -58,6 +71,8 @@ export interface TicketTypesPanelProps {
   selectedSeats: SelectedSeat[];
   /** Preço da sessão em centavos — base da prévia de inteira e meia. */
   sessionPrice?: number;
+  /** Tabela oficial da sessão, quando o backend a devolve. */
+  prices?: TicketPriceSet;
   onChangeType: (seatNumber: string, ticketType: TicketType) => void;
 }
 
@@ -66,9 +81,11 @@ export interface SeatMapFooterProps {
   selectedCount: number;
   onConfirm: () => void;
   isLoading: boolean;
+  /** Motivo pelo qual a compra está bloqueada, quando estiver. */
+  blockedMessage?: string;
 }
 
-export interface BackendSession {
+export interface BackendSession extends BackendSessionSalesEnvelope {
   _id: string;
   cinemaId: string;
   movieId: string;

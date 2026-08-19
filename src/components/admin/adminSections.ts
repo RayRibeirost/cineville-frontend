@@ -1,7 +1,4 @@
-/**
- * Seções do dashboard. `ready: false` marca o que ainda não foi ligado
- * ao backend — a navegação e os cards usam isso para não abrir tela vazia.
- */
+/** Seções do dashboard. */
 export interface AdminSection {
   href: string;
   label: string;
@@ -29,6 +26,13 @@ export const ADMIN_SECTIONS: AdminSection[] = [
     ready: true,
   },
   {
+    href: "/admin/sales-control",
+    label: "Controle de vendas",
+    description:
+      "Preços de inteira e meia, regras por dia e período de venda das sessões.",
+    ready: true,
+  },
+  {
     href: "/admin/products",
     label: "Produtos",
     description: "Itens da bomboniere, preços e disponibilidade.",
@@ -50,6 +54,35 @@ export const ADMIN_SECTIONS: AdminSection[] = [
     href: "/admin/tickets",
     label: "Ingressos",
     description: "Ingressos emitidos por usuário, sessão e assento.",
+    ready: true,
+  },
+  {
+    /** A fila de análise dos reembolsos. */
+    href: "/admin/refunds",
+    label: "Reembolsos",
+    description:
+      "Solicitações de reembolso dos clientes, para aprovar ou recusar.",
+    ready: true,
+  },
+  {
+    href: "/admin/analytics",
+    label: "Analytics",
+    description: "Receita, ingressos, filmes, cinemas e produtos por período.",
+    ready: true,
+  },
+  {
+    href: "/admin/users",
+    label: "Usuários",
+    description:
+      "Clientes cadastrados, com contato, cidade e data de cadastro.",
+    ready: true,
+  },
+  {
+    /** DENTRO DE `/admin` DE PROPÓSITO. */
+    href: "/admin/notifications",
+    label: "Notificações",
+    description:
+      "Vendas novas, pagamentos aguardando análise e alertas de estoque.",
     ready: true,
   },
 ];

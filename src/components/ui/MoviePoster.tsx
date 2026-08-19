@@ -14,17 +14,7 @@ interface MoviePosterProps {
   priority?: boolean;
 }
 
-/**
- * Pôster do filme, sempre a partir da imagem real do cadastro.
- *
- * Existe para os cards, o ingresso e o destaque da Home tratarem imagem
- * ausente e imagem quebrada do mesmo jeito. Antes cada um apontava para
- * `/assets/movie-placeholder.png` — um arquivo que não existe no projeto —, o
- * que trocava o pôster faltante por um ícone de imagem quebrada.
- *
- * O fallback é desenhado em CSS em vez de ser outro arquivo: não há segunda
- * requisição para falhar, e o título continua legível no lugar da capa.
- */
+/** Pôster do filme, sempre a partir da imagem real do cadastro. */
 export default function MoviePoster({
   src,
   alt,
@@ -62,10 +52,10 @@ export default function MoviePoster({
         src={src}
         alt={alt}
         fill
-        /*
-          As capas vêm do Firebase Storage com URL assinada; o otimizador do
-          Next não lida com a query de assinatura, então servimos direto.
-        */
+        /**
+         * As capas vêm do Firebase Storage com URL assinada; o otimizador do
+         * Next não lida com a query de assinatura, então servimos direto.
+         */
         unoptimized={src.startsWith("http")}
         sizes={sizes}
         priority={priority}

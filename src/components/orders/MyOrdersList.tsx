@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { Order, OrderStatus } from "@/src/actions/myOrdersActions";
+import type { Order, OrderStatus } from "@/src/types/order";
 import AdminPagination from "@/src/components/admin/AdminPagination";
 import { useQueryParams } from "@/src/hooks/useQueryParams";
 import OrderCard from "./OrderCard";
@@ -25,16 +25,7 @@ interface MyOrdersListProps {
   total: number;
 }
 
-/**
- * Listagem de pedidos, paginada pelo servidor.
- *
- * O filtro de status vai para a API (`GET /orders?status=`), então ele vale
- * para a base inteira e não só para a página aberta. A busca por texto não tem
- * equivalente na API hoje, então filtra os pedidos já carregados — o rótulo do
- * campo diz isso, para o administrador não achar que a busca varre tudo.
- *
- * Filtro e busca ficam na URL: paginar preserva os dois.
- */
+/** Listagem de pedidos, paginada pelo servidor. */
 export default function MyOrdersList({
   orders,
   admin = false,

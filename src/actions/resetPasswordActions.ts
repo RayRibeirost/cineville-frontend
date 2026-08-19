@@ -6,6 +6,11 @@ import { ResetPasswordState } from "../types/forgotPassword";
 import * as v from "valibot";
 type ResetPasswordInput = InferInput<typeof resetPasswordSchema>;
 
+/** O backend usa a mesma mensagem de 400 para token desconhecido e para expirado. */
+function isInvalidTokenMessage(message: unknown): boolean {
+  return typeof message === "string" && /token/i.test(message);
+}
+
 export async function resetPassword(
   prevState: ResetPasswordState<Partial<ResetPasswordInput>>,
   formData: FormData,
@@ -15,6 +20,10 @@ export async function resetPassword(
     password: formData.get("password"),
     confirmPassword: formData.get("confirmPassword"),
   } as Partial<ResetPasswordInput>;
+
+  // A senha nunca volta para a tela: só o token (que já veio do link) é
+  // devolvido, para o formulário continuar utilizável depois de um erro.
+  const keptInputs: Partial<ResetPasswordInput> = { token: rawData.token };
 
   try {
     const validData = parse(resetPasswordSchema, rawData);
@@ -43,15 +52,19 @@ export async function resetPassword(
       return {
         success: false,
         message: "Erro de comunicação com o servidor.",
-        inputs: rawData,
+        inputs: keptInputs,
       };
     }
 
     if (!response.ok) {
       return {
         success: false,
-        message: apiData.message,
-        inputs: rawData,
+        message:
+          typeof apiData?.message === "string"
+            ? apiData.message
+            : "Não foi possível redefinir a senha.",
+        inputs: keptInputs,
+        invalidToken: isInvalidTokenMessage(apiData?.message),
         errors: apiData.errors,
       };
     }
@@ -68,7 +81,10 @@ export async function resetPassword(
       return {
         success: false,
         message: "Verifique os campos.",
-        inputs: rawData,
+        inputs: keptInputs,
+        // Token vazio ou truncado no link: o problema é o endereço, não a
+        // senha digitada.
+        invalidToken: !!issues.nested?.token?.length,
         errors: issues.nested,
       };
     }
@@ -76,7 +92,7 @@ export async function resetPassword(
     return {
       success: false,
       message: err instanceof Error ? err.message : "Erro inesperado.",
-      inputs: rawData,
+      inputs: keptInputs,
     };
   }
 }

@@ -10,13 +10,7 @@ import {
 } from "@/src/types/admin";
 import { Ticket, TicketStatus, TicketType } from "@/src/types/ticket";
 
-/**
- * Formatos reais devolvidos pelo backend.
- *
- * `/tickets` popula `userId`, `sessionId` (com `cinemaId` e `movieId` dentro)
- * e `orderId`. Ou seja: estes campos chegam como objetos, não como ids — era
- * exatamente isso que quebrava a tela, que os tratava como string.
- */
+/** Formatos reais devolvidos pelo backend. */
 interface RawCinema {
   _id: string;
   name: string;
@@ -100,8 +94,7 @@ function isObject<T>(value: T | string | undefined): value is T {
  * As rotas de ingresso usam dois envelopes diferentes: `/tickets/my-tickets`
  * responde `{ message, data: [...] }` (e o `apiRequest` já desembrulha o
  * `data`), enquanto `/tickets` espalha a paginação no topo, sem `data`, e
- * chega aqui como o objeto inteiro. Tratar os dois num lugar só evita que a
- * tela chame `.map` num objeto — o TypeError que derrubava "Meus Ingressos".
+ * chega aqui como o objeto inteiro.
  */
 function toTicketArray(
   payload: RawTicket[] | RawTicketsPage | null | undefined,
@@ -181,12 +174,7 @@ async function buildTickets(raw: RawTicket[]): Promise<Ticket[]> {
     );
 }
 
-/**
- * Ingressos do usuário logado.
- *
- * `GET /tickets/my-tickets` filtra por `req.user.sub` no backend e devolve
- * sempre os ingressos do próprio usuário, mesmo para administradores.
- */
+/** Ingressos do usuário logado. */
 export async function getMyTickets(): Promise<ActionResult<Ticket[]>> {
   const result = await apiRequest<RawTicket[] | RawTicketsPage>(
     "/tickets/my-tickets",
@@ -198,16 +186,7 @@ export async function getMyTickets(): Promise<ActionResult<Ticket[]>> {
   return { success: true, data: await buildTickets(toTicketArray(result.data)) };
 }
 
-/**
- * Listagem de ingressos conforme o papel do requisitante.
- *
- * `GET /tickets` é sensível ao papel no backend (`findAllForRequester`):
- * usuário comum recebe os próprios ingressos, administrador recebe todos.
- *
- * A paginação é a da API: pedimos apenas os registros da página pedida e
- * devolvemos o total para a tela montar os controles. Antes pedíamos 100 de
- * uma vez e a tela ficava com o que caísse nesse limite.
- */
+/** Listagem de ingressos conforme o papel do requisitante. */
 export async function getAllTickets(
   page = 1,
   limit = 10,
@@ -242,15 +221,7 @@ export async function getAllTickets(
   };
 }
 
-/**
- * Ingressos emitidos para um pedido.
- *
- * Filtra a listagem do próprio usuário por `orderId` em vez de ler
- * `order.tickets`: em `/orders/:id` os ingressos vêm sem filme, cinema e
- * sessão populados, e é justamente isso que o ingresso precisa mostrar.
- * Enquanto o pagamento não é aprovado a lista volta vazia — é assim que a
- * tela de confirmação sabe que o ingresso ainda não foi emitido.
- */
+/** Ingressos emitidos para um pedido. */
 export async function getTicketsForOrder(
   orderId: string,
 ): Promise<ActionResult<Ticket[]>> {

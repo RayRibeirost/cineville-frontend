@@ -7,6 +7,8 @@ import {
   BackendSession,
   SessionInfo,
 } from "@/src/types/session-types";
+import { toSessionSalesInfo } from "@/src/types/sales-control";
+import { isoToBrDateTime } from "@/src/utils/date";
 import { buildAuthHeaders } from "./http";
 
 const MONTHS = [
@@ -76,6 +78,9 @@ export async function getSessionDetails(sessionId: string): Promise<
   const monthIndex = Number(parsedDate.month) - 1;
   const monthLabel = MONTHS[monthIndex] ?? parsedDate.month;
 
+  // O backend anexa a venda e o preço aninhados; aqui eles são achatados.
+  const salesInfo = toSessionSalesInfo(session, isoToBrDateTime);
+
   return {
     success: true,
     sessionInfo: {
@@ -86,11 +91,13 @@ export async function getSessionDetails(sessionId: string): Promise<
       audio: session.roomType,
       room: session.roomName,
       screenType: `Tela - ${session.roomType}`,
-      /*
-        Preço da sessão em centavos, como o backend guarda. Fica também dentro
-        de `sessionInfo` porque é ele que a tela recebe: o campo existia no
-        tipo, chegava sempre vazio, e a prévia de inteira/meia mostrava R$ 0,00.
-      */
+
+      /** Controle de venda resolvido pelo backend (Controle de Vendas do admin). */
+      salesStatus: salesInfo.salesStatus,
+      salesStartAt: salesInfo.salesStartAt,
+      salesEndAt: salesInfo.salesEndAt,
+      prices: salesInfo.effectivePrices,
+      /** Preço da sessão em centavos, como o backend guarda. */
       price: session.price,
     },
     seatRows: buildSeatLayout(session.seats),

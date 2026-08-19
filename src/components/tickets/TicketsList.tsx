@@ -20,11 +20,7 @@ interface TicketsListProps {
   searchable?: boolean;
   /** Texto exibido quando o usuário ainda não tem nenhum ingresso. */
   emptyMessage?: string;
-  /**
-   * Paginação, quando a lista vem de uma rota paginada (`GET /tickets`).
-   * Ausente em "Meus Ingressos", porque `/tickets/my-tickets` devolve todos os
-   * ingressos do próprio usuário de uma vez.
-   */
+  /** Paginação, quando a lista vem de uma rota paginada (`GET /tickets`). */
   pagination?: { page: number; limit: number; total: number };
 }
 

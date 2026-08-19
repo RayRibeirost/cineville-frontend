@@ -79,14 +79,7 @@ export default function SessionsManager({
     [cinemas],
   );
 
-  /**
-   * Só os filmes em cartaz no cinema escolhido.
-   *
-   * O backend recusa a sessão quando o filme não está anexado ao cinema
-   * (`"Este filme não está em cartaz no cinema selecionado."`), então o select
-   * espelha essa regra em vez de deixar o admin descobrir no erro. O cartaz é
-   * montado na tela de Cinemas.
-   */
+  /** Só os filmes em cartaz no cinema escolhido. */
   const availableMovies = useMemo(() => {
     const attached = new Set(
       (cinemasById.get(form.cinemaId)?.movies ?? []).map(String),
@@ -95,11 +88,7 @@ export default function SessionsManager({
     return movies.filter((movie) => attached.has(movie._id));
   }, [movies, cinemasById, form.cinemaId]);
 
-  /**
-   * Uma sessão antiga pode apontar para um filme que saiu do cartaz depois.
-   * Nesse caso o título continua na lista para a edição não trocar o filme
-   * sem o admin perceber.
-   */
+  /** Uma sessão antiga pode apontar para um filme que saiu do cartaz depois. */
   const staleMovieTitle =
     !!form.movieTitle &&
     !availableMovies.some((movie) => movie.title === form.movieTitle)

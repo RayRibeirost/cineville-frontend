@@ -10,8 +10,7 @@ interface ApprovePaymentButtonProps {
 
 /**
  * Conclui, pelo painel, um pagamento que o gateway mockado deixaria pendente
- * para sempre — o PIX simulado nunca recebe a confirmação do banco. Sai de
- * cena junto com o mock, quando um gateway real passar a aprovar por webhook.
+ * para sempre — o PIX simulado nunca recebe a confirmação do banco.
  */
 export default function ApprovePaymentButton({
   orderId,

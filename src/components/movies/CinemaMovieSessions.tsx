@@ -2,6 +2,10 @@
 
 import { useMemo, useState } from "react";
 import { MovieDetailsResult } from "@/src/types/movie-types";
+import {
+  SALES_STATUS_LABELS,
+  isSessionOnSale,
+} from "@/src/types/sales-control";
 import { todayBrDate } from "@/src/utils/date";
 import SessionDateFilter from "./SessionDateFilter";
 
@@ -72,15 +76,28 @@ export default function CinemaMovieSessions({
               </p>
               <p className="font-bold text-sm">{group.language}</p>
               <div className="flex gap-2 flex-wrap">
-                {group.showtimes.map((showtime) => (
-                  <button
-                    key={showtime.sessionId}
-                    onClick={() => onSelectSession(showtime.sessionId)}
-                    className="px-3 py-1 rounded bg-grayScale-600 hover:bg-red-cinema text-xs font-semibold transition-all cursor-pointer"
-                  >
-                    {showtime.time}
-                  </button>
-                ))}
+                {group.showtimes.map((showtime) => {
+                  {/* Sessão com venda encerrada continua na grade, mas sem link. */}
+                  const onSale = isSessionOnSale({
+                    salesStatus: showtime.salesStatus,
+                  });
+
+                  return (
+                    <button
+                      key={showtime.sessionId}
+                      onClick={() => onSelectSession(showtime.sessionId)}
+                      disabled={!onSale}
+                      title={
+                        onSale || !showtime.salesStatus
+                          ? undefined
+                          : SALES_STATUS_LABELS[showtime.salesStatus]
+                      }
+                      className="px-3 py-1 rounded bg-grayScale-600 hover:bg-red-cinema text-xs font-semibold transition-all cursor-pointer disabled:cursor-not-allowed disabled:bg-grayScale-600/40 disabled:text-grayScale-500 disabled:line-through disabled:hover:bg-grayScale-600/40"
+                    >
+                      {showtime.time}
+                    </button>
+                  );
+                })}
               </div>
             </div>
           ))}

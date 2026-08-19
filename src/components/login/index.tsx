@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { FiEye, FiEyeOff } from "react-icons/fi";
 import { useLoginForm } from "@/src/hooks/useLoginForm";
 import InputForm from "../ui/InputForm";
@@ -20,6 +21,10 @@ const EyeIcon = ({ visible }: { visible: boolean }) => {
 };
 
 export default function Login() {
+  // Feedback da exclusão de conta: a sessão já caiu quando o usuário chega
+  // aqui, então a confirmação é dada nesta tela, e não na que ele deixou.
+  const accountDeleted = useSearchParams().get("conta") === "excluida";
+
   const {
     formAction,
     isPending,
@@ -32,6 +37,15 @@ export default function Login() {
 
   return (
     <form action={formAction} className="space-y-5">
+      {accountDeleted && (
+        <p
+          role="status"
+          className="rounded-lg border border-green-500/40 bg-green-500/10 px-4 py-3 text-center text-sm text-green-400"
+        >
+          Sua conta foi excluída com sucesso.
+        </p>
+      )}
+
       {/* Email */}
       <div className="w-full">
         <label

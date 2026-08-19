@@ -5,13 +5,7 @@ import DownloadIcon from "@mui/icons-material/DownloadOutlined";
 import { Ticket } from "@/src/types/ticket";
 import TicketPdfDocument from "./TicketPdfDocument";
 
-/**
- * Baixa o ingresso em PDF.
- *
- * O html2pdf.js só existe no browser (mexe em `window` na importação), por
- * isso o import é dinâmico dentro do handler — importar no topo quebra o
- * build do Server Component que renderiza a página.
- */
+/** Baixa o ingresso em PDF. */
 export default function TicketDownloadButton({ ticket }: { ticket: Ticket }) {
   const documentRef = useRef<HTMLDivElement>(null);
   const [loading, setLoading] = useState(false);

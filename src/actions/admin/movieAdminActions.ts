@@ -22,14 +22,7 @@ export interface MovieInput {
   castNames: string[];
 }
 
-/**
- * As rotas de filme são multipart/form-data. O DTO do backend aceita
- * `genres`/`languages` como lista separada por vírgula e `cast` como JSON
- * string — é assim que mandamos aqui.
- *
- * Regra do backend: se `cast` for enviado, a quantidade de fotos em
- * `actorsPhotos` precisa ser exatamente igual à quantidade de atores.
- */
+/** As rotas de filme são multipart/form-data. */
 function buildMovieFormData(
   input: Partial<MovieInput>,
   banner: File | null | undefined,
