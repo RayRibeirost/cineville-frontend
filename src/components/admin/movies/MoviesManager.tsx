@@ -19,6 +19,10 @@ import {
 } from "@/src/types/admin";
 import { brToIsoDate, isoToBrDate } from "@/src/utils/date";
 import { validateImageUpload } from "@/src/utils/upload";
+import {
+  capitalizeMovieTitle,
+  capitalizeSentence,
+} from "@/src/utils/text";
 import AdminCrudShell from "../AdminCrudShell";
 import AdminTable from "../AdminTable";
 import AdminModal from "../AdminModal";
@@ -170,8 +174,10 @@ export default function MoviesManager({ movies, loadError }: Props) {
     const named = form.cast.filter((row) => row.name.trim());
 
     const input: MovieInput = {
-      title: form.title.trim(),
-      synopsis: form.synopsis.trim(),
+      // Mesma normalização de caixa em cadastro e edição: título em Title Case
+      // quando digitado todo em minúsculas, sinopse com capitalização natural.
+      title: capitalizeMovieTitle(form.title),
+      synopsis: capitalizeSentence(form.synopsis),
       genres: form.genres,
       classification: form.classification,
       duration: Number(form.duration),

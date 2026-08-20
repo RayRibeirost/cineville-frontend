@@ -27,6 +27,27 @@ export function parseBrDateTime(dateTime: string): Date | null {
   return Number.isNaN(date.getTime()) ? null : date;
 }
 
+/**
+ * A sessão já aconteceu?
+ *
+ * Compara o instante completo (data **e** horário) de `Session.dateTime`, que o
+ * backend grava como "DD/MM/AAAA HH:MM", com o momento atual. A conversão passa
+ * por `parseBrDateTime`, que monta um `Date` no fuso local — a mesma convenção
+ * que `todayBrDate` e `formatDayLabel` já usam em todo o frontend, e que
+ * corresponde ao fuso do cinema (America/Sao_Paulo) para o público do sistema.
+ * Nada de comparação de string.
+ *
+ * Formato inesperado devolve `false`: quem decide de fato é o backend, e não
+ * cabe bloquear a compra por um parse que falhou aqui.
+ */
+export function isSessionPast(dateTime: string, now: Date = new Date()): boolean {
+  const startsAt = parseBrDateTime(dateTime);
+
+  if (!startsAt) return false;
+
+  return startsAt.getTime() < now.getTime();
+}
+
 /** Date → "DD/MM/AAAA HH:MM", o mesmo formato que o backend usa. */
 export function formatBrDateTime(date: Date): string {
   const pad = (value: number) => String(value).padStart(2, "0");

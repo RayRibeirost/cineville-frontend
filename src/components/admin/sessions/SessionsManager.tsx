@@ -18,6 +18,7 @@ import {
 } from "@/src/types/admin";
 import { brToIsoDate, isoToBrDate } from "@/src/utils/date";
 import { centsToInput, formatCents, inputToCents } from "@/src/utils/currency";
+import { capitalizeWords } from "@/src/utils/text";
 import AdminCrudShell from "../AdminCrudShell";
 import AdminTable from "../AdminTable";
 import AdminModal from "../AdminModal";
@@ -88,6 +89,17 @@ export default function SessionsManager({
     return movies.filter((movie) => attached.has(movie._id));
   }, [movies, cinemasById, form.cinemaId]);
 
+  /** O filme escolhido no formulário, para checar a data de estreia. */
+  const selectedMovie = useMemo(
+    () => movies.find((movie) => movie.title === form.movieTitle) ?? null,
+    [movies, form.movieTitle],
+  );
+
+  /** Estreia em "AAAA-MM-DD", para comparar com o input type="date". */
+  const releaseDateIso = selectedMovie
+    ? brToIsoDate(selectedMovie.releaseDate)
+    : "";
+
   /** Uma sessão antiga pode apontar para um filme que saiu do cartaz depois. */
   const staleMovieTitle =
     !!form.movieTitle &&
@@ -140,6 +152,15 @@ export default function SessionsManager({
     if (!form.roomName.trim()) return "Informe o nome da sala.";
     if (!form.date || !form.time) return "Informe data e horário da sessão.";
 
+    // Regra de negócio validada também no backend: a sessão nunca pode ser
+    // anterior à estreia. Comparação em "AAAA-MM-DD", só pelo dia civil, para
+    // não depender de fuso — o dia da estreia já é permitido.
+    if (releaseDateIso && form.date < releaseDateIso)
+      return (
+        "Não é possível criar uma sessão antes da data de estreia do filme." +
+        ` A estreia de "${form.movieTitle}" é em ${selectedMovie?.releaseDate}.`
+      );
+
     const price = inputToCents(form.price);
 
     if (price === null) return "Informe um preço válido (ex.: 35,00).";
@@ -147,7 +168,9 @@ export default function SessionsManager({
     return {
       cinemaId: form.cinemaId,
       movieTitle: form.movieTitle.trim(),
-      roomName: form.roomName.trim(),
+      // Mesmo padrão de caixa do resto do cadastro ("sala premium" →
+      // "Sala Premium"), igual em criação e edição.
+      roomName: capitalizeWords(form.roomName),
       roomType: form.roomType,
       language: form.language,
       dateTime: `${isoToBrDate(form.date)} ${form.time}`,
@@ -380,11 +403,21 @@ export default function SessionsManager({
             />
           </AdminField>
 
-          <AdminField label="Data" htmlFor="session-date">
+          <AdminField
+            label="Data"
+            htmlFor="session-date"
+            hint={
+              selectedMovie
+                ? `O filme estreia em ${selectedMovie.releaseDate}; a sessão não pode ser antes disso.`
+                : undefined
+            }
+          >
             <input
               id="session-date"
               type="date"
               value={form.date}
+              // Bloqueia a escolha de datas anteriores à estreia já no seletor.
+              min={releaseDateIso || undefined}
               onChange={(e) => setForm({ ...form, date: e.target.value })}
               className={adminInputClass}
             />

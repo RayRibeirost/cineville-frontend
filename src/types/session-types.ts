@@ -20,6 +20,12 @@ export interface SessionInfo {
   city: string;
   date: string;
   time: string;
+  /**
+   * "DD/MM/AAAA HH:MM" exatamente como `Session.dateTime` está gravado.
+   * `date` e `time` são rótulos de exibição ("15 Nov", "20h30"); a checagem de
+   * sessão já realizada precisa do instante completo.
+   */
+  dateTime: string;
 
   audio: string;
 

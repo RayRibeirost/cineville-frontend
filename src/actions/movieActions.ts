@@ -40,18 +40,50 @@ export async function getAllMovies(): Promise<
   }
 }
 
+/**
+ * Compara cidades tolerando acento e caixa: a cidade do perfil do usuário é
+ * digitada no cadastro e a do cinema vem do cadastro de cinemas — "sao paulo"
+ * e "São Paulo" precisam casar.
+ */
+function cityKey(city: string): string {
+  return city
+    .normalize("NFD")
+    .replace(/\p{Diacritic}/gu, "")
+    .trim()
+    .toLowerCase();
+}
+
+/**
+ * Detalhes do filme com os cinemas e horários já filtrados.
+ *
+ * `city` é repassada ao backend como query param de `GET /movies/:id/details`,
+ * que é quem faz o recorte — o mesmo contrato usado pelo filtro de dia. A
+ * lista de cidades disponíveis sai de `GET /cinemas`, pelo relacionamento
+ * `Cinema.movies` que já existe, e por isso não encolhe quando uma cidade é
+ * escolhida.
+ */
 export async function getMovieWithSessions(
   movieId: string,
+  city?: string | null,
 ): Promise<
   | { success: true; data: MovieDetailsResult }
   | { success: false; error: string }
 > {
   const headers = await buildAuthHeaders();
 
-  const res = await fetch(
+  const detailsUrl = new URL(
     `${process.env.NEXT_PUBLIC_API_URL}/movies/${movieId}/details`,
-    { headers, cache: "no-store" },
   );
+
+  if (city) detailsUrl.searchParams.set("city", city);
+
+  const [res, cinemasRes] = await Promise.all([
+    fetch(detailsUrl, { headers, cache: "no-store" }),
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/cinemas`, {
+      headers,
+      cache: "no-store",
+    }),
+  ]);
 
   if (!res.ok) {
     return { success: false, error: "Filme não encontrado." };
@@ -59,28 +91,45 @@ export async function getMovieWithSessions(
 
   const { data } = (await res.json()) as { data: BackendMovieDetails };
 
-  const uniqueCinemaIds = Array.from(
-    new Set(data.sessions.map((s) => s.cinemaId)),
+  const allCinemas: BackendCinemaForMovies[] = cinemasRes.ok
+    ? ((await cinemasRes.json()).data ?? [])
+    : [];
+
+  const cinemaMap = new Map(
+    allCinemas.map((cinema) => [String(cinema._id), cinema]),
   );
 
-  const cinemaEntries = await Promise.all(
-    uniqueCinemaIds.map(async (cinemaId) => {
-      const cinemaRes = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/cinemas/${cinemaId}`,
-        { headers, cache: "no-store" },
-      );
-      const cinema = cinemaRes.ok
-        ? ((await cinemaRes.json()).data as BackendCinemaForMovies)
-        : null;
-      return [cinemaId, cinema] as const;
-    }),
-  );
+  // Cidades onde o filme está em cartaz, pelo relacionamento cinema → filmes.
+  const cities = Array.from(
+    new Map(
+      allCinemas
+        .filter((cinema) =>
+          (cinema.movies ?? []).some((id) => String(id) === movieId),
+        )
+        .map((cinema) => [cityKey(cinema.city), cinema.city]),
+    ).values(),
+  ).sort((a, b) => a.localeCompare(b, "pt-BR"));
 
-  const cinemaMap = new Map(cinemaEntries);
+  // A cidade pedida pode vir do perfil com outra grafia; devolvemos a versão
+  // canônica do cadastro de cinemas para o seletor exibir.
+  const appliedCity = city
+    ? (cities.find((option) => cityKey(option) === cityKey(city)) ?? city)
+    : null;
+
   const groupsMap = new Map<string, CinemaSessionGroup>();
 
   data.sessions.forEach((session) => {
-    const cinema = cinemaMap.get(session.cinemaId);
+    const cinema = cinemaMap.get(String(session.cinemaId));
+
+    // Rede de segurança do mesmo critério aplicado pelo backend: nenhum
+    // cinema de outra cidade pode aparecer na grade.
+    if (
+      appliedCity &&
+      (!cinema || cityKey(cinema.city) !== cityKey(appliedCity))
+    ) {
+      return;
+    }
+
     const key = `${session.cinemaId}-${session.roomType}-${session.language}`;
 
     const { date, time } = splitDateTime(session.dateTime);
@@ -101,6 +150,7 @@ export async function getMovieWithSessions(
       key,
       cinemaName: cinema?.name ?? "Cinema",
       address: cinema ? `${cinema.address} - ${cinema.city}` : "",
+      city: cinema?.city ?? "",
       roomType: session.roomType,
       language: session.language,
       showtimes: [showtime],
@@ -116,8 +166,14 @@ export async function getMovieWithSessions(
     ),
   }));
 
+  // Os dias vêm das sessões que sobraram, então o filtro de dia já nasce
+  // coerente com a cidade selecionada.
   const dates = Array.from(
-    new Set(data.sessions.map((s) => splitDateTime(s.dateTime).date)),
+    new Set(
+      groups.flatMap((group) =>
+        group.showtimes.map((showtime) => showtime.date),
+      ),
+    ),
   )
     .filter(Boolean)
     .sort((a, b) => parseBrDate(a).getTime() - parseBrDate(b).getTime());
@@ -135,6 +191,8 @@ export async function getMovieWithSessions(
       cast: data.movie.cast,
       groups,
       dates,
+      cities,
+      city: appliedCity,
     },
   };
 }

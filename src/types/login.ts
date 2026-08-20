@@ -17,6 +17,12 @@ export interface UserPayload {
   name: string;
   surname?: string;
   role: UserRole;
+  /**
+   * Cidade cadastrada no perfil (`User.city`). Não vem no JWT: é lida do
+   * perfil por `getSessionUser`. Usada para semear filtros de cidade — trocar
+   * o filtro na tela não altera este cadastro.
+   */
+  city?: string;
   iat: number;
   exp: number;
 }

@@ -66,7 +66,7 @@ export const ADMIN_SECTIONS: AdminSection[] = [
   },
   {
     href: "/admin/analytics",
-    label: "Analytics",
+    label: "Relatórios",
     description: "Receita, ingressos, filmes, cinemas e produtos por período.",
     ready: true,
   },
