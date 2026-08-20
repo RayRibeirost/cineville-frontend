@@ -88,6 +88,7 @@ export async function getSessionDetails(sessionId: string): Promise<
       city: cinema?.city ?? "",
       date: `${parsedDate.day} ${monthLabel}`,
       time: parsedDate.time.replace(":", "h"),
+      dateTime: session.dateTime,
       audio: session.roomType,
       room: session.roomName,
       screenType: `Tela - ${session.roomType}`,

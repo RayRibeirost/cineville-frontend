@@ -25,6 +25,30 @@ function location(user: AdminUser): string {
   return [user.city, user.state].filter(Boolean).join("/") || "—";
 }
 
+/**
+ * Célula de largura limitada: a tabela usa `table-layout: auto`, então um nome
+ * (ou e-mail) longo empurraria a coluna indefinidamente. O `max-w` fica no
+ * bloco de dentro — em layout automático o navegador ignora `max-width` no
+ * próprio `td` — e o `title` mantém o valor completo acessível ao passar o
+ * mouse. O texto guardado no backend não muda: isto é só apresentação.
+ */
+function TruncatedCell({
+  text,
+  className,
+}: {
+  text: string;
+  className?: string;
+}) {
+  return (
+    <div
+      title={text}
+      className={`truncate ${className ?? ""}`}
+    >
+      {text}
+    </div>
+  );
+}
+
 /** Listagem administrativa de usuários, 10 por página. */
 export default function UsersManager({
   users,
@@ -63,7 +87,10 @@ export default function UsersManager({
       header: "Nome",
       render: (user) => (
         <div className="min-w-0">
-          <p className="truncate font-bold text-white">{fullName(user)}</p>
+          <TruncatedCell
+            text={fullName(user)}
+            className="max-w-[10rem] font-bold text-white sm:max-w-[13rem] lg:max-w-[18rem]"
+          />
 
           {user.birthDate && (
             <p className="text-xs text-grayScale-400">
@@ -76,7 +103,10 @@ export default function UsersManager({
     {
       header: "E-mail",
       render: (user) => (
-        <span className="break-all">{user.email || "—"}</span>
+        <TruncatedCell
+          text={user.email || "—"}
+          className="max-w-[11rem] sm:max-w-[14rem] lg:max-w-[20rem]"
+        />
       ),
     },
     {
@@ -88,7 +118,10 @@ export default function UsersManager({
     {
       header: "Cidade",
       render: (user) => (
-        <span className="whitespace-nowrap">{location(user)}</span>
+        <TruncatedCell
+          text={location(user)}
+          className="max-w-[8rem] sm:max-w-[10rem] lg:max-w-[14rem]"
+        />
       ),
     },
     {

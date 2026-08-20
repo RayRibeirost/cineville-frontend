@@ -38,6 +38,7 @@ export const getSessionUser = cache(
       name?: string;
       surname?: string;
       email?: string;
+      city?: string;
     }>(`/users/${user.sub}`, {
       fallbackError: "Não foi possível carregar o perfil.",
     });
@@ -49,6 +50,7 @@ export const getSessionUser = cache(
       name: profile.data.name || user.name,
       surname: profile.data.surname || user.surname,
       email: profile.data.email || user.email,
+      city: profile.data.city || user.city,
     };
   },
 );

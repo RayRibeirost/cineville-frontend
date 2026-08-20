@@ -23,6 +23,10 @@ import {
 } from "@/src/lib/snackPreselection";
 import { useRouter } from "next/navigation";
 import { useOrder } from "@/src/context/OrderContext";
+import { isSessionPast } from "@/src/utils/date";
+
+/** Sessão já realizada não seleciona assento: o clique não faz nada. */
+const noSeatSelection = () => {};
 import {
   SALES_STATUS_LABELS,
   isSessionOnSale,
@@ -200,8 +204,14 @@ export default function SeatMapModal({
   // Fora do período de venda o botão fica desabilitado, com o motivo na tela.
   const salesStatus = sessionInfo?.salesStatus;
 
-  const salesBlockedMessage =
-    salesStatus && !isSessionOnSale({ salesStatus })
+  // Sessão que já começou não vende, independente do controle de venda do
+  // administrador. Vai pelo mesmo canal de bloqueio: desabilita o botão do
+  // rodapé, mostra o aviso e barra `handleConfirm` antes de `createOrder`.
+  const alreadyStarted = !!sessionInfo && isSessionPast(sessionInfo.dateTime);
+
+  const salesBlockedMessage = alreadyStarted
+    ? "Sessão encerrada. Não é possível comprar ingressos para uma sessão que já aconteceu."
+    : salesStatus && !isSessionOnSale({ salesStatus })
       ? `${SALES_STATUS_LABELS[salesStatus]}. Esta sessão não está disponível para compra.`
       : undefined;
 
@@ -376,7 +386,7 @@ export default function SeatMapModal({
                   <SeatGrid
                     seatRows={seatRows}
                     selectedSeats={selectedSeats}
-                    toggleSeat={toggleSeat}
+                    toggleSeat={alreadyStarted ? noSeatSelection : toggleSeat}
                     screenType={sessionInfo.screenType}
                     room={sessionInfo.room}
                   />

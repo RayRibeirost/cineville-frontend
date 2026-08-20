@@ -30,11 +30,14 @@ export interface BackendMovieDetails {
   sessions: BackendSessionFull[];
 }
 
+/** Cinema como `GET /cinemas` devolve (o schema desliga o virtual `id`). */
 export interface BackendCinemaForMovies {
-  id: string;
+  _id: string;
   name: string;
   address: string;
   city: string;
+  /** IDs dos filmes em cartaz neste cinema (`Cinema.movies` do backend). */
+  movies?: string[];
 }
 
 export interface ShowtimeOption {
@@ -50,6 +53,8 @@ export interface CinemaSessionGroup {
   key: string;
   cinemaName: string;
   address: string;
+  /** Cidade do cinema, como está cadastrada em `Cinema.city`. */
+  city: string;
   roomType: string;
   language: string;
   showtimes: ShowtimeOption[];
@@ -67,6 +72,13 @@ export interface MovieDetailsResult {
   groups: CinemaSessionGroup[];
   /** Dias com sessão disponíveis ("DD/MM/AAAA"), em ordem cronológica. */
   dates: string[];
+  /**
+   * Cidades que têm cinema com este filme em cartaz, em ordem alfabética.
+   * Não depende da cidade filtrada, para o seletor não se esvaziar sozinho.
+   */
+  cities: string[];
+  /** Cidade efetivamente aplicada no filtro; `null` quando nenhuma foi escolhida. */
+  city: string | null;
 }
 /**
  * Os cards da Home usam o mesmo modelo de filme das páginas de catálogo (`/em-

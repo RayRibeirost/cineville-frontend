@@ -3,7 +3,6 @@ import { AuthProvider } from "../context/AuthContext";
 import { getSessionUser } from "../lib/auth";
 import "./globals.css";
 import SuportButton from "../components/ui/SuportButton";
-import VLibras from "../components/Vlibras";
 import { OrderProvider } from "../context/OrderContext";
 
 /** Semeado com `getSessionUser`: o JWT guarda o nome do login, não o atual. */
@@ -20,7 +19,6 @@ export default async function RootLayout({
           <OrderProvider>
             {children}
             <SuportButton phone="99999999999" />
-            <VLibras />
           </OrderProvider>
         </AuthProvider>
       </body>

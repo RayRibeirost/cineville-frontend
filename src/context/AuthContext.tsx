@@ -11,7 +11,14 @@ const AuthContext = createContext({} as AuthContextType);
 function identityKey(user: UserPayload | null): string {
   if (!user) return "";
 
-  return [user.sub, user.name, user.surname, user.email, user.role].join("|");
+  return [
+    user.sub,
+    user.name,
+    user.surname,
+    user.email,
+    user.city,
+    user.role,
+  ].join("|");
 }
 
 export function AuthProvider({

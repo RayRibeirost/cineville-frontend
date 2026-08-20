@@ -17,7 +17,7 @@ export default function SessionDateFilter({
   if (!dates.length) return null;
 
   return (
-    <div className="flex gap-3 overflow-x-auto pb-2 mb-8">
+    <div className="flex gap-3 overflow-x-auto pb-2">
       {dates.map((date) => {
         const isSelected = date === selectedDate;
 
