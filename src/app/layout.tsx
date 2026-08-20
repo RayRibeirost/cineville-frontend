@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { montserrat, inter } from "@/src/lib/fonts";
 import { AuthProvider } from "../context/AuthContext";
 import { getSessionUser } from "../lib/auth";
@@ -5,7 +6,19 @@ import "./globals.css";
 import SuportButton from "../components/ui/SuportButton";
 import { OrderProvider } from "../context/OrderContext";
 
-/** Semeado com `getSessionUser`: o JWT guarda o nome do login, não o atual. */
+
+export const metadata: Metadata = {
+  title: {
+    default: "SmallVille",
+    template: "%s | SmallVille",
+  },
+  description:
+    "Compre ingressos, escolha sua sessão e monte sua bomboniere no SmallVille.",
+  icons: {
+    icon: "/assets/c-fav-icon.jpg",
+  },
+};
+
 export default async function RootLayout({
   children,
 }: {
