@@ -50,7 +50,7 @@ export async function getSessionDetails(sessionId: string): Promise<
   const headers = await buildAuthHeaders();
 
   const sessionRes = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/sessions/${sessionId}`,
+    `${process.env.API_URL}/sessions/${sessionId}`,
     { method: "GET", headers, cache: "no-store" },
   );
   if (!sessionRes.ok) {
@@ -62,7 +62,7 @@ export async function getSessionDetails(sessionId: string): Promise<
   };
 
   const cinemaRes = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/cinemas/${session.cinemaId}`,
+    `${process.env.API_URL}/cinemas/${session.cinemaId}`,
     { headers, cache: "no-store" },
   );
 
@@ -130,7 +130,7 @@ export async function createTickets(
   const results: TicketResult[] = await Promise.all(
     seatNumbers.map(async (seatNumber): Promise<TicketResult> => {
       try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/tickets`, {
+        const res = await fetch(`${process.env.API_URL}/tickets`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

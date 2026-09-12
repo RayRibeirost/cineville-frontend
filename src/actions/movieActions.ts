@@ -24,7 +24,7 @@ export async function getAllMovies(): Promise<
   const headers = await buildAuthHeaders();
 
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/movies`, {
+    const res = await fetch(`${process.env.API_URL}/movies`, {
       headers,
       cache: "no-store",
     });
@@ -72,14 +72,14 @@ export async function getMovieWithSessions(
   const headers = await buildAuthHeaders();
 
   const detailsUrl = new URL(
-    `${process.env.NEXT_PUBLIC_API_URL}/movies/${movieId}/details`,
+    `${process.env.API_URL}/movies/${movieId}/details`,
   );
 
   if (city) detailsUrl.searchParams.set("city", city);
 
   const [res, cinemasRes] = await Promise.all([
     fetch(detailsUrl, { headers, cache: "no-store" }),
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/cinemas`, {
+    fetch(`${process.env.API_URL}/cinemas`, {
       headers,
       cache: "no-store",
     }),

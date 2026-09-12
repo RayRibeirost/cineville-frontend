@@ -19,7 +19,7 @@ export async function getBomboniere() {
     const token = (await cookies()).get("auth_token")?.value;
 
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/products/availables`,
+      `${process.env.API_URL}/products/availables`,
       {
         method: "GET",
         headers: {

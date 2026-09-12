@@ -35,7 +35,7 @@ export async function RegisterUser(
     const validData = parse(registerSchema, rawData);
 
     const response = await fetch(
-      process.env.NEXT_PUBLIC_API_URL + "/register",
+      process.env.API_URL + "/register",
       {
         method: "POST",
         body: JSON.stringify(validData),

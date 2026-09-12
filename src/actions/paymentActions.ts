@@ -6,10 +6,10 @@ import {
   isPaymentMethodAvailable,
 } from "@/src/types/payments";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
+const API_URL = process.env.API_URL;
 
 if (!API_URL) {
-  throw new Error("NEXT_PUBLIC_API_URL não está configurada.");
+  throw new Error("API_URL não está configurada.");
 }
 
 async function getResponseData(response: Response) {

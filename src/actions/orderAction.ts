@@ -33,7 +33,7 @@ export async function createOrder(sessionId: string, seats: SeatDto[]) {
 
   const token = cookieStore.get("auth_token")?.value;
 
-  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/orders`, {
+  const response = await fetch(`${process.env.API_URL}/orders`, {
     method: "POST",
     headers: {
       Authorization: `Bearer ${token}`,
@@ -71,7 +71,7 @@ export async function addProductsToOrder(
   const token = (await cookies()).get("auth_token")?.value;
 
   const response = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/orders/${orderId}/products`,
+    `${process.env.API_URL}/orders/${orderId}/products`,
     {
       method: "PATCH",
       headers: {
@@ -103,7 +103,7 @@ export async function getOrder(orderId: string) {
   const token = (await cookies()).get("auth_token")?.value;
 
   const response = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/orders/${orderId}`,
+    `${process.env.API_URL}/orders/${orderId}`,
     {
       headers: {
         Authorization: `Bearer ${token}`,

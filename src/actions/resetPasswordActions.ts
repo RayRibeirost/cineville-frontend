@@ -33,7 +33,7 @@ export async function resetPassword(
       confirmNewPassword: validData.confirmPassword,
     };
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/reset-password`,
+      `${process.env.API_URL}/reset-password`,
       {
         method: "POST",
         headers: {

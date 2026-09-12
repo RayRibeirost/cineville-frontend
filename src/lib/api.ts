@@ -1,7 +1,7 @@
 import { cookies } from "next/headers";
 import { ActionResult } from "@/src/types/admin";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL!;
+const API_URL = process.env.API_URL!;
 
 async function authHeader(): Promise<Record<string, string>> {
   const token = (await cookies()).get("auth_token")?.value;

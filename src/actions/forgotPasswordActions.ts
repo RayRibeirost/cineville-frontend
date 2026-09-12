@@ -18,7 +18,7 @@ export async function forgotPassword(
     const validData = parse(forgotPasswordSchema, rawData);
 
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/forgot-password`,
+      `${process.env.API_URL}/forgot-password`,
       {
         method: "POST",
         headers: {

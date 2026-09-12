@@ -7,7 +7,7 @@ export async function getMovieDetailsById(
 ): Promise<MovieDetailsResult | null> {
   try {
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/movies/${id}/details`,
+      `${process.env.API_URL}/movies/${id}/details`,
       {
         method: "GET",
         cache: "no-store",
