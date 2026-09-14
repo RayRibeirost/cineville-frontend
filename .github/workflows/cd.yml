@@ -27,8 +27,8 @@ jobs:
           file: ./dockerfile
           push: true
           tags: |
-            ghcr.io/qacoders-academy/smallville-frontend:latest
-            ghcr.io/qacoders-academy/smallville-frontend:${{ github.sha }}
+            ghcr.io/qacoders-academy/smallville-front:latest
+            ghcr.io/qacoders-academy/smallville-front:${{ github.sha }}
 
   deploy-vps:
     name: Deploy VPS (produção TQC)
