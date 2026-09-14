@@ -48,7 +48,7 @@ jobs:
             cd /var/www/html/05-academy/smallville
             export IMAGE_TAG=${{ github.sha }}
             docker compose -f docker-compose.yml pull frontend
-            docker compose -f docker-compose.yml up -d frontend
+            docker compose -f docker-compose.yml up -d --no-deps frontend
       - name: Healthcheck
         if: false 
         run: echo "pendente"
@@ -63,7 +63,7 @@ jobs:
             cd /var/www/html/05-academy/smallville
             export IMAGE_TAG=latest
             docker compose -f docker-compose.yml pull frontend
-            docker compose -f docker-compose.yml up -d frontend
+            docker compose -f docker-compose.yml up -d --no-deps frontend
 
   deploy-homelab:
     name: Deploy i3 (portfólio)
@@ -87,7 +87,7 @@ jobs:
             cd ~/cineville
             export IMAGE_TAG=${{ github.sha }}
             docker compose -f docker-compose.yml pull frontend
-            docker compose -f docker-compose.yml up -d frontend
+            docker compose -f docker-compose.yml up -d --no-deps frontend
       - name: Healthcheck
         if: false
         run: echo "pendente"
@@ -102,4 +102,4 @@ jobs:
             cd ~/cineville
             export IMAGE_TAG=latest
             docker compose -f docker-compose.yml pull frontend
-            docker compose -f docker-compose.yml up -d frontend
+            docker compose -f docker-compose.yml up -d --no-deps frontend
