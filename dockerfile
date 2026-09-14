@@ -4,12 +4,11 @@ RUN apk add --no-cache bash
 WORKDIR /app
 COPY package.json yarn.lock ./
 RUN yarn install --frozen-lockfile --ignore-scripts --network-timeout 600000
-COPY .env ./
 COPY . .
 RUN yarn build
 
 # Production
-FROM node:20-alpine as runner
+FROM node:20-alpine AS runner
 WORKDIR /app
 RUN apk add --no-cache bash curl
 ENV NODE_ENV=production
