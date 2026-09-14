@@ -7,7 +7,7 @@ import RefundDecisionActions from "@/src/components/admin/refunds/RefundDecision
 import { REFUND_STATUSES } from "@/src/types/refund";
 
 export const metadata = {
-  title: "Solicitação de reembolso | Admin SmallVille",
+  title: "Solicitação de reembolso | Admin Cineville",
 };
 
 /** Detalhe de uma solicitação, para a análise. */

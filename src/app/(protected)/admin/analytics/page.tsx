@@ -6,7 +6,7 @@ import {
 } from "@/src/utils/analytics";
 
 export const metadata = {
-  title: "Analytics | Admin SmallVille",
+  title: "Analytics | Admin Cineville",
 };
 
 /** Dashboard de vendas. */

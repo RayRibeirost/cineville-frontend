@@ -3,7 +3,7 @@ import UsersManager from "@/src/components/admin/users/UsersManager";
 import { ADMIN_PAGE_SIZE, parsePageParam } from "@/src/utils/pagination";
 
 export const metadata = {
-  title: "Usuários | Admin SmallVille",
+  title: "Usuários | Admin Cineville",
 };
 
 /** Usuários cadastrados. */
@@ -23,7 +23,7 @@ export default async function AdminUsersPage({
         <h2 className="text-xl font-black">Usuários</h2>
 
         <p className="mt-1 text-sm text-grayScale-400">
-          Clientes cadastrados no SmallVille, com contato e data de cadastro.
+          Clientes cadastrados no Cineville, com contato e data de cadastro.
           Contas de administrador não aparecem aqui — o backend as remove da
           listagem.
         </p>

@@ -4,7 +4,7 @@ import MyOrdersList from "@/src/components/orders/MyOrdersList";
 import { ADMIN_PAGE_SIZE, parsePageParam } from "@/src/utils/pagination";
 
 export const metadata = {
-  title: "Pedidos | Admin SmallVille",
+  title: "Pedidos | Admin Cineville",
 };
 
 export default async function AdminOrdersPage({

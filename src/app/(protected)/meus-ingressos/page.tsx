@@ -7,7 +7,7 @@ import { ADMIN_PAGE_SIZE, parsePageParam } from "@/src/utils/pagination";
 import type { Ticket } from "@/src/types/ticket";
 
 export const metadata = {
-  title: "Meus Ingressos | SmallVille",
+  title: "Meus Ingressos | Cineville",
 };
 
 export default async function MeusIngressosPage({

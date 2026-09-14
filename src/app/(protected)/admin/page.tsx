@@ -9,7 +9,7 @@ export default async function AdminDashboardPage() {
     <div className="flex flex-col gap-8">
       <p className="text-grayScale-400 text-sm">
         Bem-vindo, <span className="font-bold text-white">{user?.name}</span>.
-        Aqui você administra o catálogo e o estoque do SmallVille.
+        Aqui você administra o catálogo e o estoque do Cineville.
       </p>
 
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">

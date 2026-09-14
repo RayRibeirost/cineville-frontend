@@ -4,7 +4,7 @@ import { ADMIN_PAGE_SIZE, parsePageParam } from "@/src/utils/pagination";
 import { isRefundStatus } from "@/src/types/refund";
 
 export const metadata = {
-  title: "Reembolsos | Admin SmallVille",
+  title: "Reembolsos | Admin Cineville",
 };
 
 /** Fila de análise dos reembolsos. */

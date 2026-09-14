@@ -1,7 +1,7 @@
 import NotificationsInbox from "@/src/components/notifications/NotificationsInbox";
 
 export const metadata = {
-  title: "Notificações | Admin SmallVille",
+  title: "Notificações | Admin Cineville",
 };
 
 /** Notificações do administrador, DENTRO do dashboard. */

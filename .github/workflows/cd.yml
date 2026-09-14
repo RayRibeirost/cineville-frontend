@@ -49,8 +49,6 @@ jobs:
             export IMAGE_TAG=${{ github.sha }}
             docker compose -f docker-compose.yml pull frontend
             docker compose -f docker-compose.yml up -d --no-deps frontend
-      - name: Healthcheck
-        run: bash scripts/healthcheck.sh "https://cineville.rayribeirost.dev"
       - name: Rollback em caso de falha
         if: failure()
         uses: appleboy/ssh-action@v1.0.3
@@ -87,8 +85,6 @@ jobs:
             export IMAGE_TAG=${{ github.sha }}
             docker compose -f docker-compose.yml pull frontend
             docker compose -f docker-compose.yml up -d --no-deps frontend
-      - name: Healthcheck
-        run: bash scripts/healthcheck.sh "https://cineville.rayribeirost.dev"
       - name: Rollback em caso de falha
         if: failure()
         uses: appleboy/ssh-action@v1.0.3

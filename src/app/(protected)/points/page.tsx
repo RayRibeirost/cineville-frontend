@@ -8,7 +8,7 @@ import { getServerUser } from "@/src/lib/auth";
 import { ADMIN_PAGE_SIZE, parsePageParam } from "@/src/utils/pagination";
 
 export const metadata = {
-  title: "Programa de Pontos | SmallVille",
+  title: "Programa de Pontos | Cineville",
 };
 
 /** Saldo e extrato do usuário logado. */

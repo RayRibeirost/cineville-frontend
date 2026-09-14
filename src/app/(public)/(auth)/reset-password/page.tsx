@@ -2,7 +2,7 @@ import AuthLayout from "../AuthLayout";
 import ResetPassword from "@/src/components/resetPassword";
 
 export const metadata = {
-  title: "Redefinir senha | SmallVille",
+  title: "Redefinir senha | Cineville",
 };
 
 /** Destino do botão do e-mail: `/reset-password?token=...`. */

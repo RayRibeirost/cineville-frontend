@@ -9,11 +9,11 @@ import { OrderProvider } from "../context/OrderContext";
 
 export const metadata: Metadata = {
   title: {
-    default: "SmallVille",
-    template: "%s | SmallVille",
+    default: "Cineville",
+    template: "%s | Cineville",
   },
   description:
-    "Compre ingressos, escolha sua sessão e monte sua bomboniere no SmallVille.",
+    "Compre ingressos, escolha sua sessão e monte sua bomboniere no Cineville.",
   icons: {
     icon: "/assets/c-fav-icon.jpg",
   },

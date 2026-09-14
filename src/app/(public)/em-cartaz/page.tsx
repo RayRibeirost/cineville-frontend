@@ -3,7 +3,7 @@ import CatalogPage from "@/src/components/catalog/CatalogPage";
 import CatalogMovieCard from "@/src/components/catalog/CatalogMovieCard";
 
 export const metadata = {
-  title: "Em Cartaz | SmallVille",
+  title: "Em Cartaz | Cineville",
 };
 
 export default async function EmCartazPage() {

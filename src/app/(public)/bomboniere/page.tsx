@@ -6,7 +6,7 @@ import CatalogPage from "@/src/components/catalog/CatalogPage";
 import BomboniereProductCard from "@/src/components/catalog/BomboniereProductCard";
 
 export const metadata = {
-  title: "Bomboniere | SmallVille",
+  title: "Bomboniere | Cineville",
 };
 
 const CATEGORY_LABELS: Record<ProductCategory, string> = {

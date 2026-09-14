@@ -4,7 +4,7 @@ import CatalogMovieCard from "@/src/components/catalog/CatalogMovieCard";
 import { parseBrDate } from "@/src/utils/date";
 
 export const metadata = {
-  title: "Lançamentos | SmallVille",
+  title: "Lançamentos | Cineville",
 };
 
 function releaseHighlight(releaseDate: string): string {

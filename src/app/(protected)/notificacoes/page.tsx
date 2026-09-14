@@ -4,7 +4,7 @@ import NotificationsInbox from "@/src/components/notifications/NotificationsInbo
 import { isServerAdmin } from "@/src/lib/auth";
 
 export const metadata = {
-  title: "Notificações | SmallVille",
+  title: "Notificações | Cineville",
 };
 
 /** Caixa de notificações do requisitante. */

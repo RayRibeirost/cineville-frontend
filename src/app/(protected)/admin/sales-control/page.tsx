@@ -6,7 +6,7 @@ import SalesControlManager from "@/src/components/admin/sales/SalesControlManage
 import { WEEKDAYS, Weekday } from "@/src/types/sales-control";
 
 export const metadata = {
-  title: "Controle de Vendas | Admin SmallVille",
+  title: "Controle de Vendas | Admin Cineville",
 };
 
 /** Área administrativa de controle de venda. */
